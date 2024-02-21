@@ -1,0 +1,330 @@
+<mxfile host="65bd71144e">
+    <diagram id="6a731a19-8d31-9384-78a2-239565b7b9f0" name="Page-1">
+        <mxGraphModel dx="1307" dy="593" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="1351" value="Friend System" style="ellipse;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=20;fontColor=#FFFFFF;align=center;strokeWidth=3;fillColor=#F08705;strokeColor=none;gradientColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="1164" y="1293" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="1352" value="Text Chats&lt;br&gt;(private or group)" style="ellipse;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=20;fontColor=#FFFFFF;align=center;strokeWidth=3;fillColor=#E85642;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="1164" y="266" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="1353" value="Calls" style="ellipse;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=20;fontColor=#FFFFFF;align=center;strokeWidth=3;fillColor=#1699D3;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="1767" y="763.5" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="1357" value="Unblock user" style="rounded=1;fillColor=#f5af58;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1354" y="1186" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1359" style="endArrow=none;strokeWidth=6;strokeColor=#1699D3;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="1515" target="TAWsj_j4IxmxIWXrBa9g-1567" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="697.1919995615726" y="372.6218819403043" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1360" style="endArrow=none;strokeWidth=6;strokeColor=#f08705;html=1;" parent="1" source="1515" target="1351" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="1361" style="endArrow=none;strokeWidth=6;strokeColor=#E85642;html=1;" parent="1" source="1515" target="1352" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="1362" style="endArrow=none;strokeWidth=6;strokeColor=#1699D3;html=1;" parent="1" source="1515" target="1353" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="1388" value="Block user" style="rounded=1;fillColor=#f5af58;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1367.5" y="1298" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1389" value="Remove friend" style="rounded=1;fillColor=#f5af58;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1314" y="1432" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1390" value="Decline friend request" style="rounded=1;fillColor=#f5af58;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1167" y="1515" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1391" value="Accept friend request" style="rounded=1;fillColor=#f5af58;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="969" y="1416" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1392" value="Send friend request" style="rounded=1;fillColor=#f5af58;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="997" y="1208" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1399" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F5AF58;html=1;" parent="1" source="1351" target="1357" edge="1">
+                    <mxGeometry x="3.5" y="21.5" width="100" height="100" as="geometry">
+                        <mxPoint x="87" y="1178" as="sourcePoint"/>
+                        <mxPoint x="187" y="1078" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1400" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F5AF58;html=1;" parent="1" source="1351" target="1388" edge="1">
+                    <mxGeometry x="3.5" y="21.5" width="100" height="100" as="geometry">
+                        <mxPoint x="87" y="1178" as="sourcePoint"/>
+                        <mxPoint x="187" y="1078" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1401" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F5AF58;html=1;" parent="1" source="1351" target="1389" edge="1">
+                    <mxGeometry x="3.5" y="21.5" width="100" height="100" as="geometry">
+                        <mxPoint x="87" y="1178" as="sourcePoint"/>
+                        <mxPoint x="187" y="1078" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1402" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F5AF58;html=1;" parent="1" source="1351" target="1390" edge="1">
+                    <mxGeometry x="3.5" y="21.5" width="100" height="100" as="geometry">
+                        <mxPoint x="87" y="1178" as="sourcePoint"/>
+                        <mxPoint x="187" y="1078" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1403" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F5AF58;html=1;" parent="1" source="1351" target="1391" edge="1">
+                    <mxGeometry x="3.5" y="21.5" width="100" height="100" as="geometry">
+                        <mxPoint x="87" y="1178" as="sourcePoint"/>
+                        <mxPoint x="187" y="1078" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1404" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F5AF58;html=1;" parent="1" source="1351" target="1392" edge="1">
+                    <mxGeometry x="3.5" y="21.5" width="100" height="100" as="geometry">
+                        <mxPoint x="87" y="1178" as="sourcePoint"/>
+                        <mxPoint x="187" y="1078" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1413" value="Send images&lt;br&gt;(one at a time) (???)" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="948.5" y="215" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1414" value="Send emojis (in messages)" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1080.5" y="97" width="171" height="51" as="geometry"/>
+                </mxCell>
+                <mxCell id="1415" value="Send messages" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1270" y="102.5" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1416" value="Write messages in a &lt;br&gt;text bar" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1386.5" y="156" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1424" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="1413" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-503.5" y="122" as="sourcePoint"/>
+                        <mxPoint x="-403.5" y="22" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1425" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="1414" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-503.5" y="122" as="sourcePoint"/>
+                        <mxPoint x="-403.5" y="22" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1426" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="1415" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-503.5" y="122" as="sourcePoint"/>
+                        <mxPoint x="-403.5" y="22" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1427" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="1416" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-503.5" y="122" as="sourcePoint"/>
+                        <mxPoint x="-403.5" y="22" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1435" value="Toggle camera" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1612" y="701.13" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1436" value="Toggle microphone&lt;br&gt;(mute / unmute)" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1792" y="642" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1437" value="Initiate a voice/video call&lt;br&gt;with another user" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1951" y="701.12" width="185.25" height="61.75" as="geometry"/>
+                </mxCell>
+                <mxCell id="1444" value="Switch between earpiece&lt;br&gt;speaker or main speaker&lt;br&gt;during voice call" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1727.25" y="970" width="159.75" height="53.25" as="geometry"/>
+                </mxCell>
+                <mxCell id="1445" value="End / Leave the call" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1560" y="908.37" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="1446" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="1353" target="1435" edge="1">
+                    <mxGeometry x="-24" y="196.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-193" y="271.75" as="sourcePoint"/>
+                        <mxPoint x="-93" y="171.75" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1447" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="1353" target="1436" edge="1">
+                    <mxGeometry x="-24" y="196.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-193" y="271.75" as="sourcePoint"/>
+                        <mxPoint x="-93" y="171.75" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1448" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="1353" target="1437" edge="1">
+                    <mxGeometry x="-24" y="196.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-193" y="271.75" as="sourcePoint"/>
+                        <mxPoint x="-93" y="171.75" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1455" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="1353" target="1444" edge="1">
+                    <mxGeometry x="-24" y="196.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-193" y="271.75" as="sourcePoint"/>
+                        <mxPoint x="-93" y="171.75" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1456" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="1353" target="1445" edge="1">
+                    <mxGeometry x="-24" y="196.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-193" y="271.75" as="sourcePoint"/>
+                        <mxPoint x="-93" y="171.75" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1514" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;exitX=0.75;exitY=0;entryX=0.75;entryY=0;startArrow=none;startFill=0;endArrow=block;endFill=1;jettySize=auto;orthogonalLoop=1;strokeColor=#12aab5;strokeWidth=6;fontSize=20;fontColor=#2F5B7C;" parent="1" source="1414" target="1414" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="1515" value="ChaTogether" style="ellipse;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=30;fontColor=#2F5B7C;align=center;strokeColor=#2F5B7C;strokeWidth=6;fillColor=#FFFFFF;fontStyle=1;gradientColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="1089" y="688.5" width="270" height="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1567" value="Video Rooms" style="ellipse;whiteSpace=wrap;html=1;shadow=0;fontFamily=Helvetica;fontSize=20;fontColor=#FFFFFF;align=center;strokeWidth=3;fillColor=#1699D3;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="484.5" y="763.5" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1569" value="Modify the current video time&lt;br&gt;in sync with everyone else" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="691.5" y="907" width="188.5" height="58" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1573" value="Invite people in the room" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="297" y="952" width="164" height="50.46" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1574" value="Search for YouTube videos (???)" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="203" y="682" width="195" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1575" value="Play YouTube videos with&lt;br&gt;link / id / after searching&lt;br&gt;for them" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="323" y="576.5" width="209.63" height="64.5" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1576" value="Pause the video in sync&lt;br&gt;with everyone else" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="586" y="623.5" width="175.5" height="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1577" value="Resume the video in sync &lt;br&gt;with everyone else" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="703" y="704.77" width="177" height="54.46" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1578" value="Ephemeral text chat&lt;br&gt;within the video room" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="499" y="981.5" width="175.5" height="54" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1579" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="TAWsj_j4IxmxIWXrBa9g-1567" target="TAWsj_j4IxmxIWXrBa9g-1578" edge="1">
+                    <mxGeometry x="-221.5" y="56.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-260.5" y="648.5" as="sourcePoint"/>
+                        <mxPoint x="-160.5" y="548.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1580" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="TAWsj_j4IxmxIWXrBa9g-1567" target="TAWsj_j4IxmxIWXrBa9g-1569" edge="1">
+                    <mxGeometry x="-221.5" y="56.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-260.5" y="648.5" as="sourcePoint"/>
+                        <mxPoint x="-160.5" y="548.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1585" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="TAWsj_j4IxmxIWXrBa9g-1567" target="TAWsj_j4IxmxIWXrBa9g-1573" edge="1">
+                    <mxGeometry x="-221.5" y="56.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-260.5" y="648.5" as="sourcePoint"/>
+                        <mxPoint x="-160.5" y="548.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1586" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="TAWsj_j4IxmxIWXrBa9g-1567" target="TAWsj_j4IxmxIWXrBa9g-1574" edge="1">
+                    <mxGeometry x="-221.5" y="56.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-260.5" y="648.5" as="sourcePoint"/>
+                        <mxPoint x="-160.5" y="548.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1587" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="TAWsj_j4IxmxIWXrBa9g-1567" target="TAWsj_j4IxmxIWXrBa9g-1575" edge="1">
+                    <mxGeometry x="-221.5" y="56.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-260.5" y="648.5" as="sourcePoint"/>
+                        <mxPoint x="-160.5" y="548.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1588" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="TAWsj_j4IxmxIWXrBa9g-1567" target="TAWsj_j4IxmxIWXrBa9g-1576" edge="1">
+                    <mxGeometry x="-221.5" y="56.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-260.5" y="648.5" as="sourcePoint"/>
+                        <mxPoint x="-160.5" y="548.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1589" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="TAWsj_j4IxmxIWXrBa9g-1567" target="TAWsj_j4IxmxIWXrBa9g-1577" edge="1">
+                    <mxGeometry x="-221.5" y="56.5" width="100" height="100" as="geometry">
+                        <mxPoint x="-260.5" y="648.5" as="sourcePoint"/>
+                        <mxPoint x="-160.5" y="548.5" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1590" value="Users can toggle their microphone&lt;br&gt;in the video room (???)" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="203" y="829.5" width="204" height="68" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1591" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="TAWsj_j4IxmxIWXrBa9g-1567" target="TAWsj_j4IxmxIWXrBa9g-1590" edge="1">
+                    <mxGeometry x="-221.5" y="56.5" width="100" height="100" as="geometry">
+                        <mxPoint x="522" y="884" as="sourcePoint"/>
+                        <mxPoint x="467" y="969" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1593" value="Create a private text chat" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1384" y="262" width="171" height="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1594" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="TAWsj_j4IxmxIWXrBa9g-1593" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1311.5" y="378" as="sourcePoint"/>
+                        <mxPoint x="-368.5" y="78" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1595" value="Create a group text chat" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1375" y="376" width="171" height="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1597" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="TAWsj_j4IxmxIWXrBa9g-1595" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1294.5" y="343" as="sourcePoint"/>
+                        <mxPoint x="1381.5" y="365" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1598" value="Add people to the group chat" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1266" y="472" width="171" height="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1599" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="TAWsj_j4IxmxIWXrBa9g-1598" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1278.5" y="384" as="sourcePoint"/>
+                        <mxPoint x="1377.5" y="406" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1600" value="Remove people from the group chat" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1005" y="483" width="191" height="63.67" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1601" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="TAWsj_j4IxmxIWXrBa9g-1600" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1267.5" y="393" as="sourcePoint"/>
+                        <mxPoint x="1322.5" y="485" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1602" value="Leave a group chat" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="923" y="295" width="171" height="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1603" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="TAWsj_j4IxmxIWXrBa9g-1602" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1189.5" y="304" as="sourcePoint"/>
+                        <mxPoint x="1084.5" y="219" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1605" value="Mute conversation" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="925" y="388" width="171" height="57" as="geometry"/>
+                </mxCell>
+                <mxCell id="TAWsj_j4IxmxIWXrBa9g-1606" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="TAWsj_j4IxmxIWXrBa9g-1605" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1175" y="325" as="sourcePoint"/>
+                        <mxPoint x="1109" y="313" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="l90vGb0YTZSn0PjJjUrz-1515" value="Send GIFs" style="rounded=1;fillColor=#f08e81;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="950.5" y="135" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="l90vGb0YTZSn0PjJjUrz-1516" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#F08E81;html=1;" parent="1" source="1352" target="l90vGb0YTZSn0PjJjUrz-1515" edge="1">
+                    <mxGeometry x="31" y="106.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1218" y="278" as="sourcePoint"/>
+                        <mxPoint x="1183" y="158" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="l90vGb0YTZSn0PjJjUrz-1517" value="Initiate a voice call&lt;br&gt;in a group chat" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" parent="1" vertex="1">
+                    <mxGeometry x="1975" y="817" width="185.25" height="61.75" as="geometry"/>
+                </mxCell>
+                <mxCell id="l90vGb0YTZSn0PjJjUrz-1518" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" parent="1" source="1353" target="l90vGb0YTZSn0PjJjUrz-1517" edge="1">
+                    <mxGeometry x="-24" y="196.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1892" y="810" as="sourcePoint"/>
+                        <mxPoint x="1981" y="773" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1516" value="Switch between the main camera&lt;br&gt;and the rear camera in a&amp;nbsp;&lt;br&gt;video call" style="rounded=1;fillColor=#64BBE2;strokeColor=none;strokeWidth=3;shadow=0;html=1;fontColor=#FFFFFF;" vertex="1" parent="1">
+                    <mxGeometry x="1940" y="929" width="185.25" height="61.75" as="geometry"/>
+                </mxCell>
+                <mxCell id="1517" value="" style="edgeStyle=none;endArrow=none;strokeWidth=3;strokeColor=#64BBE2;html=1;" edge="1" parent="1" source="1353" target="1516">
+                    <mxGeometry x="-14" y="206.5" width="100" height="100" as="geometry">
+                        <mxPoint x="1896.7022314126075" y="839.4702231412607" as="sourcePoint"/>
+                        <mxPoint x="1984.9999999999995" y="848.4922077922076" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
