@@ -1,0 +1,31 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0.36
+    volumes:
+      - chatogether_db_vol:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    networks:
+      - chatogether_net
+
+  web:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      DB_PORT: 3306
+      CHATOGETHER_DB_PWD: ${CHATOGETHER_DB_PWD}
+    networks:
+      - chatogether_net
+
+volumes:
+  chatogether_db_vol:
+
+networks:
+  chatogether_net:
+    external: true

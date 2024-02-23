@@ -1,5 +1,0 @@
--- create the user
-create user 'demo_user'@'localhost' identified by 'Y1IDQQsYza5P37j2aU04BvAVBvNX7cre';
-
--- grant privileges
-GRANT ALTER, create, delete, drop, execute, index, insert, select, trigger, update, references ON demo_student.* TO 'demo_user'@'localhost';   
