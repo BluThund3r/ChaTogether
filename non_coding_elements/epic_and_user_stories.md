@@ -87,7 +87,7 @@
 
 - [ ] As a logged in user I want to see a call screen when someone calls me and I am in the application so that I can answer or decline it.  
 
-- [ ] As a logged in user I can see a list of calls displaying some details about then so that I can have a clear view over my calls history.
+- [ ] As a logged in user I can see a list of calls displaying some details about them so that I can have a clear view over my calls history.
 
 - [ ] As a logged in user I can initiate voice and video calls with other users so that I communicate with them vocally / visually.
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "414330706451",
+    "project_id": "chatogether-cc587",
+    "storage_bucket": "chatogether-cc587.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414330706451:android:ba659b608b65aa23a8bde6",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXHVTSx9IKn_c3QAM6oO7X3cbcgpQagzQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
