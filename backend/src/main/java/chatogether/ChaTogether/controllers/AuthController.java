@@ -53,6 +53,13 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/getRemainingEmailConfirmationTrials")
+    public ResponseEntity<?> getRemainingEmailConfirmationTrials(
+            @RequestParam String email
+    ) {
+        return ResponseEntity.ok(authService.getRemainingEmailConfirmationTrials(email));
+    }
+
     @PostMapping("/resendConfirmationEmail")
     public ResponseEntity<?> resendConfirmationEmail(
             @RequestBody ResendConfirmationEmailRequestDTO confirmationDTO

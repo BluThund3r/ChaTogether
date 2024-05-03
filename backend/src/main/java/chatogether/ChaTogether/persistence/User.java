@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 public class User {
+    private static final Integer MAX_EMAIL_CONFIRMATION_TRIALS = 3;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -57,7 +58,15 @@ public class User {
     private String encryptedPrivateKey;
 
     public Boolean exceededEmailConfirmationTrials() {
-        return emailConfirmationTrials > 3;
+        return emailConfirmationTrials > MAX_EMAIL_CONFIRMATION_TRIALS;
+    }
+
+    public Integer getMaxEmailConfirmationTrials() {
+        return MAX_EMAIL_CONFIRMATION_TRIALS;
+    }
+
+    public Integer getEmailConfirmationsRemaining() {
+        return MAX_EMAIL_CONFIRMATION_TRIALS - emailConfirmationTrials;
     }
 
     public String getFullName() {

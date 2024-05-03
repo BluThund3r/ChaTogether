@@ -47,6 +47,37 @@ class AuthService {
     }
   }
 
+  Future<dynamic> getEmailVerificationTrialsLeft(String email) async {
+    final response = await http.get(
+      Uri.parse(
+          '$baseUrl/auth/getRemainingEmailConfirmationTrials?email=$email'),
+    );
+
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    } else {
+      return response.body;
+    }
+  }
+
+  Future<String?> resendVerificationCode(String email) async {
+    const headers = <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/auth/resendConfirmationEmail'),
+      headers: headers,
+      body: jsonEncode({'email': email}),
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
+
   Future<String?> register(Map<String, String> info) async {
     const headers = <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',

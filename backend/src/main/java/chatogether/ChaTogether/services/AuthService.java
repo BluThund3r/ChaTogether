@@ -124,4 +124,11 @@ public class AuthService {
                 return token;
         }
     }
+
+    public Integer getRemainingEmailConfirmationTrials(String email) {
+        var user = userService.findByEmail(email).orElseThrow(UserDoesNotExist::new);
+        if (user.getConfirmedMail())
+            throw new EmailAlreadyConfirmed();
+        return user.getEmailConfirmationsRemaining();
+    }
 }
