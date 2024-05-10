@@ -13,7 +13,7 @@
     <li><strong>Last Name:</strong> ${lastName}</li>
 </ul>
 <p>In order to access your account, you will first have to confirm your email address.</p>
-<p>Copy the code below and paste it in the input field on the mail verification screen within the app:</p>
+<p>Copy the code below and paste it in the input field on the mail verification page within the app:</p>
 <p style="font-weight: bold; font-size: 2em">${confirmationToken}</p>
 <p>Best of wishes,</p>
 <p>ChaTogether Team</p>

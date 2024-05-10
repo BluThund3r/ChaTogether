@@ -4,6 +4,29 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/utils/backend_details.dart';
 import 'package:http/http.dart' as http;
 
+class LoggedUserInfo {
+  final String username;
+  final String email;
+  final String firstName;
+  final String lastName;
+
+  LoggedUserInfo({
+    required this.username,
+    required this.email,
+    required this.firstName,
+    required this.lastName,
+  });
+
+  factory LoggedUserInfo.fromJson(Map<String, dynamic> json) {
+    return LoggedUserInfo(
+      username: json['username'],
+      email: json['email'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+    );
+  }
+}
+
 class AuthService {
   final _storage = const FlutterSecureStorage();
 
@@ -45,6 +68,15 @@ class AuthService {
     } else {
       return response.body;
     }
+  }
+
+  LoggedUserInfo _getTokenInfo(String token) {
+    final parts = token.split('.');
+    final payload = parts[1];
+    final String normalizedPayload = base64Url.normalize(payload);
+    final jsonPayload = utf8.decode(base64.decode(normalizedPayload));
+    final tokenPayload = LoggedUserInfo.fromJson(jsonDecode(jsonPayload));
+    return tokenPayload;
   }
 
   Future<dynamic> getEmailVerificationTrialsLeft(String email) async {
@@ -102,5 +134,10 @@ class AuthService {
 
   Future<bool> isLoggedIn() async {
     return await _storage.containsKey(key: 'authToken');
+  }
+
+  Future<LoggedUserInfo> getLoggedInUser() async {
+    final token = await _storage.read(key: 'authToken');
+    return _getTokenInfo(token!);
   }
 }

@@ -1,5 +1,8 @@
 package chatogether.ChaTogether.services;
 
+import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserDoesNotExist;
+import chatogether.ChaTogether.exceptions.UsersAlreadyFriends;
+import chatogether.ChaTogether.exceptions.UsersNotFriends;
 import chatogether.ChaTogether.persistence.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,5 +43,33 @@ public class UserService {
 
     public List<User> findAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<User> searchUser(String searchString) {
+        var usersByUsername = userRepository.findByUsernameContaining(searchString);
+        var usersByName = userRepository.findByNameContaining(searchString);
+        usersByUsername.addAll(usersByName);
+        return usersByUsername.stream().toList();
+    }
+
+    public List<User> searchNotRelated(String username, String searchString) {
+        var requestingUser = userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new);
+        var usersByUsername = userRepository.findByUsernameContaining(searchString);
+        var usersByName = userRepository.findByNameContaining(searchString);
+        usersByUsername.addAll(usersByName);
+
+
+        var removedFriends = usersByUsername.removeIf(user -> requestingUser.getFriends().contains(user)); // remove friends
+        var removedHimself = usersByUsername.removeIf(user -> user.equals(requestingUser)); // remove self
+        var removedSentFriendReqs = usersByUsername.removeIf(
+                user -> requestingUser.getSentFriendRequests().stream()
+                        .anyMatch(fr -> fr.getReceiver().getUsername().equals(user.getUsername()))
+        ); // remove sent requests
+        var removedReceivedFriendReqs = usersByUsername.removeIf(
+                user -> requestingUser.getReceivedFriendRequests().stream()
+                        .anyMatch(fr -> fr.getSender().getUsername().equals(user.getUsername()))
+        ); // remove received requests
+
+        return usersByUsername.stream().toList();
     }
 }

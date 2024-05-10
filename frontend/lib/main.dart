@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api/firebase_api.dart';
 import 'package:frontend/routing/router.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/friend_service.dart';
+import 'package:frontend/services/user_service.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
@@ -18,6 +20,12 @@ void main() async {
         Provider<AuthService>(
           create: (_) => AuthService(),
         ),
+        Provider<FriendService>(
+          create: (_) => FriendService(),
+        ),
+        Provider<UserService>(
+          create: (_) => UserService(),
+        ),
         // other services that need to be injected
       ],
       child: const MyApp(),
@@ -32,6 +40,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: router,
       title: 'ChaTogether',
       theme: ThemeData.dark(useMaterial3: true).copyWith(

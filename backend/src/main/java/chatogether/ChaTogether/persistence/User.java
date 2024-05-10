@@ -5,11 +5,15 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "users")
 public class User {
+    @JsonIgnore
     private static final Integer MAX_EMAIL_CONFIRMATION_TRIALS = 3;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,6 +61,32 @@ public class User {
     @Column(nullable = true)
     private String encryptedPrivateKey;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "receiver")
+    private Set<FriendRequest> receivedFriendRequests = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "sender")
+    private Set<FriendRequest> sentFriendRequests = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "friendship",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    @JsonIgnore
+    private Set<User> friends = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "blocked_users",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "blocked_user_id")
+    )
+    @JsonIgnore
+    private Set<User> blockedUsers = new HashSet<>();
+
     public Boolean exceededEmailConfirmationTrials() {
         return emailConfirmationTrials > MAX_EMAIL_CONFIRMATION_TRIALS;
     }
@@ -71,5 +101,46 @@ public class User {
 
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + username.hashCode();
+        result = 31 * result + passwordHash.hashCode();
+        result = 31 * result + email.hashCode();
+        result = 31 * result + firstName.hashCode();
+        result = 31 * result + lastName.hashCode();
+        result = 31 * result + online.hashCode();
+        result = 31 * result + confirmedMail.hashCode();
+        result = 31 * result + confirmationToken.hashCode();
+        result = 31 * result + tokenExpiration.hashCode();
+        result = 31 * result + emailConfirmationTrials.hashCode();
+        result = 31 * result + (publicKey != null ? publicKey.hashCode() : 0);
+        result = 31 * result + (encryptedPrivateKey != null ? encryptedPrivateKey.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", online=" + online +
+                ", confirmedMail=" + confirmedMail +
+                '}';
     }
 }

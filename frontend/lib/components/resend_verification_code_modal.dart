@@ -42,7 +42,7 @@ class _ResendVerificationCodeModalState
     _formKey.currentState!.save();
     var trialsLeftResponse =
         await authService.getEmailVerificationTrialsLeft(email!);
-    if (trialsLeftResponse.runtimeType != int) {
+    if (trialsLeftResponse is! int) {
       showErrorToast(trialsLeftResponse);
       return;
     }
@@ -114,7 +114,9 @@ class _ResendVerificationCodeModalState
                       Column(
                         children: [
                           Text(
-                            'You have $trialsLeft trials left',
+                            trialsLeft == 2
+                                ? 'You have $trialsLeft trials left'
+                                : 'You only have 1 trial left',
                             style: const TextStyle(fontSize: 18),
                           ),
                           const SizedBox(height: 10),
