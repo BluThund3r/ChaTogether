@@ -23,6 +23,12 @@ public class FriendshipService {
         FriendRequest friendRequest = new FriendRequest();
         var senderUser = userService.findByUsername(sender).orElseThrow(UserDoesNotExist::new);
         var receiverUser = userService.findByUsername(receiver).orElseThrow(UserDoesNotExist::new);
+        if (senderUser.getBlockedUsers().contains(receiverUser))
+            throw new UserBlocked("You have blocked this user");
+
+        if (receiverUser.getBlockedUsers().contains(senderUser))
+            throw new UserBlocked("This user has blocked you");
+
         friendRequest.setSender(senderUser);
         friendRequest.setReceiver(receiverUser);
         friendRequestRepository.save(friendRequest);
@@ -104,7 +110,7 @@ public class FriendshipService {
             this.deleteFriendRequest(usernameToBlock, requestingUsername);
         } catch (FriendRequestNotFound ignored) {
         }
-        
+
         userService.saveUser(userRequesting);
     }
 

@@ -23,7 +23,6 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
   void initState() {
     super.initState();
     friendService = Provider.of<FriendService>(context, listen: false);
-    initFToast(context);
     fetchBlockedUsers();
   }
 
@@ -93,6 +92,7 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
 
   @override
   Widget build(BuildContext context) {
+    initFToast(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text(

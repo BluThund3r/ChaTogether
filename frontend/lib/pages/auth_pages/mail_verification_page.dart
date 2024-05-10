@@ -20,7 +20,6 @@ class _MailVerificationPageState extends State<MailVerificationPage> {
   void initState() {
     super.initState();
     authService = Provider.of<AuthService>(context, listen: false);
-    initFToast(context);
   }
 
   String? _verificationCode;
@@ -64,6 +63,7 @@ class _MailVerificationPageState extends State<MailVerificationPage> {
 
   @override
   Widget build(BuildContext context) {
+    initFToast(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

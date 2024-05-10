@@ -30,7 +30,6 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     super.initState();
     authService = Provider.of<AuthService>(context, listen: false);
-    initFToast(context);
   }
 
   void onFormSubmit() async {
@@ -112,6 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    initFToast(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

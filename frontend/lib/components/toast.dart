@@ -11,18 +11,19 @@ enum _ToastType { OK, ERROR, INFO }
 void _showToastOfType(_ToastType type, String message) {
   Color backgroundColor;
   IconData icon;
+  const opacity = 0.5;
 
   switch (type) {
     case _ToastType.OK:
-      backgroundColor = Colors.green;
+      backgroundColor = Colors.green.withOpacity(opacity);
       icon = Icons.check_sharp;
       break;
     case _ToastType.ERROR:
-      backgroundColor = Colors.red;
+      backgroundColor = Colors.red.withOpacity(opacity);
       icon = Icons.error_sharp;
       break;
     case _ToastType.INFO:
-      backgroundColor = Colors.blue;
+      backgroundColor = Colors.blue.withOpacity(opacity);
       icon = Icons.info_sharp;
       break;
   }

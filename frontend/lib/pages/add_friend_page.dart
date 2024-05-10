@@ -25,7 +25,6 @@ class _AddFriendPageState extends State<AddFriendPage> {
   @override
   void initState() {
     super.initState();
-    initFToast(context);
     userService = Provider.of<UserService>(context, listen: false);
     friendService = Provider.of<FriendService>(context, listen: false);
   }
@@ -79,6 +78,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
 
   @override
   Widget build(BuildContext context) {
+    initFToast(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text(

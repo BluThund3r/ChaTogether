@@ -23,7 +23,6 @@ class _FriendsPageState extends State<FriendsPage> {
   void initState() {
     super.initState();
     friendService = Provider.of<FriendService>(context, listen: false);
-    initFToast(context);
     fetchFriends();
   }
 
@@ -93,6 +92,7 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   Widget build(BuildContext context) {
+    initFToast(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text(

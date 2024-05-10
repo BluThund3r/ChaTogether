@@ -21,7 +21,6 @@ class _PeoplePageState extends State<PeoplePage> {
   @override
   void initState() {
     super.initState();
-    initFToast(context);
     friendService = Provider.of<FriendService>(context, listen: false);
     fetchData();
   }
@@ -94,6 +93,7 @@ class _PeoplePageState extends State<PeoplePage> {
 
   @override
   Widget build(BuildContext context) {
+    initFToast(context);
     return loaded
         ? SizedBox(
             height: MediaQuery.of(context).size.height,

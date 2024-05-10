@@ -23,7 +23,6 @@ class _ResendVerificationCodeModalState
   @override
   void initState() {
     super.initState();
-    initFToast(context);
     authService = Provider.of<AuthService>(context, listen: false);
   }
 
@@ -62,6 +61,7 @@ class _ResendVerificationCodeModalState
 
   @override
   Widget build(BuildContext context) {
+    initFToast(context);
     return SingleChildScrollView(
       child: Center(
         child: Padding(

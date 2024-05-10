@@ -23,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     authService = Provider.of<AuthService>(context, listen: false);
-    initFToast(context);
   }
 
   void onFormSubmit() async {
@@ -44,6 +43,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    initFToast(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
