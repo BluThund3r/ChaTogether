@@ -39,6 +39,10 @@ public class AuthRequestFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        if (shouldNotFilter(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer")) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -67,6 +71,11 @@ public class AuthRequestFilter extends OncePerRequestFilter {
         lastName.set(claims.get("lastName", String.class));
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return request.getServletPath().equals("/user/profilePicture");
     }
 
     public static String getJwtToken() {

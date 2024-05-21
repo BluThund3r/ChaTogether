@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -17,6 +18,7 @@ public class AuthService {
     private JWTService jwtService;
     private UserService userService;
     private MailService mailService;
+    private FileService fileService;
 
     public User registerUser(
             String username,
@@ -55,6 +57,14 @@ public class AuthService {
 
         var hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         user.setPasswordHash(hashedPassword);
+
+        var hashedUsername = BCrypt.hashpw(username, BCrypt.gensalt());
+        user.setDirectoryName(hashedUsername);
+        try {
+            fileService.createUserDirectory(user);
+        } catch (IOException e) {
+            throw new UserAlreadyExists();
+        }
 
         var confirmationToken = generateEmailConfirmationToken();
         user.setConfirmationToken(confirmationToken);

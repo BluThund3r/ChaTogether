@@ -26,6 +26,12 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
     fetchBlockedUsers();
   }
 
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   void fetchBlockedUsers() async {
     if (mounted) {
       setState(() => loading = true);

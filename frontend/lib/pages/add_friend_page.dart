@@ -29,6 +29,12 @@ class _AddFriendPageState extends State<AddFriendPage> {
     friendService = Provider.of<FriendService>(context, listen: false);
   }
 
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   void onClear() {
     setState(() {
       searched = false;

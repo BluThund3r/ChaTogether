@@ -26,6 +26,12 @@ class _FriendsPageState extends State<FriendsPage> {
     fetchFriends();
   }
 
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
   void fetchFriends() async {
     if (mounted) {
       setState(() => loading = true);

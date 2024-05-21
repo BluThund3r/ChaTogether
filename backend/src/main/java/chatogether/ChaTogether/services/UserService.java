@@ -4,22 +4,21 @@ import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserDoesNotExist;
 import chatogether.ChaTogether.exceptions.UsersAlreadyFriends;
 import chatogether.ChaTogether.exceptions.UsersNotFriends;
 import chatogether.ChaTogether.persistence.User;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import chatogether.ChaTogether.repositories.UserRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);

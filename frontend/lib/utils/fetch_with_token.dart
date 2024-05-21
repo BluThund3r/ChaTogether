@@ -74,4 +74,20 @@ class HttpWithToken {
       headers: localHeaders,
     );
   }
+
+  static Future<http.StreamedResponse> postFile({
+    required String filePath,
+    String url = "",
+    Map<String, String> headers = const {},
+  }) async {
+    var token = await _storage.read(key: "authToken") ?? "";
+    var localHeaders = {...headers};
+    localHeaders["Authorization"] = 'Bearer $token';
+
+    var request = http.MultipartRequest('POST', Uri.parse(url))
+      ..files.add(await http.MultipartFile.fromPath('file', filePath))
+      ..headers.addAll(localHeaders);
+
+    return request.send();
+  }
 }

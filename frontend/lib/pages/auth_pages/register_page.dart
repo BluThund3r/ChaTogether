@@ -32,6 +32,12 @@ class _RegisterPageState extends State<RegisterPage> {
     authService = Provider.of<AuthService>(context, listen: false);
   }
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   void onFormSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 

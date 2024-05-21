@@ -7,6 +7,7 @@ import 'package:frontend/pages/blocked_users_page.dart';
 import 'package:frontend/pages/friends_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/navbar_pages/people_page.dart';
+import 'package:frontend/pages/profile_page.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,20 @@ final GoRouter router = GoRouter(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
         return HomePage();
+      },
+      redirect: (context, _) async {
+        final isLoggedIn =
+            await Provider.of<AuthService>(context, listen: false).isLoggedIn();
+        if (!isLoggedIn) {
+          return '/auth/login';
+        }
+        return null;
+      },
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (BuildContext context, GoRouterState state) {
+        return const ProfilePage();
       },
       redirect: (context, _) async {
         final isLoggedIn =

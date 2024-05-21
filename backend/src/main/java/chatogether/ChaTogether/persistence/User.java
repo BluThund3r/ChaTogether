@@ -61,6 +61,8 @@ public class User {
     @Column(nullable = true)
     private String encryptedPrivateKey;
 
+    private String directoryName;
+
     @JsonIgnore
     @OneToMany(mappedBy = "receiver")
     private Set<FriendRequest> receivedFriendRequests = new HashSet<>();

@@ -2,12 +2,12 @@ package chatogether.ChaTogether.controllers;
 
 import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.User;
+import chatogether.ChaTogether.services.FileService;
 import chatogether.ChaTogether.services.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.core.io.Resource;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final FileService fileService;
 
     @GetMapping("/all")
     public List<User> getAllUsers() {
@@ -35,5 +36,26 @@ public class UserController {
     ) {
         String username = AuthRequestFilter.getUsername();
         return userService.searchNotRelated(username, searchString);
+    }
+
+    @PostMapping("/uploadProfilePicture")
+    public void uploadProfilePicture(
+            @RequestParam("file") MultipartFile profilePicture
+    ) {
+        String username = AuthRequestFilter.getUsername();
+        fileService.uploadProfilePicture(username, profilePicture);
+    }
+
+    @GetMapping("/profilePictureUploaded")
+    public boolean profilePictureUploaded() {
+        String username = AuthRequestFilter.getUsername();
+        return fileService.profilePictureUploaded(username);
+    }
+
+    @GetMapping("/profilePicture")
+    public Resource getProfilePicture(
+            @RequestParam String username
+    ) {
+        return fileService.getProfilePicture(username);
     }
 }
