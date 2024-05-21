@@ -108,8 +108,7 @@ import java.util.Objects;
 public class FileService {
     private final UserService userService;
 
-    // Change this to the path where you want to store the images
-    private final String userDataPath = "/userData/";
+    private final String userDataPath = "../userData/";
 
     public FileService(UserService userService) {
         this.userService = userService;

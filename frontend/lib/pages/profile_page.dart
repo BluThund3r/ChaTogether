@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
 import 'package:frontend/components/toast.dart';
@@ -25,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    initFToast(context);
+    // initFToast(context);
     authService = Provider.of<AuthService>(context, listen: false);
     userService = Provider.of<UserService>(context, listen: false);
   }
@@ -201,18 +202,17 @@ class _ProfilePageState extends State<ProfilePage> {
   Future _updateProfilePicture() async {
     final response =
         await userService.updateProfilePicture(_selectedImage!.path);
+    initFToast(context);
     if (response == null) {
+      await CachedNetworkImage.evictFromCache(
+        "$baseUrl/user/profilePicture?username=${(await authService.getLoggedInUser()).username}",
+      );
       setState(() {
         _selectedImage = null;
       });
-      Future.delayed(const Duration(milliseconds: 100), () {
-        showOKToast("Profile picture uploaded");
-      });
-      GoRouter.of(context).replace('/profile');
+      showOKToast("Profile picture uploaded");
     } else {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        showOKToast("Profile picture uploaded");
-      });
+      showErrorToast(response.body);
     }
   }
 

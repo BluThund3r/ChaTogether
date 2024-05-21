@@ -6,12 +6,14 @@ class CustomCircleAvatar extends StatefulWidget {
   final String name;
   final String imageUrl;
   final double radius;
+  // final Key key;
 
   const CustomCircleAvatar({
     super.key,
     required this.imageUrl,
     required this.name,
     this.radius = 20.0,
+    // required this.key,
   });
 
   @override
