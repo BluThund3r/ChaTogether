@@ -71,4 +71,12 @@ public class UserService {
 
         return usersByUsername.stream().toList();
     }
+
+    public Optional<User> findById(Long senderId) {
+        return userRepository.findById(senderId);
+    }
+
+    public String getUserPublicKey(String username) {
+        return userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new).getPublicKey();
+    }
 }

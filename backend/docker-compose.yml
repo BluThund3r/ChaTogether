@@ -55,7 +55,7 @@ services:
       - .:/backend
 
 volumes:
-  mongo: {}
+  mongo: { }
   chatogether_db_vol:
 
 networks:
