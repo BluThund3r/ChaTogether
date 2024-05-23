@@ -14,6 +14,7 @@ public class FilterConfig {
         registrationBean.setFilter(new AuthRequestFilter());
         registrationBean.addUrlPatterns("/friendship/*");   // add more url patterns if needed
         registrationBean.addUrlPatterns("/user/*");
+        registrationBean.addUrlPatterns("/chatroom/*");
 
         return registrationBean;
     }

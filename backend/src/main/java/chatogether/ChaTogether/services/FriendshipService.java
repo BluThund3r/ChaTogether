@@ -128,4 +128,24 @@ public class FriendshipService {
         var user = userService.findByUsername(username).orElseThrow(UserDoesNotExist::new);
         return user.getBlockedUsers().stream().toList();
     }
+
+    public boolean areUsersBlocked(User user1, User user2) {
+        return user1.getBlockedUsers().contains(user2) || user2.getBlockedUsers().contains(user1);
+    }
+
+    public boolean areUsersBlockedByIds(Long id1, Long id2) {
+        var user1 = userService.findById(id1).orElseThrow(UserDoesNotExist::new);
+        var user2 = userService.findById(id2).orElseThrow(UserDoesNotExist::new);
+        return areUsersBlocked(user1, user2);
+    }
+
+    public boolean areUsersBlockedByUsername(String username1, String username2) {
+        var user1 = userService.findByUsername(username1).orElseThrow(UserDoesNotExist::new);
+        var user2 = userService.findByUsername(username2).orElseThrow(UserDoesNotExist::new);
+        return areUsersBlocked(user1, user2);
+    }
+
+    public boolean areUsersFriends(User sender, User receiver) {
+        return sender.getFriends().contains(receiver) && receiver.getFriends().contains(sender);
+    }
 }

@@ -56,7 +56,6 @@ public class User {
     @Column(nullable = true)
     private String publicKey;
 
-
     @JsonIgnore
     @Column(nullable = true)
     private String encryptedPrivateKey;

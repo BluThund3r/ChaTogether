@@ -3,6 +3,8 @@ package chatogether.ChaTogether.services;
 import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserDoesNotExist;
 import chatogether.ChaTogether.exceptions.FileNotFoundException;
 import chatogether.ChaTogether.exceptions.ImageUploadFailed;
+import chatogether.ChaTogether.persistence.ChatMessage;
+import chatogether.ChaTogether.persistence.ChatRoom;
 import chatogether.ChaTogether.persistence.User;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -10,10 +12,15 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.DateFormatter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 //@Service
@@ -151,6 +158,8 @@ public class FileService {
 
     public Resource getProfilePicture(String username) throws FileNotFoundException {
         var user = userService.findByUsername(username).orElseThrow(UserDoesNotExist::new);
+        if (user.getDirectoryName() == null)
+            throw new FileNotFoundException("User directory not found for user " + username);
 
         Path jpgProfilePicturePath = Paths.get(userDataPath, user.getDirectoryName(), "profilePicture.jpg");
         Path pngProfilePicturePath = Paths.get(userDataPath, user.getDirectoryName(), "profilePicture.png");
@@ -162,5 +171,35 @@ public class FileService {
         }
 
         throw new FileNotFoundException("Profile picture not found for user " + username);
+    }
+
+    public String uploadChatImage(byte[] encryptedImage, ChatRoom chatRoom, ChatMessage message) {
+        Long senderId = message.getSenderId();
+        LocalDateTime sentAt = message.getSentAt();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String timestamp = sentAt.format(formatter);
+
+        String fileName = "image_" + senderId + "_" + timestamp;
+        Path filePath = Paths.get(chatRoom.getDirectoryPath(), fileName);
+        Path fullPath = Paths.get(userDataPath, filePath.toString());
+
+        try {
+            Files.write(fullPath, encryptedImage);
+        } catch (IOException e) {
+            throw new ImageUploadFailed();
+        }
+
+        return filePath.toString();
+    }
+
+    public void createChatDirectory(String directoryPathString) {
+        Path directoryPath = Paths.get(userDataPath, directoryPathString);
+        if (!Files.exists(directoryPath)) {
+            try {
+                Files.createDirectory(directoryPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

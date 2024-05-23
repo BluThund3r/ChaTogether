@@ -19,6 +19,7 @@ public class ChatRoom {
     private Map<Long, String> encryptedKeys;
     private int maxUsers;
     private List<Long> admins;
+    private String directoryPath;
 
     public String getEncryptedKeyOfUser(Long userId) {
         return encryptedKeys.get(userId);
@@ -30,5 +31,16 @@ public class ChatRoom {
 
     public void removeUserEncryptionKey(Long userId) {
         encryptedKeys.remove(userId);
+    }
+
+    public boolean isPrivateChat() {
+        return maxUsers == 2;
+    }
+
+    public Long getOtherUserId(Long userId) {
+        return admins.stream()
+                .filter(id -> !id.equals(userId))
+                .findFirst()
+                .orElseThrow();
     }
 }

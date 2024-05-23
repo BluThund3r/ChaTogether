@@ -93,6 +93,7 @@ public class AuthService {
         claims.put("email", user.getEmail());
         claims.put("firstName", user.getFirstName());
         claims.put("lastName", user.getLastName());
+        claims.put("userId", user.getId());
 
         return jwtService.createToken(claims);
     }

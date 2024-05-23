@@ -22,6 +22,7 @@ public class AuthRequestFilter extends OncePerRequestFilter {
     private static final ThreadLocal<String> email = new ThreadLocal<>();
     private static final ThreadLocal<String> firstName = new ThreadLocal<>();
     private static final ThreadLocal<String> lastName = new ThreadLocal<>();
+    private static final ThreadLocal<Long> userId = new ThreadLocal<>();
     private JWTService jwtService;
 
     @Override
@@ -69,6 +70,7 @@ public class AuthRequestFilter extends OncePerRequestFilter {
         email.set(claims.get("email", String.class));
         firstName.set(claims.get("firstName", String.class));
         lastName.set(claims.get("lastName", String.class));
+        userId.set(claims.get("userId", Long.class));
 
         filterChain.doFilter(request, response);
     }
@@ -96,5 +98,9 @@ public class AuthRequestFilter extends OncePerRequestFilter {
 
     public static String getLastName() {
         return lastName.get();
+    }
+
+    public static Long getUserId() {
+        return userId.get();
     }
 }

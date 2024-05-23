@@ -6,4 +6,8 @@ public class UserNotInChatRoom extends ForbiddenException {
     public UserNotInChatRoom() {
         super("User is not part of this chat");
     }
+
+    public UserNotInChatRoom(String message) {
+        super(message);
+    }
 }

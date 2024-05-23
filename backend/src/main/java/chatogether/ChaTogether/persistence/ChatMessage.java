@@ -1,9 +1,12 @@
 package chatogether.ChaTogether.persistence;
 
+import chatogether.ChaTogether.ChatMessageType;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -11,6 +14,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ChatMessage {
     @Id
     private Long id;
-    private String chatRoomId;
-    private String content;
+    private Long chatRoomId;
+    private String contentOrPath;
+    private ChatMessageType type;
+    private Boolean isEdited;
+    private LocalDateTime sentAt;
+    private Long senderId;
+    private Boolean isDeleted;
 }
