@@ -1,6 +1,6 @@
 package chatogether.ChaTogether.services;
 
-import chatogether.ChaTogether.ChatMessageType;
+import chatogether.ChaTogether.enums.ChatMessageType;
 import chatogether.ChaTogether.exceptions.*;
 import chatogether.ChaTogether.persistence.ChatMessage;
 import chatogether.ChaTogether.repositories.ChatMessageRepository;
@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,11 +50,11 @@ public class ChatMessageService {
                 .sentAt(LocalDateTime.now())
                 .build();
 
-        if (type == ChatMessageType.TEXT) {
+        if (type == ChatMessageType.TEXT || type == ChatMessageType.ANNOUNCEMENT)
             message.setContentOrPath(encryptedContent);
-        } else {
+        else
             message.setContentOrPath(fileService.uploadChatImage(encryptedImage, chatRoom, message));
-        }
+
         return saveMessage(message);
     }
 
@@ -74,5 +75,19 @@ public class ChatMessageService {
             throw new MessageNotDeletable("You can only delete your own messages");
         chatMessage.setIsDeleted(true);
         return saveMessage(chatMessage);
+    }
+
+    public List<ChatMessage> getMessagesByRoomIdBeforeAndLimited(
+            Long chatRoomId,
+            LocalDateTime beforeTimestamp,
+            int limit,
+            Long userId
+    ) {
+        if (!chatRoomService.isUserInChatRoom(userId, chatRoomId))
+            throw new UserNotInChatRoom();
+
+        var messages = chatMessageRepository.findByChatRoomIdBefore(chatRoomId, beforeTimestamp);
+        messages.sort(Comparator.comparing(ChatMessage::getSentAt).reversed());
+        return messages.subList(0, Math.min(limit, messages.size()));
     }
 }

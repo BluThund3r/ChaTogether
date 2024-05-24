@@ -192,6 +192,15 @@ public class FileService {
         return filePath.toString();
     }
 
+    public byte[] getChatImage(String filePath) {
+        Path fullPath = Paths.get(userDataPath, filePath);
+        try {
+            return Files.readAllBytes(fullPath);
+        } catch (IOException e) {
+            throw new FileNotFoundException("Image not found");
+        }
+    }
+
     public void createChatDirectory(String directoryPathString) {
         Path directoryPath = Paths.get(userDataPath, directoryPathString);
         if (!Files.exists(directoryPath)) {
