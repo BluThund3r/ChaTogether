@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.swing.text.DateFormatter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -57,7 +56,13 @@ public class ChatMessageController {
 
         simpMessagingTemplate.convertAndSend(
                 "/user/chatRoom/" + chatRoomId,
-                new OutgoingChatMessageDTO(chatMessage, ActionType.SEND)
+                new OutgoingChatMessageDTO(
+                        chatMessage,
+                        ActionType.SEND,
+                        chatMessage.getType() == ChatMessageType.IMAGE ?
+                                chatMessageService.getImageEncodedOfMessage(chatMessage) :
+                                null
+                )
         );
     }
 
@@ -78,7 +83,7 @@ public class ChatMessageController {
 
         simpMessagingTemplate.convertAndSend(
                 "/user/chatRoom/" + chatMessage.getChatRoomId(),
-                new OutgoingChatMessageDTO(chatMessage, ActionType.EDIT)
+                new OutgoingChatMessageDTO(chatMessage, ActionType.EDIT, null) // can only edit text messages
         );
     }
 
@@ -97,7 +102,10 @@ public class ChatMessageController {
 
         simpMessagingTemplate.convertAndSend(
                 "/user/chatRoom/" + chatMessage.getChatRoomId(),
-                new OutgoingChatMessageDTO(chatMessage, ActionType.DELETE)
+                new OutgoingChatMessageDTO(chatMessage, ActionType.DELETE,
+                        chatMessage.getType() == ChatMessageType.IMAGE ?
+                                chatMessageService.getImageEncodedOfMessage(chatMessage) :
+                                null)
         );
     }
 
@@ -111,7 +119,15 @@ public class ChatMessageController {
         var beforeTimestamp = LocalDateTime.parse(beforeTimestampStr, formatter);
         return chatMessageService.getMessagesByRoomIdBeforeAndLimited(chatRoomId, beforeTimestamp, 50, userId)
                 .stream()
-                .map(chatMessage -> new OutgoingChatMessageDTO(chatMessage, ActionType.GET))
+                .map(chatMessage ->
+                        new OutgoingChatMessageDTO(
+                                chatMessage,
+                                ActionType.GET,
+                                chatMessage.getType() == ChatMessageType.IMAGE ?
+                                        chatMessageService.getImageEncodedOfMessage(chatMessage) :
+                                        null
+                        )
+                )
                 .toList();
     }
 }

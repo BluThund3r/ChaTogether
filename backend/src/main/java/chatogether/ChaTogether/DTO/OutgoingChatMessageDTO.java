@@ -16,7 +16,7 @@ public class OutgoingChatMessageDTO {
     private Long id;
     private Long chatRoomId;
     private Long senderId;
-    private String contentOrPath;
+    private String encryptedContent;
     private String sentAt;
     private ChatMessageType type;
     private boolean isEdited;
@@ -24,11 +24,14 @@ public class OutgoingChatMessageDTO {
     private List<Long> seenBy;
     private ActionType action;
 
-    public OutgoingChatMessageDTO(ChatMessage chatMessage, ActionType action) {
+    public OutgoingChatMessageDTO(ChatMessage chatMessage, ActionType action, String imageContent) {
         this.id = chatMessage.getId();
         this.chatRoomId = chatMessage.getChatRoomId();
         this.senderId = chatMessage.getSenderId();
-        this.contentOrPath = chatMessage.getContentOrPath();
+        if (chatMessage.getType() != ChatMessageType.IMAGE)
+            this.encryptedContent = chatMessage.getContentOrPath();
+        else
+            this.encryptedContent = imageContent;
         this.sentAt = chatMessage.getSentAt().toString();
         this.type = chatMessage.getType();
         this.isEdited = chatMessage.getIsEdited();

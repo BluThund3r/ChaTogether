@@ -192,7 +192,7 @@ public class FileService {
         return filePath.toString();
     }
 
-    public byte[] getChatImage(String filePath) {
+    public byte[] getChatImageBytes(String filePath) {
         Path fullPath = Paths.get(userDataPath, filePath);
         try {
             return Files.readAllBytes(fullPath);
