@@ -27,6 +27,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
     super.initState();
     userService = Provider.of<UserService>(context, listen: false);
     friendService = Provider.of<FriendService>(context, listen: false);
+    print("Add Friend Page Initialized");
   }
 
   @override

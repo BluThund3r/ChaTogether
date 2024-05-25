@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class WebsocketInterceptorConfig {
-    private JWTService jwtService;
+    private final JWTService jwtService;
 
     @Bean
     public WebsocketHandshakeInterceptor websocketHandshakeInterceptor() {

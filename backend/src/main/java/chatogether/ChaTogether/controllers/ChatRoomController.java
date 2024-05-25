@@ -1,12 +1,13 @@
 package chatogether.ChaTogether.controllers;
 
-import chatogether.ChaTogether.DTO.AddUserToChatDTO;
-import chatogether.ChaTogether.DTO.CreateGroupChatDTO;
-import chatogether.ChaTogether.DTO.UserDetailsForOthersDTO;
+import chatogether.ChaTogether.DTO.*;
+import chatogether.ChaTogether.enums.ActionType;
 import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.ChatRoom;
+import chatogether.ChaTogether.services.ChatMessageService;
 import chatogether.ChaTogether.services.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,11 +17,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
+    private final ChatMessageService chatMessageService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("/myChats")
-    public List<ChatRoom> getMyChats() {
+    public List<ChatRoomDetailsWithLastMessageDTO> getMyChats() {
         var callerUsername = AuthRequestFilter.getUsername();
-        return chatRoomService.getChatRoomsOfUser(callerUsername);
+        return chatRoomService.getChatRoomsOfUser(callerUsername).stream()
+                .map(chatRoom -> {
+                    var lastMessageOptional = chatMessageService.getLastMessageOfChatRoom(chatRoom.getId());
+                    if (lastMessageOptional.isEmpty())
+                        return new ChatRoomDetailsWithLastMessageDTO(chatRoom, null);
+                    var lastMessage = new OutgoingChatMessageDTO(
+                            lastMessageOptional.get(),
+                            ActionType.GET,
+                            null
+                    );
+                    return new ChatRoomDetailsWithLastMessageDTO(chatRoom, lastMessage);
+                })
+                .toList();
     }
 
     @GetMapping("/chatUsers/{chatRoomId}")
@@ -96,6 +111,7 @@ public class ChatRoomController {
     public void leaveChatRoom(
             @PathVariable Long chatRoomId
     ) {
+        // TODO: make sure that the user sends the leave message before actually leaving the room
         var callerId = AuthRequestFilter.getUserId();
         chatRoomService.leaveChatRoom(callerId, chatRoomId);
     }

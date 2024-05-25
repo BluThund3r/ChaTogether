@@ -8,7 +8,8 @@ import 'package:http/http.dart' as http;
 class UserService {
   Future<dynamic> getUsersNotRelated(String searchString) async {
     final response = await HttpWithToken.get(
-        url: "$baseUrl/user/searchNotRelated?searchString=$searchString");
+      url: "$baseUrl/user/searchNotRelated?searchString=$searchString",
+    );
 
     if (response.statusCode == 200) {
       final List<dynamic> body = jsonDecode(response.body);

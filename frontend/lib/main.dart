@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api/firebase_api.dart';
 import 'package:frontend/routing/router.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/chat_message_service.dart';
+import 'package:frontend/services/chat_room_service.dart';
 import 'package:frontend/services/friend_service.dart';
+import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/services/user_service.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
@@ -14,6 +17,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseApi().initNotifications();
+  final stompService = StompService();
+  final authService = AuthService();
+  if (await authService.isLoggedIn()) {
+    stompService.openWsConnection();
+  }
+
   runApp(
     MultiProvider(
       providers: [
@@ -25,6 +34,12 @@ void main() async {
         ),
         Provider<UserService>(
           create: (_) => UserService(),
+        ),
+        Provider<ChatRoomService>(
+          create: (_) => ChatRoomService(),
+        ),
+        Provider<ChatMessageService>(
+          create: (_) => ChatMessageService(),
         ),
         // other services that need to be injected
       ],

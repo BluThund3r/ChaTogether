@@ -38,6 +38,7 @@ public class WebsocketHandshakeInterceptor implements HandshakeInterceptor {
                 attributes.put("firstName", claims.get("firstName", String.class));
                 attributes.put("lastName", claims.get("lastName", String.class));
                 attributes.put("userId", claims.get("userId", Long.class));
+                System.out.println("Websocket connection established for user: " + claims.get("username", String.class));
             } catch (Exception e) {
                 return false;
             }

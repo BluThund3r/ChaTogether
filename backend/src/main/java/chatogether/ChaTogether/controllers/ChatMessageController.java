@@ -1,5 +1,6 @@
 package chatogether.ChaTogether.controllers;
 
+import chatogether.ChaTogether.DTO.ChatRoomDetailsWithLastMessageDTO;
 import chatogether.ChaTogether.DTO.OutgoingChatMessageDTO;
 import chatogether.ChaTogether.enums.ActionType;
 import chatogether.ChaTogether.enums.ChatMessageType;
@@ -7,6 +8,7 @@ import chatogether.ChaTogether.DTO.IncomingTextChatMessageDTO;
 import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.ChatMessage;
 import chatogether.ChaTogether.services.ChatMessageService;
+import chatogether.ChaTogether.services.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -27,6 +29,7 @@ import java.util.List;
 public class ChatMessageController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatMessageService chatMessageService;
+    private final ChatRoomService chatRoomService;
 
     @MessageMapping("/sendMessage/{chatRoomId}")
     public void sendMessage(
@@ -64,6 +67,50 @@ public class ChatMessageController {
                                 null
                 )
         );
+
+        var chatRoom = chatRoomService.getChatRoomById(chatRoomId);
+        simpMessagingTemplate.convertAndSend(
+                "/user/chatRoomUpdates",
+                new ChatRoomDetailsWithLastMessageDTO(
+                        chatRoom,
+                        new OutgoingChatMessageDTO(chatMessage, ActionType.GET, null)
+                )
+        );
+    }
+
+    @MessageMapping("/seeMessage/{messageId}")
+    public void seeMessage(
+            @DestinationVariable Long messageId,
+            SimpMessageHeaderAccessor headerAccessor
+    ) {
+        var attributes = headerAccessor.getSessionAttributes();
+        var userId = (Long) attributes.get("userId");
+
+        var chatMessage = chatMessageService.seeMessage(messageId, userId);
+
+        simpMessagingTemplate.convertAndSend(
+                "/user/chatRoom/" + chatMessage.getChatRoomId(),
+                new OutgoingChatMessageDTO(chatMessage, ActionType.SEEN, null)
+        );
+    }
+
+    @MessageMapping("/seeAllMessages/{chatRoomId}")
+    public void seeMessages(
+            @DestinationVariable Long chatRoomId,
+            SimpMessageHeaderAccessor headerAccessor
+    ) {
+        var attributes = headerAccessor.getSessionAttributes();
+        var userId = (Long) attributes.get("userId");
+
+        var chatMessages = chatMessageService.seeMessagesInChatRoom(chatRoomId, userId);
+        simpMessagingTemplate.convertAndSend(
+                "/user/chatRoom/" + chatRoomId,
+                chatMessages.stream()
+                        .map(chatMessage ->
+                                new OutgoingChatMessageDTO(chatMessage, ActionType.SEEN, null)
+                        )
+                        .toList()
+        );
     }
 
     @MessageMapping("/editMessage/{messageId}")
@@ -83,7 +130,7 @@ public class ChatMessageController {
 
         simpMessagingTemplate.convertAndSend(
                 "/user/chatRoom/" + chatMessage.getChatRoomId(),
-                new OutgoingChatMessageDTO(chatMessage, ActionType.EDIT, null) // can only edit text messages
+                new OutgoingChatMessageDTO(chatMessage, ActionType.EDIT, null)
         );
     }
 

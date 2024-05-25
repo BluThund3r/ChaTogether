@@ -5,13 +5,11 @@ import chatogether.ChaTogether.exceptions.*;
 import chatogether.ChaTogether.persistence.ChatMessage;
 import chatogether.ChaTogether.repositories.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +23,7 @@ public class ChatMessageService {
         return chatMessageRepository.save(message);
     }
 
-    public List<ChatMessage> getMessagesByRoomId(String roomId) {
+    public List<ChatMessage> getMessagesByRoomId(Long roomId) {
         return chatMessageRepository.findByChatRoomId(roomId);
     }
 
@@ -87,9 +85,8 @@ public class ChatMessageService {
         if (!chatRoomService.isUserInChatRoom(userId, chatRoomId))
             throw new UserNotInChatRoom();
 
-        var messages = chatMessageRepository.findByChatRoomIdBefore(chatRoomId, beforeTimestamp);
-        messages.sort(Comparator.comparing(ChatMessage::getSentAt).reversed());
-        return messages.subList(0, Math.min(limit, messages.size()));
+        var pageable = PageRequest.of(0, limit);
+        return chatMessageRepository.findByChatRoomIdBeforeAndLimited(chatRoomId, beforeTimestamp, pageable);
     }
 
     public byte[] getImageBytesByMessageId(Long messageId) {
@@ -110,5 +107,34 @@ public class ChatMessageService {
 
     public String getImageEncodedOfMessage(ChatMessage chatMessage) {
         return Base64.getEncoder().encodeToString(getImageBytesOfMessage(chatMessage));
+    }
+
+    public Optional<ChatMessage> getLastMessageOfChatRoom(Long chatRoomId) {
+        var pageable = PageRequest.of(0, 1);
+        var messages = chatMessageRepository.findLatestByChatRoomId(chatRoomId, pageable);
+        if (messages.isEmpty())
+            return Optional.empty();
+        return Optional.of(messages.getFirst());
+    }
+
+    public ChatMessage seeMessage(Long messageId, Long userId) {
+        var chatMessage = chatMessageRepository.findById(messageId).orElseThrow(ChatMessageDoesNotExist::new);
+        if (!chatMessage.getSeenBy().contains(userId)) {
+            chatMessage.getSeenBy().add(userId);
+            saveMessage(chatMessage);
+        }
+
+        return chatMessage;
+    }
+
+    public List<ChatMessage> seeMessages(List<Long> messageIds, Long userId) {
+        return messageIds.stream().map(messageId -> seeMessage(messageId, userId)).toList();
+    }
+
+    public List<ChatMessage> seeMessagesInChatRoom(Long chatRoomId, Long userId) {
+        if (!chatRoomService.isUserInChatRoom(userId, chatRoomId))
+            throw new UserNotInChatRoom();
+        var messages = chatMessageRepository.findUnseenMessagesByRoomId(chatRoomId, userId);
+        return seeMessages(messages.stream().map(ChatMessage::getId).toList(), userId);
     }
 }

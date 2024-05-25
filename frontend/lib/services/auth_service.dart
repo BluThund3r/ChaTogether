@@ -140,4 +140,8 @@ class AuthService {
     final token = await _storage.read(key: 'authToken');
     return _getTokenInfo(token!);
   }
+
+  Future<String?> getAuthToken() async {
+    return await _storage.read(key: 'authToken');
+  }
 }

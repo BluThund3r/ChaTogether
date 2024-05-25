@@ -8,6 +8,7 @@ import 'package:frontend/pages/friends_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/navbar_pages/people_page.dart';
 import 'package:frontend/pages/profile_page.dart';
+import 'package:frontend/pages/test_page.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,12 @@ final GoRouter router = GoRouter(
         return null;
       },
     ),
+    // GoRoute(
+    //   path: '/test',
+    //   builder: (BuildContext context, GoRouterState state) {
+    //     return TestPage();
+    //   },
+    // ),
     GoRoute(
       path: '/profile',
       builder: (BuildContext context, GoRouterState state) {

@@ -23,6 +23,7 @@ class _PeoplePageState extends State<PeoplePage> {
     super.initState();
     friendService = Provider.of<FriendService>(context, listen: false);
     fetchData();
+    print("People page initialized");
   }
 
   void fetchData() async {
