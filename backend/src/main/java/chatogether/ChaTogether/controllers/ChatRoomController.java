@@ -3,9 +3,10 @@ package chatogether.ChaTogether.controllers;
 import chatogether.ChaTogether.DTO.*;
 import chatogether.ChaTogether.enums.ActionType;
 import chatogether.ChaTogether.filters.AuthRequestFilter;
-import chatogether.ChaTogether.persistence.ChatRoom;
+import chatogether.ChaTogether.persistence.User;
 import chatogether.ChaTogether.services.ChatMessageService;
 import chatogether.ChaTogether.services.ChatRoomService;
+import chatogether.ChaTogether.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,7 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final UserService userService;
 
     @GetMapping("/myChats")
     public List<ChatRoomDetailsWithLastMessageDTO> getMyChats() {
@@ -27,20 +29,20 @@ public class ChatRoomController {
                 .map(chatRoom -> {
                     var lastMessageOptional = chatMessageService.getLastMessageOfChatRoom(chatRoom.getId());
                     if (lastMessageOptional.isEmpty())
-                        return new ChatRoomDetailsWithLastMessageDTO(chatRoom, null);
+                        return new ChatRoomDetailsWithLastMessageDTO(chatRoom, null, userService);
                     var lastMessage = new OutgoingChatMessageDTO(
                             lastMessageOptional.get(),
                             ActionType.GET,
                             null
                     );
-                    return new ChatRoomDetailsWithLastMessageDTO(chatRoom, lastMessage);
+                    return new ChatRoomDetailsWithLastMessageDTO(chatRoom, lastMessage, userService);
                 })
                 .toList();
     }
 
     @GetMapping("/chatUsers/{chatRoomId}")
     public List<UserDetailsForOthersDTO> getChatUsers(
-            @PathVariable Long chatRoomId
+            @PathVariable String chatRoomId
     ) {
         var callerId = AuthRequestFilter.getUserId();
         return chatRoomService.getUsersInChatRoom(chatRoomId, callerId)
@@ -55,10 +57,16 @@ public class ChatRoomController {
 
     @GetMapping("/getChatRoomKey/{chatRoomId}")
     public String getChatRoomKey(
-            @PathVariable Long chatRoomId
+            @PathVariable String chatRoomId
     ) {
         var callerId = AuthRequestFilter.getUserId();
         return chatRoomService.getChatRoomEncryptionKey(callerId, chatRoomId);
+    }
+
+    @GetMapping("/friendsWithNoPrivateChat")
+    public List<User> getFriendsWithNoPrivateChat() {
+        String username = AuthRequestFilter.getUsername();
+        return chatRoomService.getFriendsWithNoPrivateChat(username);
     }
 
     @PostMapping("/createPrivate/{anotherUsername}")
@@ -96,7 +104,7 @@ public class ChatRoomController {
 
     @DeleteMapping("/removeUser/{chatRoomId}/{userId}")
     public void removeUserFromGroupChat(
-            @PathVariable Long chatRoomId,
+            @PathVariable String chatRoomId,
             @PathVariable Long userId
     ) {
         var callerId = AuthRequestFilter.getUserId();
@@ -109,7 +117,7 @@ public class ChatRoomController {
 
     @DeleteMapping("/leaveChat/{chatRoomId}")
     public void leaveChatRoom(
-            @PathVariable Long chatRoomId
+            @PathVariable String chatRoomId
     ) {
         // TODO: make sure that the user sends the leave message before actually leaving the room
         var callerId = AuthRequestFilter.getUserId();
@@ -118,7 +126,7 @@ public class ChatRoomController {
 
     @PostMapping("/makeAdmin/{chatRoomId}/{userId}")
     public void makeUserAdminInChatRoom(
-            @PathVariable Long chatRoomId,
+            @PathVariable String chatRoomId,
             @PathVariable Long userId
     ) {
         var callerId = AuthRequestFilter.getUserId();
@@ -127,7 +135,7 @@ public class ChatRoomController {
 
     @DeleteMapping("/removeAdmin/{chatRoomId}/{userId}")
     public void removeAdminOfChatRoom(
-            @PathVariable Long chatRoomId,
+            @PathVariable String chatRoomId,
             @PathVariable Long userId
     ) {
         var callerId = AuthRequestFilter.getUserId();

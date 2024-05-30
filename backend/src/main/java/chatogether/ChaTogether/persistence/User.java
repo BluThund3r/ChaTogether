@@ -53,11 +53,11 @@ public class User {
     private Integer emailConfirmationTrials = 1;
 
     @JsonIgnore
-    @Column(nullable = true)
+    @Column(nullable = true, length = 3000)
     private String publicKey;
 
     @JsonIgnore
-    @Column(nullable = true)
+    @Column(nullable = true, length = 10000)
     private String encryptedPrivateKey;
 
     private String directoryName;

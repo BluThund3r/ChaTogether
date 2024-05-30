@@ -27,15 +27,46 @@ class _HomePageState extends State<HomePage> {
   int currentPageIndex = 0;
   late List<FloatingActionButton?> actionButtons;
 
+  void _showChoiceDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Select an option"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  GestureDetector(
+                    child: const Text("Create Private Chat"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      GoRouter.of(context).push("/chat/createPrivate");
+                    },
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                  ),
+                  GestureDetector(
+                    child: const Text("Create Group Chat"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      GoRouter.of(context).push("/chat/createGroup");
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   @override
   void initState() {
     super.initState();
     authService = Provider.of<AuthService>(context, listen: false);
     actionButtons = <FloatingActionButton?>[
       FloatingActionButton(
-        onPressed: () {
-          // TODO: Add the routing for creating a new chat
-        },
+        onPressed: () => _showChoiceDialog(context),
         child: const Icon(Icons.add_comment_rounded),
       ),
       FloatingActionButton(

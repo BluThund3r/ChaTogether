@@ -13,8 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OutgoingChatMessageDTO {
-    private Long id;
-    private Long chatRoomId;
+    private String id;
+    private String chatRoomId;
     private Long senderId;
     private String encryptedContent;
     private String sentAt;

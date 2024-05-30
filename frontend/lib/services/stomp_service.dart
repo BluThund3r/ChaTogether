@@ -72,6 +72,14 @@ class StompService {
     );
   }
 
+  Function({Map<String, String>? unsubscribeHeaders})
+      subscribeToChatRoomAddOrRemove(Function(StompFrame) callback) {
+    return _stompClient.subscribe(
+      destination: "$_receiveBaseUrl/chatRoom/addOrRemove",
+      callback: callback,
+    );
+  }
+
   void sendChatMessage(OutgoingChatMessage chatMessage, int chatRoomId) {
     _stompClient.send(
       destination: '$_sendBaseUrl/sendMessage/$chatRoomId',

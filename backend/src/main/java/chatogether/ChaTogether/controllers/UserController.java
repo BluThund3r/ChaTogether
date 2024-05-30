@@ -1,5 +1,6 @@
 package chatogether.ChaTogether.controllers;
 
+import chatogether.ChaTogether.DTO.KeysDTO;
 import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.User;
 import chatogether.ChaTogether.services.FileService;
@@ -57,5 +58,26 @@ public class UserController {
             @RequestParam String username
     ) {
         return fileService.getProfilePicture(username);
+    }
+
+    @GetMapping("/profilePictureById")
+    public Resource getProfilePictureById(
+            @RequestParam Long userId
+    ) {
+        return fileService.getProfilePictureById(userId);
+    }
+
+    @PostMapping("/uploadKeys")
+    public void uploadKeys(
+            @RequestBody KeysDTO uploadKeysDTO
+    ) {
+        String username = AuthRequestFilter.getUsername();
+        userService.uploadKeys(username, uploadKeysDTO.getPublicKey(), uploadKeysDTO.getEncryptedPrivateKey());
+    }
+
+    @GetMapping("/getKeys")
+    public KeysDTO getKeys() {
+        String username = AuthRequestFilter.getUsername();
+        return userService.getKeys(username);
     }
 }

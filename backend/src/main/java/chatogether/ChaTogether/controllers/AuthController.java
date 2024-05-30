@@ -29,7 +29,9 @@ public class AuthController {
                                 registerRequestDTO.getConfirmPassword(),
                                 registerRequestDTO.getEmail(),
                                 registerRequestDTO.getFirstName(),
-                                registerRequestDTO.getLastName()
+                                registerRequestDTO.getLastName(),
+                                registerRequestDTO.getPublicKey(),
+                                registerRequestDTO.getEncryptedPrivateKey()
                         )
                 );
     }

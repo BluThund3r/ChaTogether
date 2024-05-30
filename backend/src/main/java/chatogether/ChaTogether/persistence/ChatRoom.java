@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ import java.util.Map;
 public class ChatRoom {
     @Id
     @Indexed
-    private Long id;
+    private String id;
     private String roomName;
     private Map<Long, String> encryptedKeys;
     private int maxUsers;
@@ -28,6 +30,8 @@ public class ChatRoom {
     }
 
     public void setEncryptedKeyOfUser(Long userId, String encryptedKey) {
+        if (encryptedKeys == null)
+            encryptedKeys = new HashMap<>();
         encryptedKeys.put(userId, encryptedKey);
     }
 
@@ -44,5 +48,9 @@ public class ChatRoom {
                 .filter(id -> !id.equals(userId))
                 .findFirst()
                 .orElseThrow();
+    }
+
+    public boolean isUserAdmin(Long userId) {
+        return admins.contains(userId);
     }
 }

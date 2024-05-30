@@ -46,6 +46,11 @@ dependencies:
   image_picker: ^1.1.1
   cached_network_image: ^3.3.1
   stomp_dart_client: ^2.0.0
+  rsa_encrypt: ^2.0.0
+  fast_rsa: ^3.6.2
+  crypto: ^3.0.3
+  encrypt: ^5.0.3
+  pointycastle: ^3.9.1
 
 dev_dependencies:
   flutter_test:

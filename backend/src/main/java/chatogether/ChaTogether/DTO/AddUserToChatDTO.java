@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AddUserToChatDTO {
-    private Long chatRoomId;
+    private String chatRoomId;
     private Long userId;
     private String encryptedKey;
 }

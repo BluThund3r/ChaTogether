@@ -9,6 +9,7 @@ import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.ChatMessage;
 import chatogether.ChaTogether.services.ChatMessageService;
 import chatogether.ChaTogether.services.ChatRoomService;
+import chatogether.ChaTogether.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,10 +31,11 @@ public class ChatMessageController {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
+    private final UserService userService;
 
     @MessageMapping("/sendMessage/{chatRoomId}")
     public void sendMessage(
-            @DestinationVariable Long chatRoomId,
+            @DestinationVariable String chatRoomId,
             IncomingTextChatMessageDTO incomingMessage,
             SimpMessageHeaderAccessor headerAccessor
     ) {
@@ -73,14 +75,15 @@ public class ChatMessageController {
                 "/user/chatRoomUpdates",
                 new ChatRoomDetailsWithLastMessageDTO(
                         chatRoom,
-                        new OutgoingChatMessageDTO(chatMessage, ActionType.GET, null)
+                        new OutgoingChatMessageDTO(chatMessage, ActionType.GET, null),
+                        userService
                 )
         );
     }
 
     @MessageMapping("/seeMessage/{messageId}")
     public void seeMessage(
-            @DestinationVariable Long messageId,
+            @DestinationVariable String messageId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
         var attributes = headerAccessor.getSessionAttributes();
@@ -96,7 +99,7 @@ public class ChatMessageController {
 
     @MessageMapping("/seeAllMessages/{chatRoomId}")
     public void seeMessages(
-            @DestinationVariable Long chatRoomId,
+            @DestinationVariable String chatRoomId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
         var attributes = headerAccessor.getSessionAttributes();
@@ -115,7 +118,7 @@ public class ChatMessageController {
 
     @MessageMapping("/editMessage/{messageId}")
     public void editMessage(
-            @DestinationVariable Long messageId,
+            @DestinationVariable String messageId,
             String newContent,
             SimpMessageHeaderAccessor headerAccessor
     ) {
@@ -136,7 +139,7 @@ public class ChatMessageController {
 
     @MessageMapping("/deleteMessage/{messageId}")
     public void deleteMessage(
-            @DestinationVariable Long messageId,
+            @DestinationVariable String messageId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
         var attributes = headerAccessor.getSessionAttributes();
@@ -158,7 +161,7 @@ public class ChatMessageController {
 
     @GetMapping("/chatMessages/{chatRoomId}")
     public List<OutgoingChatMessageDTO> getChatMessages(
-            @PathVariable Long chatRoomId,
+            @PathVariable String chatRoomId,
             @RequestParam("before") String beforeTimestampStr
     ) {
         var userId = AuthRequestFilter.getUserId();

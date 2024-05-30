@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/interfaces/login_response.dart';
 import 'package:frontend/utils/backend_details.dart';
+import 'package:frontend/utils/crypto_utils.dart';
 import 'package:http/http.dart' as http;
 
 class LoggedUserInfo {
@@ -9,12 +12,14 @@ class LoggedUserInfo {
   final String email;
   final String firstName;
   final String lastName;
+  final int userId;
 
   LoggedUserInfo({
     required this.username,
     required this.email,
     required this.firstName,
     required this.lastName,
+    required this.userId,
   });
 
   factory LoggedUserInfo.fromJson(Map<String, dynamic> json) {
@@ -23,6 +28,7 @@ class LoggedUserInfo {
       email: json['email'],
       firstName: json['firstName'],
       lastName: json['lastName'],
+      userId: json['userId'],
     );
   }
 }
@@ -63,7 +69,19 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      await _storage.write(key: 'authToken', value: response.body);
+      final loginResponse = LoginResponse.fromJson(jsonDecode(response.body));
+
+      await _storage.write(key: 'authToken', value: loginResponse.token);
+      await CryptoUtils.storeUserRSAKeys(
+        KeyPair(
+          loginResponse.publicKey,
+          await CryptoUtils.getPrivateKeyFromEncrypted(
+            loginResponse.encryptedPrivateKey,
+            password,
+          ),
+        ),
+      );
+
       return null;
     } else {
       return response.body;

@@ -4,6 +4,9 @@ import 'package:frontend/pages/auth_pages/login_page.dart';
 import 'package:frontend/pages/auth_pages/mail_verification_page.dart';
 import 'package:frontend/pages/auth_pages/register_page.dart';
 import 'package:frontend/pages/blocked_users_page.dart';
+import 'package:frontend/pages/chat_page.dart';
+import 'package:frontend/pages/create_group_chat_page.dart';
+import 'package:frontend/pages/create_private_chat_page.dart';
 import 'package:frontend/pages/friends_page.dart';
 import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/navbar_pages/people_page.dart';
@@ -29,12 +32,42 @@ final GoRouter router = GoRouter(
         return null;
       },
     ),
-    // GoRoute(
-    //   path: '/test',
+    // GoRoute(    //   path: '/test',
     //   builder: (BuildContext context, GoRouterState state) {
     //     return TestPage();
     //   },
     // ),
+
+    GoRoute(
+      path: '/chat',
+      builder: (BuildContext context, GoRouterState state) {
+        return const TestPage();
+      },
+      routes: [
+        GoRoute(
+          path: 'createGroup',
+          builder: (BuildContext context, GoRouterState state) {
+            return const CreateGroupChatPage();
+          },
+        ),
+        GoRoute(
+          path: 'createPrivate',
+          builder: (BuildContext context, GoRouterState state) {
+            return const CreatePrivateChatPage();
+          },
+        ),
+        //! This should be the last route in the list
+        GoRoute(
+          path: ':id',
+          builder: (BuildContext context, GoRouterState state) {
+            final id = state.pathParameters['id'];
+            if (id == null) return const SizedBox();
+            return ChatPage(chatId: id);
+          },
+        ),
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ],
+    ),
     GoRoute(
       path: '/profile',
       builder: (BuildContext context, GoRouterState state) {

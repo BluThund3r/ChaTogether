@@ -1,5 +1,6 @@
 package chatogether.ChaTogether.services;
 
+import chatogether.ChaTogether.DTO.KeysDTO;
 import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserDoesNotExist;
 import chatogether.ChaTogether.exceptions.UsersAlreadyFriends;
 import chatogether.ChaTogether.exceptions.UsersNotFriends;
@@ -78,5 +79,17 @@ public class UserService {
 
     public String getUserPublicKey(String username) {
         return userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new).getPublicKey();
+    }
+
+    public void uploadKeys(String username, String publicKey, String encryptedPrivateKey) {
+        var user = userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new);
+        user.setPublicKey(publicKey);
+        user.setEncryptedPrivateKey(encryptedPrivateKey);
+        userRepository.save(user);
+    }
+
+    public KeysDTO getKeys(String username) {
+        var user = userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new);
+        return new KeysDTO(user.getPublicKey(), user.getEncryptedPrivateKey());
     }
 }

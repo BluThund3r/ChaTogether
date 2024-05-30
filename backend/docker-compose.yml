@@ -8,7 +8,7 @@ services:
     networks:
       - chatogether_net
     volumes:
-      - mongo:/data
+      - mongo:/data/db
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -55,7 +55,7 @@ services:
       - .:/backend
 
 volumes:
-  mongo: { }
+  mongo:
   chatogether_db_vol:
 
 networks:

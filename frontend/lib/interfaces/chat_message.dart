@@ -2,8 +2,8 @@ import 'package:frontend/interfaces/enums/action_type.dart';
 import 'package:frontend/interfaces/enums/chat_message_type.dart';
 
 class ChatMessage {
-  int id;
-  int chatRoomId;
+  String id;
+  String chatRoomId;
   int senderId;
   String encryptedContent;
   String sentAt;
@@ -40,6 +40,21 @@ class ChatMessage {
       seenBy: json['seenBy'],
       action: ActionType.values
           .firstWhere((e) => e.toString() == 'ActionType.${json['action']}'),
+    );
+  }
+
+  factory ChatMessage.empty() {
+    return ChatMessage(
+      id: "",
+      chatRoomId: "",
+      senderId: -1,
+      encryptedContent: '',
+      sentAt: '',
+      type: ChatMessageType.TEXT,
+      isEdited: false,
+      isDeleted: false,
+      seenBy: [],
+      action: ActionType.GET,
     );
   }
 }

@@ -1,5 +1,7 @@
 package chatogether.ChaTogether.services;
 
+import chatogether.ChaTogether.DTO.ChatRoomAddOrRemoveDTO;
+import chatogether.ChaTogether.enums.ChatRoomAction;
 import chatogether.ChaTogether.exceptions.*;
 import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserDoesNotExist;
 import chatogether.ChaTogether.persistence.ChatRoom;
@@ -7,13 +9,13 @@ import chatogether.ChaTogether.persistence.User;
 import chatogether.ChaTogether.repositories.ChatRoomRepository;
 import chatogether.ChaTogether.utils.CryptoUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,30 +24,56 @@ public class ChatRoomService {
     private final UserService userService;
     private final FileService fileService;
     private final FriendshipService friendshipService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
     public static final int MAX_USERS_IN_GROUP_CHAT = 50;
 
     public ChatRoom createPrivateChat(String senderUsername, String receiverUsername) {
+
+        // TODO: modifica toate canalele de trimitere de mesaje!!!!!
         var sender = userService.findByUsername(senderUsername).orElseThrow(UserDoesNotExist::new);
         var receiver = userService.findByUsername(receiverUsername).orElseThrow(UserDoesNotExist::new);
-        if (friendshipService.areUsersFriends(sender, receiver))
+        if (!friendshipService.areUsersFriends(sender, receiver))
             throw new UsersNotFriends();
         if (friendshipService.areUsersBlocked(sender, receiver))
             throw new UsersBlocked();
+        if (areUsersInPrivateChat(sender, receiver))
+            throw new ChatRoomAlreadyExists("Private chat already exists");
+
+        var directoryPath = BCrypt.hashpw(sender.getUsername() + receiver.getUsername(), BCrypt.gensalt())
+                .replaceAll("[^a-zA-Z0-9.-]", "_");
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomName(sender.getUsername() + "-" + receiver.getUsername())
                 .maxUsers(2)
-                .directoryPath(BCrypt.hashpw(sender.getUsername() + receiver.getUsername(), BCrypt.gensalt()))
+                .directoryPath(directoryPath)
+                .admins(new ArrayList<>())
+                .encryptedKeys(new HashMap<>())
                 .build();
         SecretKey roomSecretKey = CryptoUtils.generateAESKey();
-        var senderEncryptedKey = CryptoUtils.encryptWithRSA(roomSecretKey.getEncoded(), sender.getPublicKey());
-        var receiverEncryptedKey = CryptoUtils.encryptWithRSA(roomSecretKey.getEncoded(), receiver.getPublicKey());
+        String ivString = Base64.getEncoder().encodeToString(CryptoUtils.generateIV());
+        String roomSecretKeyString = Base64.getEncoder().encodeToString(roomSecretKey.getEncoded());
+        String concatenated = ivString + "." + roomSecretKeyString;
+        System.out.println("IV and Secret key of private chat: " + concatenated);
+        var senderEncryptedKey = CryptoUtils.encryptWithRSA(concatenated.getBytes(), sender.getPublicKey());
+        var receiverEncryptedKey = CryptoUtils.encryptWithRSA(concatenated.getBytes(), receiver.getPublicKey());
         chatRoom.setEncryptedKeyOfUser(sender.getId(), Base64.getEncoder().encodeToString(senderEncryptedKey));
         chatRoom.setEncryptedKeyOfUser(receiver.getId(), Base64.getEncoder().encodeToString(receiverEncryptedKey));
         chatRoom.getAdmins().addAll(List.of(sender.getId(), receiver.getId()));
+        System.out.println("Creating chat directory" + chatRoom.getDirectoryPath());
         fileService.createChatDirectory(chatRoom.getDirectoryPath());
+        var savedChatRoom = chatRoomRepository.save(chatRoom);
+        simpMessagingTemplate.convertAndSend(
+                "/user/chatRoom/addOrRemove",
+                new ChatRoomAddOrRemoveDTO(
+                        savedChatRoom,
+                        null,
+                        ChatRoomAction.ADD,
+                        List.of(sender.getId(), receiver.getId()),
+                        userService
+                )
+        );
 
-        return chatRoomRepository.save(chatRoom);
+        return savedChatRoom;
     }
 
     public ChatRoom createGroupChat(String roomName, List<String> receiverUsername, String adminUsername) {
@@ -55,30 +83,50 @@ public class ChatRoomService {
         var admin = userService.findByUsername(adminUsername).orElseThrow(UserDoesNotExist::new);
 
         var directorySeed = users.stream().reduce("", (acc, user) -> acc + user.getUsername(), String::concat);
+        var directoryPath = BCrypt.hashpw(directorySeed, BCrypt.gensalt())
+                .replaceAll("[^a-zA-Z0-9.-]", "_");
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .roomName(roomName)
                 .maxUsers(MAX_USERS_IN_GROUP_CHAT)
-                .directoryPath(BCrypt.hashpw(directorySeed, BCrypt.gensalt()))
+                .directoryPath(directoryPath)
+                .admins(new ArrayList<>())
+                .encryptedKeys(new HashMap<>())
                 .build();
 
         SecretKey roomSecretKey = CryptoUtils.generateAESKey();
+        String ivString = Base64.getEncoder().encodeToString(CryptoUtils.generateIV());
+        String roomSecretKeyString = Base64.getEncoder().encodeToString(roomSecretKey.getEncoded());
+        String concatenated = ivString + "." + roomSecretKeyString;
+        System.out.println("IV and Secret key of group chat: " + concatenated);
         users.forEach(user -> {
-            var encryptedKey = CryptoUtils.encryptWithRSA(roomSecretKey.getEncoded(), user.getPublicKey());
+            var encryptedKey = CryptoUtils.encryptWithRSA(concatenated.getBytes(), user.getPublicKey());
             chatRoom.setEncryptedKeyOfUser(user.getId(), Base64.getEncoder().encodeToString(encryptedKey));
         });
 
         chatRoom.getAdmins().add(admin.getId());
         fileService.createChatDirectory(chatRoom.getDirectoryPath());
+        var savedChatRoom = chatRoomRepository.save(chatRoom);
 
-        return chatRoomRepository.save(chatRoom);
+        simpMessagingTemplate.convertAndSend(
+                "/user/chatRoom/addOrRemove",
+                new ChatRoomAddOrRemoveDTO(
+                        savedChatRoom,
+                        null,
+                        ChatRoomAction.ADD,
+                        users.stream().map(User::getId).toList(),
+                        userService
+                )
+        );
+
+        return savedChatRoom;
     }
 
-    public ChatRoom getChatRoomById(Long chatRoomId) {
+    public ChatRoom getChatRoomById(String chatRoomId) {
         return chatRoomRepository.findById(chatRoomId).orElseThrow();
     }
 
-    public boolean isUserInChatRoom(Long userId, Long chatRoomId) {
+    public boolean isUserInChatRoom(Long userId, String chatRoomId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         return chatRoom.getEncryptedKeyOfUser(userId) != null;
     }
@@ -90,7 +138,7 @@ public class ChatRoomService {
                 .toList();
     }
 
-    public List<User> getUsersInChatRoom(Long chatRoomId, Long callerId) {
+    public List<User> getUsersInChatRoom(String chatRoomId, Long callerId) {
         if (!isUserInChatRoom(callerId, chatRoomId))
             throw new UserNotInChatRoom("You are not part of the chat");
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
@@ -99,7 +147,7 @@ public class ChatRoomService {
                 .toList();
     }
 
-    public List<User> getAdminsInChatRoom(Long chatRoomId, Long callerId) {
+    public List<User> getAdminsInChatRoom(String chatRoomId, Long callerId) {
         if (!isUserInChatRoom(callerId, chatRoomId))
             throw new UserNotInChatRoom("You are not part of the chat");
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
@@ -108,40 +156,73 @@ public class ChatRoomService {
                 .toList();
     }
 
-    public void addUserToChatRoom(Long userId, Long chatRoomId, String encryptedKey, Long adminId) {
+    public void addUserToChatRoom(Long userId, String chatRoomId, String encryptedKey, Long adminId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         if (!chatRoom.getAdmins().contains(adminId))
             throw new UserNotInChatRoom();
         chatRoom.setEncryptedKeyOfUser(userId, encryptedKey);
-        chatRoomRepository.save(chatRoom);
+        var savedChatRoom = chatRoomRepository.save(chatRoom);
+        simpMessagingTemplate.convertAndSend(
+                "/user/chatRoom/addOrRemove",
+                new ChatRoomAddOrRemoveDTO(
+                        savedChatRoom,
+                        null,
+                        ChatRoomAction.ADD,
+                        List.of(userId),
+                        userService
+                )
+        );
     }
 
-    public String getChatRoomEncryptionKey(Long userId, Long chatRoomId) {
+    public String getChatRoomEncryptionKey(Long userId, String chatRoomId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         if (isUserInChatRoom(userId, chatRoomId))
             throw new UserNotInChatRoom();
         return chatRoom.getEncryptedKeyOfUser(userId);
     }
 
-    public void removeUserFromChatRoom(Long userId, Long chatRoomId, Long adminId) {
+    public void removeUserFromChatRoom(Long userId, String chatRoomId, Long adminId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         if (chatRoom.isPrivateChat())
             throw new UserRemovalDenied();
         if (!chatRoom.getAdmins().contains(adminId))
             throw new UserNotInChatRoom();
         chatRoom.removeUserEncryptionKey(userId);
-        chatRoomRepository.save(chatRoom);
+
+        var savedChatRoom = chatRoomRepository.save(chatRoom);
+
+        simpMessagingTemplate.convertAndSend(
+                "/user/chatRoom/addOrRemove",
+                new ChatRoomAddOrRemoveDTO(
+                        savedChatRoom,
+                        null,
+                        ChatRoomAction.ADD,
+                        List.of(userId),
+                        userService
+                )
+        );
     }
 
-    public void leaveChatRoom(Long userId, Long chatRoomId) {
+    public void leaveChatRoom(Long userId, String chatRoomId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         if (chatRoom.isPrivateChat())
             throw new UserRemovalDenied("Cannot leave private chat room");
         chatRoom.removeUserEncryptionKey(userId);
-        chatRoomRepository.save(chatRoom);
+        var savedChatRoom = chatRoomRepository.save(chatRoom);
+
+        simpMessagingTemplate.convertAndSend(
+                "/user/chatRoom/addOrRemove",
+                new ChatRoomAddOrRemoveDTO(
+                        savedChatRoom,
+                        null,
+                        ChatRoomAction.REMOVE,
+                        List.of(userId),
+                        userService
+                )
+        );
     }
 
-    public void makeUserAdminInChatRoom(Long userId, Long chatRoomId, Long adminId) {
+    public void makeUserAdminInChatRoom(Long userId, String chatRoomId, Long adminId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         if (!chatRoom.getAdmins().contains(adminId))
             throw new NotChatAdmin();
@@ -154,7 +235,7 @@ public class ChatRoomService {
         chatRoomRepository.save(chatRoom);
     }
 
-    public void removeAdminOfChatRoom(Long userId, Long chatRoomId, Long adminId) {
+    public void removeAdminOfChatRoom(Long userId, String chatRoomId, Long adminId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         if (!chatRoom.getAdmins().contains(adminId))
             throw new NotChatAdmin();
@@ -166,13 +247,28 @@ public class ChatRoomService {
         chatRoomRepository.save(chatRoom);
     }
 
-    public Optional<ChatRoom> findById(Long chatRoomId) {
+    public Optional<ChatRoom> findById(String chatRoomId) {
         return chatRoomRepository.findById(chatRoomId);
     }
 
-    public boolean isAdminInChatRoom(Long userId, Long chatRoomId) {
+    public boolean isAdminInChatRoom(Long userId, String chatRoomId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         return chatRoom.getAdmins().contains(userId);
+    }
+
+    public boolean areUsersInPrivateChat(User user, User friend) {
+        var result = chatRoomRepository.findPrivateByUserIds(user.getId(), friend.getId()).isPresent();
+        System.out.println("Are users in private chat: " + result);
+        return result;
+    }
+
+    public List<User> getFriendsWithNoPrivateChat(String username) {
+        var user = userService.findByUsername(username).orElseThrow(UserDoesNotExist::new);
+        var result = user.getFriends().stream()
+                .filter(friend -> !this.areUsersInPrivateChat(user, friend))
+                .toList();
+        result.forEach(friend -> System.out.println(friend.getUsername()));
+        return result;
     }
 }
 

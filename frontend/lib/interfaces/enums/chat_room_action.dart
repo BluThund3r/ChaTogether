@@ -1,0 +1,1 @@
+enum ChatRoomAction { ADD, REMOVE }

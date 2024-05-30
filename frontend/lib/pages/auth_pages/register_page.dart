@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/utils/crypto_utils.dart';
 import 'package:frontend/utils/regex_validator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -43,6 +44,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
     _formKey.currentState!.save();
 
+    final keyPair = await CryptoUtils.generateRSAKeyPair();
+    final encrypedPrivateKeyConcat = await CryptoUtils.encryptPrivateKeyOfUser(
+        keyPair.privateKey, _password!);
+
+    print("Public key: ${keyPair.publicKey}");
+    print("Encrypted private key: $encrypedPrivateKeyConcat");
+
     var info = {
       'username': _username!,
       'firstName': _firstName!,
@@ -50,6 +58,8 @@ class _RegisterPageState extends State<RegisterPage> {
       'email': _email!,
       'password': _password!,
       "confirmPassword": _confirmPassword!,
+      "publicKey": keyPair.publicKey,
+      "encryptedPrivateKey": encrypedPrivateKeyConcat,
     };
 
     setState(() => _loading = true);

@@ -211,4 +211,9 @@ public class FileService {
             }
         }
     }
+
+    public Resource getProfilePictureById(Long userId) {
+        var user = userService.findById(userId).orElseThrow(UserDoesNotExist::new);
+        return getProfilePicture(user.getUsername());
+    }
 }

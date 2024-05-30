@@ -1,5 +1,6 @@
 package chatogether.ChaTogether.services;
 
+import chatogether.ChaTogether.DTO.LoginResponseDTO;
 import chatogether.ChaTogether.exceptions.ConcreteExceptions.*;
 import chatogether.ChaTogether.persistence.User;
 import chatogether.ChaTogether.utils.RandomTokenGenerator;
@@ -26,7 +27,9 @@ public class AuthService {
             String confirmPassword,
             String email,
             String firstName,
-            String lastName
+            String lastName,
+            String publicKey,
+            String encryptedPrivateKey
     ) {
         if (!password.equals(confirmPassword))
             throw new PasswordsDoNotMatch();
@@ -54,11 +57,13 @@ public class AuthService {
         user.setEmail(email);
         user.setFirstName(firstName);
         user.setLastName(lastName);
+        user.setPublicKey(publicKey);
+        user.setEncryptedPrivateKey(encryptedPrivateKey);
 
         var hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         user.setPasswordHash(hashedPassword);
 
-        var hashedUsername = BCrypt.hashpw(username, BCrypt.gensalt());
+        var hashedUsername = BCrypt.hashpw(username, BCrypt.gensalt()).replaceAll("[^a-zA-Z0-9]", "_");
         user.setDirectoryName(hashedUsername);
         try {
             fileService.createUserDirectory(user);
@@ -77,7 +82,7 @@ public class AuthService {
         return savedUser;
     }
 
-    public String login(String usernameOrEmail, String password) {
+    public LoginResponseDTO login(String usernameOrEmail, String password) {
         var user = userService.findByUsernameOrEmail(usernameOrEmail).orElseThrow(UserDoesNotExist::new);
         if (!user.getConfirmedMail()) {
             if (user.getTokenExpiration().isBefore(LocalDateTime.now()))
@@ -95,7 +100,12 @@ public class AuthService {
         claims.put("lastName", user.getLastName());
         claims.put("userId", user.getId());
 
-        return jwtService.createToken(claims);
+        var token = jwtService.createToken(claims);
+        return new LoginResponseDTO(
+                token,
+                user.getPublicKey(),
+                user.getEncryptedPrivateKey()
+        );
     }
 
     public void confirmEmail(String token) {

@@ -23,12 +23,12 @@ public class ChatMessageService {
         return chatMessageRepository.save(message);
     }
 
-    public List<ChatMessage> getMessagesByRoomId(Long roomId) {
+    public List<ChatMessage> getMessagesByRoomId(String roomId) {
         return chatMessageRepository.findByChatRoomId(roomId);
     }
 
     public ChatMessage uploadMessage(
-            Long chatRoomId,
+            String chatRoomId,
             Long senderId,
             String encryptedContent,
             ChatMessageType type,
@@ -57,7 +57,7 @@ public class ChatMessageService {
         return saveMessage(message);
     }
 
-    public ChatMessage editMessage(Long messageId, String newContent, Long userId) {
+    public ChatMessage editMessage(String messageId, String newContent, Long userId) {
         var chatMessage = chatMessageRepository.findById(messageId).orElseThrow(ChatMessageDoesNotExist::new);
         if (chatMessage.getType() != ChatMessageType.TEXT)
             throw new MessageNotEditable("Only text messages can be edited");
@@ -68,7 +68,7 @@ public class ChatMessageService {
         return saveMessage(chatMessage);
     }
 
-    public ChatMessage deleteMessage(Long messageId, Long userId) {
+    public ChatMessage deleteMessage(String messageId, Long userId) {
         var chatMessage = chatMessageRepository.findById(messageId).orElseThrow(ChatMessageDoesNotExist::new);
         if (!Objects.equals(chatMessage.getSenderId(), userId))
             throw new MessageNotDeletable("You can only delete your own messages");
@@ -77,7 +77,7 @@ public class ChatMessageService {
     }
 
     public List<ChatMessage> getMessagesByRoomIdBeforeAndLimited(
-            Long chatRoomId,
+            String chatRoomId,
             LocalDateTime beforeTimestamp,
             int limit,
             Long userId
@@ -89,12 +89,12 @@ public class ChatMessageService {
         return chatMessageRepository.findByChatRoomIdBeforeAndLimited(chatRoomId, beforeTimestamp, pageable);
     }
 
-    public byte[] getImageBytesByMessageId(Long messageId) {
+    public byte[] getImageBytesByMessageId(String messageId) {
         var chatMessage = chatMessageRepository.findById(messageId).orElseThrow(ChatMessageDoesNotExist::new);
         return getImageBytesOfMessage(chatMessage);
     }
 
-    public String getImageEncodedByMessageId(Long messageId) {
+    public String getImageEncodedByMessageId(String messageId) {
         var chatMessage = chatMessageRepository.findById(messageId).orElseThrow(ChatMessageDoesNotExist::new);
         return getImageEncodedOfMessage(chatMessage);
     }
@@ -109,7 +109,7 @@ public class ChatMessageService {
         return Base64.getEncoder().encodeToString(getImageBytesOfMessage(chatMessage));
     }
 
-    public Optional<ChatMessage> getLastMessageOfChatRoom(Long chatRoomId) {
+    public Optional<ChatMessage> getLastMessageOfChatRoom(String chatRoomId) {
         var pageable = PageRequest.of(0, 1);
         var messages = chatMessageRepository.findLatestByChatRoomId(chatRoomId, pageable);
         if (messages.isEmpty())
@@ -117,7 +117,7 @@ public class ChatMessageService {
         return Optional.of(messages.getFirst());
     }
 
-    public ChatMessage seeMessage(Long messageId, Long userId) {
+    public ChatMessage seeMessage(String messageId, Long userId) {
         var chatMessage = chatMessageRepository.findById(messageId).orElseThrow(ChatMessageDoesNotExist::new);
         if (!chatMessage.getSeenBy().contains(userId)) {
             chatMessage.getSeenBy().add(userId);
@@ -127,11 +127,11 @@ public class ChatMessageService {
         return chatMessage;
     }
 
-    public List<ChatMessage> seeMessages(List<Long> messageIds, Long userId) {
+    public List<ChatMessage> seeMessages(List<String> messageIds, Long userId) {
         return messageIds.stream().map(messageId -> seeMessage(messageId, userId)).toList();
     }
 
-    public List<ChatMessage> seeMessagesInChatRoom(Long chatRoomId, Long userId) {
+    public List<ChatMessage> seeMessagesInChatRoom(String chatRoomId, Long userId) {
         if (!chatRoomService.isUserInChatRoom(userId, chatRoomId))
             throw new UserNotInChatRoom();
         var messages = chatMessageRepository.findUnseenMessagesByRoomId(chatRoomId, userId);

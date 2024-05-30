@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface ChatMessageRepository extends MongoRepository<ChatMessage, Long> {
-    List<ChatMessage> findByChatRoomId(Long roomId);
+public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
+    List<ChatMessage> findByChatRoomId(String roomId);
 
     @Query(value = "{ 'chatRoomId' : ?0, 'sentAt' : { $lt: ?1 } }", sort = "{ 'sentAt' : -1 }")
-    List<ChatMessage> findByChatRoomIdBeforeAndLimited(Long chatRoomId, LocalDateTime beforeTimestamp, Pageable pageable);
+    List<ChatMessage> findByChatRoomIdBeforeAndLimited(String chatRoomId, LocalDateTime beforeTimestamp, Pageable pageable);
 
     @Query(value = "{ 'chatRoomId' : ?0 }", sort = "{ 'sentAt' : -1 }")
-    List<ChatMessage> findLatestByChatRoomId(Long chatRoomId, Pageable pageable);
+    List<ChatMessage> findLatestByChatRoomId(String chatRoomId, Pageable pageable);
 
     @Query("{ 'chatRoomId': ?0, 'seenBy': { '$nin': [?1] } }")
-    List<ChatMessage> findUnseenMessagesByRoomId(Long chatRoomId, Long userId);
+    List<ChatMessage> findUnseenMessagesByRoomId(String chatRoomId, Long userId);
 }
