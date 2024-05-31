@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/interfaces/login_response.dart';
+import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/utils/backend_details.dart';
 import 'package:frontend/utils/crypto_utils.dart';
 import 'package:http/http.dart' as http;
@@ -82,6 +83,9 @@ class AuthService {
         ),
       );
 
+      StompService().updateTokenInClient(loginResponse.token);
+      StompService().openWsConnection();
+
       return null;
     } else {
       return response.body;
@@ -147,7 +151,8 @@ class AuthService {
   }
 
   Future<void> logout() async {
-    await _storage.delete(key: 'authToken');
+    StompService().closeWsConnection();
+    await _storage.deleteAll();
   }
 
   Future<bool> isLoggedIn() async {

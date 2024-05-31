@@ -13,7 +13,7 @@ import java.util.List;
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
     List<ChatMessage> findByChatRoomId(String roomId);
 
-    @Query(value = "{ 'chatRoomId' : ?0, 'sentAt' : { $lt: ?1 } }", sort = "{ 'sentAt' : -1 }")
+    @Query(value = "{ 'chatRoomId' : ?0, 'sentAt' : { $lt: ?1 } }", sort = "{ 'sentAt' : 1 }")
     List<ChatMessage> findByChatRoomIdBeforeAndLimited(String chatRoomId, LocalDateTime beforeTimestamp, Pageable pageable);
 
     @Query(value = "{ 'chatRoomId' : ?0 }", sort = "{ 'sentAt' : -1 }")

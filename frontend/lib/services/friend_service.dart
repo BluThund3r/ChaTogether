@@ -130,4 +130,15 @@ class FriendService {
       return response.body;
     }
   }
+
+  Future<bool?> areUsersBlocked(int userId, int id) async {
+    final response = await HttpWithToken.get(
+        url: "$baseUrl/friendship/areUsersBlocked/$userId/$id");
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      return null;
+    }
+  }
 }

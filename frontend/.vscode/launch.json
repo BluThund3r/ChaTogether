@@ -22,4 +22,10 @@
       "flutterMode": "release"
     }
   ]
+  // "compounds": [
+  //   {
+  //     "name": "Compound",
+  //     "configurations": ["frontend (profile mode)", "frontend"]
+  //   }
+  // ]
 }

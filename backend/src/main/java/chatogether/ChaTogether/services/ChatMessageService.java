@@ -35,10 +35,10 @@ public class ChatMessageService {
             byte[] encryptedImage
     ) {
         var chatRoom = chatRoomService.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
-        if (chatRoomService.isUserInChatRoom(senderId, chatRoomId)) {
+        if (!chatRoomService.isUserInChatRoom(senderId, chatRoomId)) {
             throw new UserNotInChatRoom();
         }
-        if (chatRoom.isPrivateChat() && !friendshipService.areUsersBlockedByIds(senderId, chatRoom.getOtherUserId(senderId))) {
+        if (chatRoom.isPrivateChat() && friendshipService.areUsersBlockedByIds(senderId, chatRoom.getOtherUserId(senderId))) {
             throw new UserBlocked("Not able to reply to this conversation");
         }
         ChatMessage message = ChatMessage.builder()
@@ -46,6 +46,9 @@ public class ChatMessageService {
                 .senderId(senderId)
                 .type(type)
                 .isEdited(false)
+                .isDeleted(false)
+                .seenBy(new ArrayList<>())
+                .contentOrPath("")
                 .sentAt(LocalDateTime.now())
                 .build();
 

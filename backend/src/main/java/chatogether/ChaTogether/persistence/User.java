@@ -3,6 +3,8 @@ package chatogether.ChaTogether.persistence;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -86,6 +88,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "blocked_user_id")
     )
     @JsonIgnore
+    @Fetch(FetchMode.JOIN)
     private Set<User> blockedUsers = new HashSet<>();
 
     public Boolean exceededEmailConfirmationTrials() {

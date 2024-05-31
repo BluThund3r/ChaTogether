@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +42,10 @@ public class ChatMessageController {
     ) {
         var attributes = headerAccessor.getSessionAttributes();
         var senderId = (Long) attributes.get("userId");
+        System.out.println("senderId: " + senderId);
+        System.out.println("chatRoomId: " + chatRoomId);
+        System.out.println("incomingMessageContent: " + incomingMessage.getEncryptedContent());
+        System.out.println("incomingMessageType: " + incomingMessage.getType());
         ChatMessage chatMessage;
         if (incomingMessage.getType() == ChatMessageType.IMAGE)
             chatMessage = chatMessageService.uploadMessage(
@@ -60,7 +65,7 @@ public class ChatMessageController {
             );
 
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/" + chatRoomId,
+                "/queue/chatRoom/" + chatRoomId,
                 new OutgoingChatMessageDTO(
                         chatMessage,
                         ActionType.SEND,
@@ -72,7 +77,7 @@ public class ChatMessageController {
 
         var chatRoom = chatRoomService.getChatRoomById(chatRoomId);
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoomUpdates",
+                "/queue/chatRoomUpdates",
                 new ChatRoomDetailsWithLastMessageDTO(
                         chatRoom,
                         new OutgoingChatMessageDTO(chatMessage, ActionType.GET, null),
@@ -92,7 +97,7 @@ public class ChatMessageController {
         var chatMessage = chatMessageService.seeMessage(messageId, userId);
 
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/" + chatMessage.getChatRoomId(),
+                "/queue/chatRoom/" + chatMessage.getChatRoomId(),
                 new OutgoingChatMessageDTO(chatMessage, ActionType.SEEN, null)
         );
     }
@@ -107,7 +112,7 @@ public class ChatMessageController {
 
         var chatMessages = chatMessageService.seeMessagesInChatRoom(chatRoomId, userId);
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/" + chatRoomId,
+                "/queue/chatRoom/" + chatRoomId,
                 chatMessages.stream()
                         .map(chatMessage ->
                                 new OutgoingChatMessageDTO(chatMessage, ActionType.SEEN, null)
@@ -132,7 +137,7 @@ public class ChatMessageController {
         );
 
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/" + chatMessage.getChatRoomId(),
+                "/queue/chatRoom/" + chatMessage.getChatRoomId(),
                 new OutgoingChatMessageDTO(chatMessage, ActionType.EDIT, null)
         );
     }
@@ -151,7 +156,7 @@ public class ChatMessageController {
         );
 
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/" + chatMessage.getChatRoomId(),
+                "/queue/chatRoom/" + chatMessage.getChatRoomId(),
                 new OutgoingChatMessageDTO(chatMessage, ActionType.DELETE,
                         chatMessage.getType() == ChatMessageType.IMAGE ?
                                 chatMessageService.getImageEncodedOfMessage(chatMessage) :
@@ -159,9 +164,10 @@ public class ChatMessageController {
         );
     }
 
-    @GetMapping("/chatMessages/{chatRoomId}")
+    @GetMapping("/chatMessages")
+    @ResponseBody
     public List<OutgoingChatMessageDTO> getChatMessages(
-            @PathVariable String chatRoomId,
+            @RequestParam String chatRoomId,
             @RequestParam("before") String beforeTimestampStr
     ) {
         var userId = AuthRequestFilter.getUserId();

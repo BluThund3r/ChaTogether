@@ -10,7 +10,7 @@ class StompService {
   late StompClient _stompClient;
   late final AuthService authService;
   final _sendBaseUrl = '/app';
-  final _receiveBaseUrl = '/user';
+  final _receiveBaseUrl = '/queue';
 
   StompService._privateConstructor() {
     authService = AuthService();
@@ -57,7 +57,7 @@ class StompService {
   }
 
   Function({Map<String, String>? unsubscribeHeaders}) subscribeToChatRoom(
-      int chatRoomId, Function(StompFrame) callback) {
+      String chatRoomId, Function(StompFrame) callback) {
     return _stompClient.subscribe(
       destination: '$_receiveBaseUrl/chatRoom/$chatRoomId',
       callback: callback,
@@ -80,7 +80,7 @@ class StompService {
     );
   }
 
-  void sendChatMessage(OutgoingChatMessage chatMessage, int chatRoomId) {
+  void sendChatMessage(OutgoingChatMessage chatMessage, String chatRoomId) {
     _stompClient.send(
       destination: '$_sendBaseUrl/sendMessage/$chatRoomId',
       body: json.encode(chatMessage.toJson()),
@@ -110,5 +110,9 @@ class StompService {
     _stompClient.send(
       destination: '$_sendBaseUrl/seeAllMessages/$chatRoomId',
     );
+  }
+
+  void seeMessage(String id, String chatId) {
+    // TODO: implement this
   }
 }

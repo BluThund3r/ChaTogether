@@ -4,6 +4,7 @@ import 'package:frontend/interfaces/chat_room_details.dart';
 import 'package:frontend/interfaces/user.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/utils/backend_details.dart';
+import 'package:frontend/utils/crypto_utils.dart';
 import 'package:frontend/utils/fetch_with_token.dart';
 
 class ChatRoomService {
@@ -22,6 +23,16 @@ class ChatRoomService {
     }
   }
 
+  Future<dynamic> getChatRoomSecretKeyAndIv(String chatRoomId) async {
+    final response = await HttpWithToken.get(
+        url: "$baseUrl/chatRoom/getChatRoomKey/${chatRoomId}");
+    if (response.statusCode != 200) {
+      return response.body;
+    }
+
+    return await CryptoUtils.decryptConversationKeyAndIv(response.body);
+  }
+
   Future<dynamic> getFriendsWithNoPrivateChat() async {
     final response = await HttpWithToken.get(
         url: "$baseUrl/chatRoom/friendsWithNoPrivateChat");
@@ -37,7 +48,7 @@ class ChatRoomService {
   Future<dynamic> createPrivateChat(String username) async {
     print("Creating private chat with $username");
     final response = await HttpWithToken.post(
-      url: "$baseUrl/chatRoom/createPrivate/$username", 
+      url: "$baseUrl/chatRoom/createPrivate/$username",
     );
 
     if (response.statusCode == 200) {
@@ -67,6 +78,19 @@ class ChatRoomService {
       return null;
     } else {
       print("Error creating group chat: ${response.body}");
+      return response.body;
+    }
+  }
+
+  Future<dynamic> getChatRoomById(String chatId) async {
+    final response = await HttpWithToken.get(
+      url: "$baseUrl/chatRoom/getChatDetailsById/$chatId",
+    );
+
+    if (response.statusCode == 200) {
+      print("Chat room details: ${response.body}");
+      return ChatRoomDetails.fromJson(jsonDecode(response.body));
+    } else {
       return response.body;
     }
   }

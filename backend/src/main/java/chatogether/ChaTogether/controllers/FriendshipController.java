@@ -103,4 +103,13 @@ public class FriendshipController {
         String requestingUsername = AuthRequestFilter.getUsername();
         friendshipService.unblockUser(requestingUsername, userToUnblock);
     }
+
+    @GetMapping("/areUsersBlocked/{userId1}/{userId2}")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean areUsersBlocked(
+            @PathVariable Long userId1,
+            @PathVariable Long userId2
+    ) {
+        return friendshipService.areUsersBlockedByIds(userId1, userId2);
+    }
 }

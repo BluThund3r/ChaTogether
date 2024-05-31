@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/interfaces/chat_message.dart';
 import 'package:pointycastle/key_derivators/pbkdf2.dart';
 import 'package:pointycastle/macs/hmac.dart';
 import 'package:pointycastle/pointycastle.dart';
@@ -39,7 +40,7 @@ class CryptoUtils {
   }
 
   static Future<void> storeConversationKeyAndIV(
-    int conversationId,
+    String conversationId,
     Uint8List key,
     encrypt.IV iv,
   ) async {
@@ -54,12 +55,25 @@ class CryptoUtils {
   }
 
   static Future<List<dynamic>?> getConversationKeyAndIV(
-      int conversationId) async {
+      String conversationId) async {
     final key =
         await _secureStorage.read(key: "conversationKey.$conversationId");
     final iv = await _secureStorage.read(key: "conversationIV.$conversationId");
     if (key == null || iv == null) return null;
     return [base64Decode(key), encrypt.IV.fromBase64(iv)];
+  }
+
+  static Future<List<dynamic>> decryptConversationKeyAndIv(
+      String encryptedKeyAndIvBase64) async {
+    final privateKey = (await getUserRSAKeys())!.privateKey;
+    final decryptedKeyAndIv = await decryptWithRSA(
+      encryptedKeyAndIvBase64,
+      privateKey,
+    );
+    final [ivString, keyString] = decryptedKeyAndIv.split(".");
+    final iv = encrypt.IV.fromBase64(ivString);
+    final key = base64Decode(keyString);
+    return [key, iv];
   }
 
   static Future<KeyPair> generateRSAKeyPair() async {
@@ -127,6 +141,32 @@ class CryptoUtils {
 
     final encrypted = encrypter.encrypt(plaintext, iv: iv);
     return encrypted.base64;
+  }
+
+  static Future<ChatMessage> decryptChatMessage(
+      ChatMessage message, Uint8List chatRoomKey, encrypt.IV chatRoomIV) async {
+    final decryptedMessage = await decryptWithAES(
+      message.encryptedContent,
+      chatRoomKey,
+      chatRoomIV,
+    );
+
+    message.content = decryptedMessage;
+    return message;
+  }
+
+  static Future<List<ChatMessage>> decryptChatMessages(
+      List<ChatMessage> messages,
+      Uint8List chatRoomKey,
+      encrypt.IV chatRoomIV) async {
+    final decryptedMessages = <ChatMessage>[];
+    for (final message in messages) {
+      final decryptedMessage =
+          await decryptChatMessage(message, chatRoomKey, chatRoomIV);
+      decryptedMessages.add(decryptedMessage);
+    }
+
+    return decryptedMessages;
   }
 
   static Future<String> decryptWithAES(

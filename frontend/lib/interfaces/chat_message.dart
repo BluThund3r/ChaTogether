@@ -6,7 +6,8 @@ class ChatMessage {
   String chatRoomId;
   int senderId;
   String encryptedContent;
-  String sentAt;
+  String? content;
+  DateTime sentAt;
   ChatMessageType type;
   bool isEdited;
   bool isDeleted;
@@ -32,12 +33,12 @@ class ChatMessage {
       chatRoomId: json['chatRoomId'],
       senderId: json['senderId'],
       encryptedContent: json['encryptedContent'],
-      sentAt: json['sentAt'],
+      sentAt: DateTime.parse(json['sentAt']),
       type: ChatMessageType.values
           .firstWhere((e) => e.toString() == 'ChatMessageType.${json['type']}'),
-      isEdited: json['isEdited'],
-      isDeleted: json['isDeleted'],
-      seenBy: json['seenBy'],
+      isEdited: json['edited'],
+      isDeleted: json['deleted'],
+      seenBy: json['seenBy'].cast<int>(),
       action: ActionType.values
           .firstWhere((e) => e.toString() == 'ActionType.${json['action']}'),
     );
@@ -49,7 +50,7 @@ class ChatMessage {
       chatRoomId: "",
       senderId: -1,
       encryptedContent: '',
-      sentAt: '',
+      sentAt: DateTime.fromMillisecondsSinceEpoch(0),
       type: ChatMessageType.TEXT,
       isEdited: false,
       isDeleted: false,

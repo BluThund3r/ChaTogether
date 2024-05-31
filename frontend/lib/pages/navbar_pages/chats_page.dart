@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/custom_circle_avatar_no_cache.dart';
 import 'package:frontend/components/toast.dart';
@@ -10,6 +12,7 @@ import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/chat_room_service.dart';
 import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/utils/backend_details.dart';
+import 'package:frontend/utils/crypto_utils.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
@@ -220,7 +223,30 @@ class _ChatsPageState extends State<ChatsPage> {
                                   ),
                                 ],
                               ),
-                              onTap: () {
+                              onTap: () async {
+                                final keyAndId =
+                                    await CryptoUtils.getConversationKeyAndIV(
+                                        chatRoom.id);
+                                if (keyAndId == null) {
+                                  final response = await chatRoomService
+                                      .getChatRoomSecretKeyAndIv(chatRoom.id);
+                                  if (response is! List<dynamic> && mounted) {
+                                    initFToast(context);
+                                    showErrorToast(response);
+                                    return;
+                                  }
+
+                                  final secretKey = response[0] as Uint8List;
+                                  print("Secret key: $secretKey");
+                                  final iv = response[1] as IV;
+                                  print("IV: $iv");
+                                  await CryptoUtils.storeConversationKeyAndIV(
+                                    chatRoom.id,
+                                    secretKey,
+                                    iv,
+                                  );
+                                }
+                                
                                 GoRouter.of(context)
                                     .push('/chat/${chatRoom.id}');
                               },

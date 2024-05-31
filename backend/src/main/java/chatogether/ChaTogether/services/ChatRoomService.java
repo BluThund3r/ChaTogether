@@ -1,6 +1,7 @@
 package chatogether.ChaTogether.services;
 
 import chatogether.ChaTogether.DTO.ChatRoomAddOrRemoveDTO;
+import chatogether.ChaTogether.DTO.ChatRoomDetailsWithLastMessageDTO;
 import chatogether.ChaTogether.enums.ChatRoomAction;
 import chatogether.ChaTogether.exceptions.*;
 import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserDoesNotExist;
@@ -28,8 +29,6 @@ public class ChatRoomService {
     public static final int MAX_USERS_IN_GROUP_CHAT = 50;
 
     public ChatRoom createPrivateChat(String senderUsername, String receiverUsername) {
-
-        // TODO: modifica toate canalele de trimitere de mesaje!!!!!
         var sender = userService.findByUsername(senderUsername).orElseThrow(UserDoesNotExist::new);
         var receiver = userService.findByUsername(receiverUsername).orElseThrow(UserDoesNotExist::new);
         if (!friendshipService.areUsersFriends(sender, receiver))
@@ -63,7 +62,7 @@ public class ChatRoomService {
         fileService.createChatDirectory(chatRoom.getDirectoryPath());
         var savedChatRoom = chatRoomRepository.save(chatRoom);
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/addOrRemove",
+                "/queue/chatRoom/addOrRemove",
                 new ChatRoomAddOrRemoveDTO(
                         savedChatRoom,
                         null,
@@ -109,7 +108,7 @@ public class ChatRoomService {
         var savedChatRoom = chatRoomRepository.save(chatRoom);
 
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/addOrRemove",
+                "/queue/chatRoom/addOrRemove",
                 new ChatRoomAddOrRemoveDTO(
                         savedChatRoom,
                         null,
@@ -163,7 +162,7 @@ public class ChatRoomService {
         chatRoom.setEncryptedKeyOfUser(userId, encryptedKey);
         var savedChatRoom = chatRoomRepository.save(chatRoom);
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/addOrRemove",
+                "/queue/chatRoom/addOrRemove",
                 new ChatRoomAddOrRemoveDTO(
                         savedChatRoom,
                         null,
@@ -176,7 +175,7 @@ public class ChatRoomService {
 
     public String getChatRoomEncryptionKey(Long userId, String chatRoomId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
-        if (isUserInChatRoom(userId, chatRoomId))
+        if (!isUserInChatRoom(userId, chatRoomId))
             throw new UserNotInChatRoom();
         return chatRoom.getEncryptedKeyOfUser(userId);
     }
@@ -192,7 +191,7 @@ public class ChatRoomService {
         var savedChatRoom = chatRoomRepository.save(chatRoom);
 
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/addOrRemove",
+                "/queue/chatRoom/addOrRemove",
                 new ChatRoomAddOrRemoveDTO(
                         savedChatRoom,
                         null,
@@ -211,7 +210,7 @@ public class ChatRoomService {
         var savedChatRoom = chatRoomRepository.save(chatRoom);
 
         simpMessagingTemplate.convertAndSend(
-                "/user/chatRoom/addOrRemove",
+                "/queue/chatRoom/addOrRemove",
                 new ChatRoomAddOrRemoveDTO(
                         savedChatRoom,
                         null,
@@ -237,6 +236,8 @@ public class ChatRoomService {
 
     public void removeAdminOfChatRoom(Long userId, String chatRoomId, Long adminId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
+        if (chatRoom.isPrivateChat())
+            throw new UserRemovalDenied("Cannot remove admin from private chat");
         if (!chatRoom.getAdmins().contains(adminId))
             throw new NotChatAdmin();
         if (!chatRoom.getAdmins().contains(userId))
@@ -269,6 +270,13 @@ public class ChatRoomService {
                 .toList();
         result.forEach(friend -> System.out.println(friend.getUsername()));
         return result;
+    }
+
+    public ChatRoomDetailsWithLastMessageDTO getChatRoomDetailsById(Long callerId, String chatRoomId) {
+        if (!isUserInChatRoom(callerId, chatRoomId))
+            throw new UserNotInChatRoom();
+        var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
+        return new ChatRoomDetailsWithLastMessageDTO(chatRoom, null, userService);
     }
 }
 

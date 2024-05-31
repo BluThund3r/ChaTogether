@@ -55,6 +55,14 @@ public class ChatRoomController {
                 .toList();
     }
 
+    @GetMapping("/getChatDetailsById/{chatRoomId}")
+    public ChatRoomDetailsWithLastMessageDTO getChatDetailsById(
+            @PathVariable String chatRoomId
+    ) {
+        var callerId = AuthRequestFilter.getUserId();
+        return chatRoomService.getChatRoomDetailsById(callerId, chatRoomId);
+    }
+
     @GetMapping("/getChatRoomKey/{chatRoomId}")
     public String getChatRoomKey(
             @PathVariable String chatRoomId
