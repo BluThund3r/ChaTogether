@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Set;
 
 public class AuthRequestFilter extends OncePerRequestFilter {
     private static final ThreadLocal<String> jwtToken = new ThreadLocal<>();
@@ -24,6 +25,11 @@ public class AuthRequestFilter extends OncePerRequestFilter {
     private static final ThreadLocal<String> lastName = new ThreadLocal<>();
     private static final ThreadLocal<Long> userId = new ThreadLocal<>();
     private JWTService jwtService;
+
+    private Set<String> urlsToSkip = Set.of(
+            "/user/profilePicture",
+            "/user/profilePictureById"
+    );
 
     @Override
     protected void initFilterBean() throws ServletException {
@@ -77,7 +83,7 @@ public class AuthRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getServletPath().equals("/user/profilePicture");
+        return urlsToSkip.contains(request.getServletPath());
     }
 
     public static String getJwtToken() {

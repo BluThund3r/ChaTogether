@@ -6,9 +6,11 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/chat_message_widget.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
+import 'package:frontend/components/long_press_message_options.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/chat_message.dart';
 import 'package:frontend/interfaces/chat_room_details.dart';
+import 'package:frontend/interfaces/enums/action_type.dart';
 import 'package:frontend/interfaces/enums/chat_message_type.dart';
 import 'package:frontend/interfaces/outgoing_chat_message.dart';
 import 'package:frontend/interfaces/user.dart';
@@ -80,23 +82,36 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     if (frame.body == null) return;
     print("Received message: ${frame.body}");
     final message = ChatMessage.fromJson(jsonDecode(frame.body!));
-    if (message.type == ChatMessageType.TEXT) {
+    if (message.action != ActionType.SEND) {
+      final messageIndex =
+          messages.indexWhere((element) => element.id == message.id);
       final decryptedMessage = await CryptoUtils.decryptChatMessage(
           message, chatRoomKey, chatRoomIv);
-      setState(() {
-        messages.add(decryptedMessage);
-      });
-      if (decryptedMessage.senderId != loggedInUser.userId) {
-        stompService.seeMessage(decryptedMessage.id, widget.chatId);
-        if (isLockedToBottom) {
+      if (messageIndex != -1) {
+        print("Updating message: ${message.id} at index: $messageIndex");
+        setState(() {
+          messages[messageIndex] = decryptedMessage;
+        });
+      }
+    } else {
+      if (message.type == ChatMessageType.TEXT) {
+        final decryptedMessage = await CryptoUtils.decryptChatMessage(
+            message, chatRoomKey, chatRoomIv);
+        setState(() {
+          messages.add(decryptedMessage);
+        });
+        if (decryptedMessage.senderId != loggedInUser.userId) {
+          stompService.seeMessage(decryptedMessage.id, widget.chatId);
+          if (isLockedToBottom) {
+            Future.delayed(const Duration(milliseconds: 200), () {
+              _scrollToBottom();
+            });
+          }
+        } else {
           Future.delayed(const Duration(milliseconds: 200), () {
             _scrollToBottom();
           });
         }
-      } else {
-        Future.delayed(const Duration(milliseconds: 200), () {
-          _scrollToBottom();
-        });
       }
     }
   }
@@ -156,6 +171,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _jumpToBottom();
     });
+
+    stompService.seeAllMessages(chatRoomDetails.id);
   }
 
   void evictAllProfilePicturesFromCache() async {
@@ -234,6 +251,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ListTile(
+              leading: const Icon(Icons.people_rounded),
               title: const Text("View members"),
               onTap: () {
                 Navigator.pop(context);
@@ -241,6 +259,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.person_add_rounded),
               title: const Text("Add new member"),
               onTap: () {
                 Navigator.pop(context);
@@ -248,6 +267,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.exit_to_app_rounded),
               title: const Text("Leave chat"),
               onTap: () {
                 Navigator.pop(context);
@@ -255,6 +275,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             ),
             if (chatRoomDetails.isPrivateChat())
               ListTile(
+                leading: blockedUsers!
+                    ? const Icon(Icons.lock_open)
+                    : const Icon(Icons.block_rounded),
                 title: blockedUsers!
                     ? const Text("Unblock user")
                     : const Text("Block user"),
@@ -303,14 +326,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     chatRoomIv = keyAndIv[1] as IV;
   }
 
-  @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
-    if (WidgetsBinding.instance.window.viewInsets.bottom > 0) {
-      _scrollToBottom();
-    }
-  }
-
   void _jumpToBottom() {
     if (messages.isEmpty) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -336,6 +351,28 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     if (unsubscribeWS != null) {
       unsubscribeWS();
       unsubscribeWS = null;
+    }
+  }
+
+  void handleMessageLongPress(ChatMessage message, BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return LongPressMessageOptions(
+          message: message,
+          loggedUserInfo: loggedInUser,
+          chatRoomKey: chatRoomKey,
+          chatRoomIv: chatRoomIv,
+        );
+      },
+    );
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    if (WidgetsBinding.instance.window.viewInsets.bottom > 0) {
+      _scrollToBottom();
     }
   }
 
@@ -480,12 +517,17 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                   return const SizedBox(height: 0);
                                 }
                                 final message = messages[index - 1];
-                                return ChatMessageWidget(
-                                  message: message,
-                                  isCurrentUser:
-                                      message.senderId == loggedInUser.userId,
-                                  privateChat: chatRoomDetails.isPrivateChat(),
-                                  members: chatRoomDetails.members,
+                                return GestureDetector(
+                                  onLongPress: () =>
+                                      handleMessageLongPress(message, context),
+                                  child: ChatMessageWidget(
+                                    message: message,
+                                    isCurrentUser:
+                                        message.senderId == loggedInUser.userId,
+                                    privateChat:
+                                        chatRoomDetails.isPrivateChat(),
+                                    members: chatRoomDetails.members,
+                                  ),
                                 );
                               },
                             );

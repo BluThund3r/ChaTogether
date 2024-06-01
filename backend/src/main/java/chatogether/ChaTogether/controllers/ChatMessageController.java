@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -80,7 +81,7 @@ public class ChatMessageController {
                 "/queue/chatRoomUpdates",
                 new ChatRoomDetailsWithLastMessageDTO(
                         chatRoom,
-                        new OutgoingChatMessageDTO(chatMessage, ActionType.GET, null),
+                        new OutgoingChatMessageDTO(chatMessage, ActionType.SEND, null),
                         userService
                 )
         );
@@ -100,6 +101,15 @@ public class ChatMessageController {
                 "/queue/chatRoom/" + chatMessage.getChatRoomId(),
                 new OutgoingChatMessageDTO(chatMessage, ActionType.SEEN, null)
         );
+
+        simpMessagingTemplate.convertAndSend(
+                "/queue/chatRoomUpdates",
+                new ChatRoomDetailsWithLastMessageDTO(
+                        chatRoomService.getChatRoomById(chatMessage.getChatRoomId()),
+                        new OutgoingChatMessageDTO(chatMessage, ActionType.SEEN, null),
+                        userService
+                )
+        );
     }
 
     @MessageMapping("/seeAllMessages/{chatRoomId}")
@@ -111,13 +121,24 @@ public class ChatMessageController {
         var userId = (Long) attributes.get("userId");
 
         var chatMessages = chatMessageService.seeMessagesInChatRoom(chatRoomId, userId);
+        var lastChatMessage = chatMessages.stream()
+                .max(Comparator.comparing(ChatMessage::getSentAt))
+                .orElse(null);
+        chatMessages.forEach(chatMessage -> {
+            simpMessagingTemplate.convertAndSend(
+                    "/queue/chatRoom/" + chatRoomId,
+                    new OutgoingChatMessageDTO(chatMessage, ActionType.SEEN, null)
+            );
+        });
+
+        if (lastChatMessage == null) return;
         simpMessagingTemplate.convertAndSend(
-                "/queue/chatRoom/" + chatRoomId,
-                chatMessages.stream()
-                        .map(chatMessage ->
-                                new OutgoingChatMessageDTO(chatMessage, ActionType.SEEN, null)
-                        )
-                        .toList()
+                "/queue/chatRoomUpdates",
+                new ChatRoomDetailsWithLastMessageDTO(
+                        chatRoomService.getChatRoomById(chatRoomId),
+                        new OutgoingChatMessageDTO(lastChatMessage, ActionType.SEEN, null),
+                        userService
+                )
         );
     }
 
@@ -160,7 +181,31 @@ public class ChatMessageController {
                 new OutgoingChatMessageDTO(chatMessage, ActionType.DELETE,
                         chatMessage.getType() == ChatMessageType.IMAGE ?
                                 chatMessageService.getImageEncodedOfMessage(chatMessage) :
-                                null)
+                                null
+                )
+        );
+    }
+
+    @MessageMapping("/restoreMessage/{messageId}")
+    public void restoreMessage(
+            @DestinationVariable String messageId,
+            SimpMessageHeaderAccessor headerAccessor
+    ) {
+        var attributes = headerAccessor.getSessionAttributes();
+        var senderId = (Long) attributes.get("userId");
+
+        var chatMessage = chatMessageService.restoreMessage(
+                messageId,
+                senderId
+        );
+
+        simpMessagingTemplate.convertAndSend(
+                "/queue/chatRoom/" + chatMessage.getChatRoomId(),
+                new OutgoingChatMessageDTO(chatMessage, ActionType.RESTORE,
+                        chatMessage.getType() == ChatMessageType.IMAGE ?
+                                chatMessageService.getImageEncodedOfMessage(chatMessage) :
+                                null
+                )
         );
     }
 

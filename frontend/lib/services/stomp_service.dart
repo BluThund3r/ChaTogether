@@ -87,16 +87,22 @@ class StompService {
     );
   }
 
-  void editChatMessage(int messageId, String newContent) {
+  void editChatMessage(String messageId, String newContent) {
     _stompClient.send(
       destination: '$_sendBaseUrl/editMessage/$messageId',
       body: newContent,
     );
   }
 
-  void deleteChatMessage(int messageId) {
+  void deleteChatMessage(String messageId) {
     _stompClient.send(
       destination: '$_sendBaseUrl/deleteMessage/$messageId',
+    );
+  }
+
+  void restoreChatMessage(String messageId) {
+    _stompClient.send(
+      destination: '$_sendBaseUrl/restoreMessage/$messageId',
     );
   }
 
@@ -113,6 +119,14 @@ class StompService {
   }
 
   void seeMessage(String id, String chatId) {
-    // TODO: implement this
+    _stompClient.send(
+      destination: '$_sendBaseUrl/seeMessage/$id',
+    );
+  }
+
+  void seeAllMessages(String chatId) {
+    _stompClient.send(
+      destination: '$_sendBaseUrl/seeAllMessages/$chatId',
+    );
   }
 }

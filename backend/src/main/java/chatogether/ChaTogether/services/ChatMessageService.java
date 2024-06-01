@@ -47,7 +47,7 @@ public class ChatMessageService {
                 .type(type)
                 .isEdited(false)
                 .isDeleted(false)
-                .seenBy(new ArrayList<>())
+                .seenBy(List.of(senderId))
                 .contentOrPath("")
                 .sentAt(LocalDateTime.now())
                 .build();
@@ -75,7 +75,19 @@ public class ChatMessageService {
         var chatMessage = chatMessageRepository.findById(messageId).orElseThrow(ChatMessageDoesNotExist::new);
         if (!Objects.equals(chatMessage.getSenderId(), userId))
             throw new MessageNotDeletable("You can only delete your own messages");
+        if (chatMessage.getIsDeleted())
+            throw new MessageNotDeletable("Message is already deleted");
         chatMessage.setIsDeleted(true);
+        return saveMessage(chatMessage);
+    }
+
+    public ChatMessage restoreMessage(String messageId, Long userId) {
+        var chatMessage = chatMessageRepository.findById(messageId).orElseThrow(ChatMessageDoesNotExist::new);
+        if (!Objects.equals(chatMessage.getSenderId(), userId))
+            throw new MessageNotDeletable("You can only restore your own messages");
+        if (!chatMessage.getIsDeleted())
+            throw new MessageNotDeletable("Message is not deleted");
+        chatMessage.setIsDeleted(false);
         return saveMessage(chatMessage);
     }
 

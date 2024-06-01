@@ -45,14 +45,17 @@ class ChatMessageWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (!isCurrentUser && !privateChat)
-            CustomCircleAvatar(
-              imageUrl:
-                  '$baseUrl/user/profilePictureById?username=${message.senderId}',
-              name: members
-                  .where((element) => element.id == message.senderId)
-                  .first
-                  .firstName,
-              radius: 20,
+            Padding(
+              padding: const EdgeInsets.only(left: 5.0),
+              child: CustomCircleAvatar(
+                imageUrl:
+                    '$baseUrl/user/profilePictureById?userId=${message.senderId}',
+                name: members
+                    .where((element) => element.id == message.senderId)
+                    .first
+                    .firstName,
+                radius: 20,
+              ),
             ),
           Padding(
             padding:
@@ -72,10 +75,18 @@ class ChatMessageWidget extends StatelessWidget {
                       ? CrossAxisAlignment.end
                       : CrossAxisAlignment.start,
                   children: [
-                    if (message.content != null)
+                    if (message.content != null && !message.isDeleted)
                       Text(
                         message.content!,
                         style: const TextStyle(color: Colors.white),
+                      ),
+                    if (message.isDeleted)
+                      const Text(
+                        'Message deleted',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     const SizedBox(height: 5),
                     Row(
@@ -89,13 +100,21 @@ class ChatMessageWidget extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 5),
-                        Icon(
-                          message.seenBy.isNotEmpty
-                              ? Icons.remove_red_eye
-                              : Icons.check,
-                          size: 12,
-                          color: Colors.white70,
-                        ),
+                        if (message.isEdited)
+                          const Icon(
+                            Icons.edit,
+                            size: 12,
+                            color: Colors.white70,
+                          ),
+                        const SizedBox(width: 2),
+                        if (!privateChat || isCurrentUser)
+                          Icon(
+                            message.seenBy.length > 1
+                                ? Icons.remove_red_eye
+                                : Icons.check,
+                            size: 12,
+                            color: Colors.white70,
+                          ),
                       ],
                     ),
                   ],

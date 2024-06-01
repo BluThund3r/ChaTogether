@@ -50,8 +50,28 @@ class _ChatsPageState extends State<ChatsPage> {
     print("Unsubscribed from ws channels");
   }
 
+  void rearrangeChats() {
+    chatRoomsDetails.sort((a, b) {
+      final aTime = a.lastMessage.sentAt;
+      final bTime = b.lastMessage.sentAt;
+      return bTime.compareTo(aTime);
+    });
+  }
+
   void chatRoomUpdatesHandler(StompFrame frame) async {
-    // TODO: implement this
+    print("Received chat room update: ${frame.body}");
+    if (frame.body == null) return;
+    ChatRoomDetails chatRoomDetails =
+        ChatRoomDetails.fromJson(jsonDecode(frame.body!));
+    print("Chat room update: $chatRoomDetails");
+
+    final index = chatRoomsDetails.indexWhere((element) =>
+        element.id == chatRoomDetails.id && element != chatRoomDetails);
+
+    setState(() {
+      chatRoomsDetails[index] = chatRoomDetails;
+      rearrangeChats();
+    });
   }
 
   void addChatRoom(ChatRoomAddOrRemove chatRoomAddOrRemove) async {
@@ -104,6 +124,7 @@ class _ChatsPageState extends State<ChatsPage> {
       print("Setting the chats in the page");
       setState(() {
         chatRoomsDetails = response;
+        rearrangeChats();
         loading = false;
       });
       // print("Chats: ${chatRoomsDetails}");
@@ -246,7 +267,7 @@ class _ChatsPageState extends State<ChatsPage> {
                                     iv,
                                   );
                                 }
-                                
+
                                 GoRouter.of(context)
                                     .push('/chat/${chatRoom.id}');
                               },

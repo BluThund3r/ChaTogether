@@ -4,4 +4,5 @@ enum ActionType {
   EDIT,
   DELETE,
   SEEN,
+  RESTORE,
 }
