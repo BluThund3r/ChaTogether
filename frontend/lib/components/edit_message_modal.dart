@@ -75,7 +75,7 @@ class _EditMessageModalState extends State<EditMessageModal> {
   Widget build(BuildContext context) {
     _messageController.text = widget.message.content!;
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(10.0),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,

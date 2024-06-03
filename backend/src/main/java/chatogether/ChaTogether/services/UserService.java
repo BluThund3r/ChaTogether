@@ -92,4 +92,8 @@ public class UserService {
         var user = userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new);
         return new KeysDTO(user.getPublicKey(), user.getEncryptedPrivateKey());
     }
+
+    public String getPublicKeyOfUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new).getPublicKey();
+    }
 }

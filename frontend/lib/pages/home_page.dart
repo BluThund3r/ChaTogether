@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
   final navbarPages = <Widget>[
     const ChatsPage(),
     const PeoplePage(),
-    const CallsPage(),
+    // const CallsPage(),
     const WatchPage(),
   ];
 
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
         },
         child: const Icon(Icons.person_add),
       ),
-      null,
+      // null,
       null,
     ];
   }
@@ -134,10 +134,10 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.person_rounded),
             label: 'People',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.phone_rounded),
-            label: 'Calls',
-          ),
+          // NavigationDestination(
+          //   icon: Icon(Icons.phone_rounded),
+          //   label: 'Calls',
+          // ),
           NavigationDestination(
             icon: Icon(Icons.live_tv_rounded),
             label: 'Watch',

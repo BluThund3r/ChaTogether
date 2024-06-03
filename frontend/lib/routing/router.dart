@@ -12,6 +12,7 @@ import 'package:frontend/pages/home_page.dart';
 import 'package:frontend/pages/navbar_pages/people_page.dart';
 import 'package:frontend/pages/profile_page.dart';
 import 'package:frontend/pages/test_page.dart';
+import 'package:frontend/pages/video_room_page.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -63,6 +64,22 @@ final GoRouter router = GoRouter(
             final id = state.pathParameters['id'];
             if (id == null) return const SizedBox();
             return ChatPage(chatId: id);
+          },
+        ),
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ],
+    ),
+    GoRoute(
+      path: "/videoRoom",
+      builder: (context, state) => const SizedBox(), // Add this line
+      routes: [
+        //! This should be the last route in the list
+        GoRoute(
+          path: ":connectionCode",
+          builder: (context, state) {
+            final connectionCode = state.pathParameters['connectionCode'];
+            if (connectionCode == null) return const SizedBox();
+            return VideoRoomPage(connectionCode: connectionCode);
           },
         ),
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

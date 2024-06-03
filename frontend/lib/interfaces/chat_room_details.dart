@@ -37,7 +37,9 @@ class ChatRoomDetails {
   }
 
   User otherMember(int firstId) {
-    return members.firstWhere((element) => element.id != firstId);
+    return members.firstWhere((element) => element.id != firstId, orElse: () {
+      return User.empty();
+    });
   }
 
   factory ChatRoomDetails.fromAddOrRemove(

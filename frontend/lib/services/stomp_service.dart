@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:frontend/interfaces/outgoing_chat_message.dart';
+import 'package:frontend/interfaces/user.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/utils/backend_details.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
@@ -86,7 +87,7 @@ class StompService {
       body: json.encode(chatMessage.toJson()),
     );
   }
-
+  
   void editChatMessage(String messageId, String newContent) {
     _stompClient.send(
       destination: '$_sendBaseUrl/editMessage/$messageId',

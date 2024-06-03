@@ -1,13 +1,19 @@
 package chatogether.ChaTogether.controllers;
 
+import chatogether.ChaTogether.DTO.OutgoingChatMessageDTO;
+import chatogether.ChaTogether.enums.ActionType;
+import chatogether.ChaTogether.enums.ChatMessageType;
 import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.FriendRequest;
 import chatogether.ChaTogether.persistence.User;
+import chatogether.ChaTogether.services.ChatRoomService;
 import chatogether.ChaTogether.services.FriendshipService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -15,6 +21,8 @@ import java.util.List;
 @RequestMapping("/friendship")
 public class FriendshipController {
     private FriendshipService friendshipService;
+    private ChatRoomService chatRoomService;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @GetMapping("/receivedRequests")
     public List<FriendRequest> getReceivedFriendRequests() {
@@ -79,6 +87,13 @@ public class FriendshipController {
         friendshipService.removeFriendship(requestingUsername, friendToRemove);
     }
 
+    @GetMapping("/blockedUsers")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> getBlockedUsers() {
+        String username = AuthRequestFilter.getUsername();
+        return friendshipService.getBlockedUsers(username);
+    }
+
     @PostMapping("/blockUser/{userToBlock}")
     @ResponseStatus(HttpStatus.OK)
     public void blockUser(
@@ -86,13 +101,25 @@ public class FriendshipController {
     ) {
         String requestingUsername = AuthRequestFilter.getUsername();
         friendshipService.blockUser(requestingUsername, userToBlock);
-    }
+        var chatRoom = chatRoomService.getPrivateChatOfUsers(requestingUsername, userToBlock).orElse(null);
+        if (chatRoom == null)
+            return;
 
-    @GetMapping("/blockedUsers")
-    @ResponseStatus(HttpStatus.OK)
-    public List<User> getBlockedUsers() {
-        String username = AuthRequestFilter.getUsername();
-        return friendshipService.getBlockedUsers(username);
+        simpMessagingTemplate.convertAndSend(
+                "/queue/chatRoom/" + chatRoom.getId(),
+                OutgoingChatMessageDTO.builder()
+                        .id("0")
+                        .chatRoomId(chatRoom.getId())
+                        .senderId(0L)
+                        .encryptedContent("")
+                        .sentAt(LocalDateTime.now().toString())
+                        .isEdited(false)
+                        .isDeleted(false)
+                        .seenBy(List.of())
+                        .type(ChatMessageType.ANNOUNCEMENT)
+                        .action(ActionType.BLOCK)
+                        .build()
+        );
     }
 
     @DeleteMapping("/unblockUser/{userToUnblock}")
@@ -102,6 +129,27 @@ public class FriendshipController {
     ) {
         String requestingUsername = AuthRequestFilter.getUsername();
         friendshipService.unblockUser(requestingUsername, userToUnblock);
+
+        var chatRoom = chatRoomService.getPrivateChatOfUsers(requestingUsername, userToUnblock).orElse(null);
+        if (chatRoom == null)
+            return;
+
+        simpMessagingTemplate.convertAndSend(
+                "/queue/chatRoom/" + chatRoom.getId(),
+                OutgoingChatMessageDTO.builder()
+                        .id("0")
+                        .chatRoomId(chatRoom.getId())
+                        .senderId(0L)
+                        .encryptedContent("")
+                        .sentAt(LocalDateTime.now().toString())
+                        .isEdited(false)
+                        .isDeleted(false)
+                        .seenBy(List.of())
+                        .type(ChatMessageType.ANNOUNCEMENT)
+                        .action(ActionType.UNBLOCK)
+                        .build()
+
+        );
     }
 
     @GetMapping("/areUsersBlocked/{userId1}/{userId2}")

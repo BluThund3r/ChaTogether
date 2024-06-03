@@ -188,6 +188,8 @@ class _ChatsPageState extends State<ChatsPage> {
                         itemBuilder: (context, index) {
                           final chatRoom = chatRoomsDetails[index];
                           final privateChat = chatRoom.isPrivateChat();
+                          print("Chat room: ${chatRoom.roomName}");
+                          print("Private chat: $privateChat");
                           final otherMember =
                               chatRoom.otherMember(_loggedInUser.userId);
                           final seenLastMessage = chatRoom.lastMessage.seenBy

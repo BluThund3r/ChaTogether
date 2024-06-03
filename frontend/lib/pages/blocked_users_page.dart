@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/custom_circle_avatar_no_cache.dart';
 import 'package:frontend/components/custom_search_bar.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/user.dart';
 import 'package:frontend/services/friend_service.dart';
+import 'package:frontend/utils/backend_details.dart';
 import 'package:provider/provider.dart';
 
 class BlockedUsersPage extends StatefulWidget {
@@ -197,13 +199,10 @@ class _BlockedUsersPageState extends State<BlockedUsersPage> {
                     itemBuilder: (context, index) {
                       final blockedUser = displayedBlockedUsers[index];
                       return ListTile(
-                        leading: CircleAvatar(
-                          child: Text(
-                            blockedUser.firstName[0],
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        leading: CustomCircleAvatarNoCache(
+                          imageUrl:
+                              "$baseUrl/user/profilePicture?username=${blockedUser.username}",
+                          name: blockedUser.firstName,
                         ),
                         title: Text(
                           '${blockedUser.firstName} ${blockedUser.lastName}',

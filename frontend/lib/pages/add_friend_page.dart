@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/custom_circle_avatar_no_cache.dart';
 import 'package:frontend/components/custom_search_bar.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/user.dart';
 import 'package:frontend/services/friend_service.dart';
 import 'package:frontend/services/user_service.dart';
+import 'package:frontend/utils/backend_details.dart';
 import 'package:provider/provider.dart';
 
 class AddFriendPage extends StatefulWidget {
@@ -141,13 +143,10 @@ class _AddFriendPageState extends State<AddFriendPage> {
                     itemBuilder: (context, index) {
                       final user = users[index];
                       return ListTile(
-                        leading: CircleAvatar(
-                          child: Text(
-                            user.firstName[0],
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        leading: CustomCircleAvatarNoCache(
+                          imageUrl:
+                              "$baseUrl/user/profilePicture?username=${user.username}",
+                          name: user.firstName,
                         ),
                         title: Text(
                           '${user.firstName} ${user.lastName}',

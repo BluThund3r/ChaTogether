@@ -127,7 +127,6 @@ public class ChatRoomController {
     public void leaveChatRoom(
             @PathVariable String chatRoomId
     ) {
-        // TODO: make sure that the user sends the leave message before actually leaving the room
         var callerId = AuthRequestFilter.getUserId();
         chatRoomService.leaveChatRoom(callerId, chatRoomId);
     }
@@ -148,5 +147,16 @@ public class ChatRoomController {
     ) {
         var callerId = AuthRequestFilter.getUserId();
         chatRoomService.removeAdminOfChatRoom(userId, chatRoomId, callerId);
+    }
+
+    @GetMapping("/friendsNotInChat/{chatRoomId}")
+    public List<UserDetailsForOthersDTO> getFriendsNotInChat(
+            @PathVariable String chatRoomId
+    ) {
+        var callerUsername = AuthRequestFilter.getUsername();
+        return chatRoomService.getFriendsNotInChat(callerUsername, chatRoomId)
+                .stream()
+                .map(friend -> new UserDetailsForOthersDTO(friend, false))
+                .toList();
     }
 }

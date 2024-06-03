@@ -7,4 +7,6 @@ public enum ActionType {
     DELETE,
     SEEN,
     RESTORE,
+    BLOCK,
+    UNBLOCK,
 }

@@ -4,6 +4,7 @@ import chatogether.ChaTogether.enums.ActionType;
 import chatogether.ChaTogether.enums.ChatMessageType;
 import chatogether.ChaTogether.persistence.ChatMessage;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class OutgoingChatMessageDTO {
     private String id;
     private String chatRoomId;

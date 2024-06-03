@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/components/add_member_to_chat_modal.dart';
+import 'package:frontend/components/chat_members_modal.dart';
 import 'package:frontend/components/chat_message_widget.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
 import 'package:frontend/components/long_press_message_options.dart';
@@ -14,7 +16,6 @@ import 'package:frontend/interfaces/enums/action_type.dart';
 import 'package:frontend/interfaces/enums/chat_message_type.dart';
 import 'package:frontend/interfaces/outgoing_chat_message.dart';
 import 'package:frontend/interfaces/user.dart';
-import 'package:frontend/pages/helpers/show_members_modal.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/chat_message_service.dart';
 import 'package:frontend/services/chat_room_service.dart';
@@ -22,6 +23,7 @@ import 'package:frontend/services/friend_service.dart';
 import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/utils/backend_details.dart';
 import 'package:frontend/utils/crypto_utils.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
@@ -82,6 +84,21 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     if (frame.body == null) return;
     print("Received message: ${frame.body}");
     final message = ChatMessage.fromJson(jsonDecode(frame.body!));
+
+    if (message.action == ActionType.BLOCK) {
+      setState(() {
+        blockedUsers = true;
+      });
+      return;
+    }
+
+    if (message.action == ActionType.UNBLOCK) {
+      setState(() {
+        blockedUsers = false;
+      });
+      return;
+    }
+
     if (message.action != ActionType.SEND) {
       final messageIndex =
           messages.indexWhere((element) => element.id == message.id);
@@ -94,9 +111,10 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         });
       }
     } else {
-      if (message.type == ChatMessageType.TEXT) {
-        final decryptedMessage = await CryptoUtils.decryptChatMessage(
-            message, chatRoomKey, chatRoomIv);
+      final decryptedMessage = await CryptoUtils.decryptChatMessage(
+          message, chatRoomKey, chatRoomIv);
+      if (message.type == ChatMessageType.TEXT ||
+          message.type == ChatMessageType.ANNOUNCEMENT) {
         setState(() {
           messages.add(decryptedMessage);
         });
@@ -112,6 +130,13 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             _scrollToBottom();
           });
         }
+      }
+      if (message.type == ChatMessageType.ANNOUNCEMENT &&
+          decryptedMessage.content!
+              .contains("removed ${loggedInUser.username} from chat")) {
+        initFToast(context);
+        showInfoToast("You were removed from the chat");
+        GoRouter.of(context).go('/');
       }
     }
   }
@@ -185,64 +210,56 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                child: Text(
-                  "Add member",
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    final member = chatRoomDetails.members[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: ListTile(
-                        leading: CustomCircleAvatar(
-                          imageUrl:
-                              '$baseUrl/user/profilePicture?username=${member.username}',
-                          name: member.firstName,
-                          radius: 25,
-                        ),
-                        title: Row(
-                          children: [
-                            Text(member.username),
-                            const SizedBox(width: 10),
-                            member.isAdminInChat
-                                ? const Icon(
-                                    Icons.star_rounded,
-                                    color: Colors.grey,
-                                  )
-                                : const SizedBox(),
-                          ],
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.add_rounded),
-                          onPressed: () {},
-                        ),
-                      ),
-                    );
-                  },
-                  itemCount: chatRoomDetails.members.length,
-                ),
-              )
-            ],
-          ),
+        return AddMemberToChatModal(
+          chatRoomDetails: chatRoomDetails,
+          chatKey: chatRoomKey,
+          chatIv: chatRoomIv,
+          loggedUserInfo: loggedInUser,
         );
       },
     );
   }
 
+  void showMembersModal(
+      context, ChatRoomDetails chatRoomDetails, LoggedUserInfo loggedUserInfo) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ChatMembersModal(
+          chatRoomDetails: chatRoomDetails,
+          loggedUserInfo: loggedUserInfo,
+          chatRoomKey: chatRoomKey,
+          chatRoomIv: chatRoomIv,
+        );
+      },
+    );
+  }
+
+  void handleLeaveChat() async {
+    final plaintextContent = "${loggedInUser.username} left the chat";
+    final encryptedContent = await CryptoUtils.encryptWithAES(
+      plaintextContent,
+      chatRoomKey,
+      chatRoomIv,
+    );
+
+    stompService.sendChatMessage(
+      OutgoingChatMessage(
+        type: ChatMessageType.ANNOUNCEMENT,
+        encryptedContent: encryptedContent,
+      ),
+      widget.chatId,
+    );
+
+    await CryptoUtils.removeConversationKeyAndIV(widget.chatId);
+    chatRoomService.leaveChat(widget.chatId);
+    GoRouter.of(context).go('/');
+  }
+
   void showOptionsModal(context) {
+    bool isLoggedInUserAdmin = chatRoomDetails.members
+        .firstWhere((member) => member.id == loggedInUser.userId)
+        .isAdminInChat;
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -250,29 +267,28 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ListTile(
-              leading: const Icon(Icons.people_rounded),
-              title: const Text("View members"),
-              onTap: () {
-                Navigator.pop(context);
-                showMembersModal(context, chatRoomDetails);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person_add_rounded),
-              title: const Text("Add new member"),
-              onTap: () {
-                Navigator.pop(context);
-                showAddMemberModal(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.exit_to_app_rounded),
-              title: const Text("Leave chat"),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
+            if (!chatRoomDetails.isPrivateChat())
+              ListTile(
+                leading: const Icon(Icons.people_rounded),
+                title: const Text("View members"),
+                onTap: () {
+                  showMembersModal(context, chatRoomDetails, loggedInUser);
+                },
+              ),
+            if (isLoggedInUserAdmin && !chatRoomDetails.isPrivateChat())
+              ListTile(
+                leading: const Icon(Icons.person_add_rounded),
+                title: const Text("Add new member"),
+                onTap: () {
+                  showAddMemberModal(context);
+                },
+              ),
+            if (!chatRoomDetails.isPrivateChat())
+              ListTile(
+                leading: const Icon(Icons.exit_to_app_rounded),
+                title: const Text("Leave chat"),
+                onTap: () => handleLeaveChat(),
+              ),
             if (chatRoomDetails.isPrivateChat())
               ListTile(
                 leading: blockedUsers!
@@ -339,11 +355,20 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     if (messages.isEmpty) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bottomOffset = MediaQuery.of(context).viewInsets.bottom;
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent + bottomOffset,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-      );
+      final scrollExtent = _scrollController.position.maxScrollExtent;
+      final scrollPosition = _scrollController.position.pixels;
+
+      // Ensure we don't scroll beyond the max scroll extent
+      final targetOffset = scrollExtent + bottomOffset;
+
+      // Only scroll if we are not already at the bottom
+      if (scrollPosition < targetOffset) {
+        _scrollController.animateTo(
+          targetOffset,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+        );
+      }
     });
   }
 
@@ -396,6 +421,10 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         isLockedToBottom = true;
+      }
+      if (_scrollController.position.pixels <
+          _scrollController.position.maxScrollExtent) {
+        isLockedToBottom = false;
       }
     });
     _scrollController.addListener(() {
@@ -506,6 +535,10 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                           builder: (BuildContext context,
                               BoxConstraints constraints) {
                             return ListView.builder(
+                              padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom,
+                              ),
                               controller: _scrollController,
                               itemCount: messages.length + 1,
                               itemBuilder: (context, index) {

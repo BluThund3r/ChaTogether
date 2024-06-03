@@ -80,4 +80,11 @@ public class UserController {
         String username = AuthRequestFilter.getUsername();
         return userService.getKeys(username);
     }
+
+    @GetMapping("/getPublicKeyOfUser/{username}")
+    public String getPublicKeyOfUser(
+            @PathVariable String username
+    ) {
+        return userService.getPublicKeyOfUser(username);
+    }
 }

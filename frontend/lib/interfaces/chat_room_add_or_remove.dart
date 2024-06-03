@@ -1,4 +1,3 @@
-import 'package:frontend/interfaces/chat_message.dart';
 import 'package:frontend/interfaces/chat_room_details.dart';
 import 'package:frontend/interfaces/enums/chat_room_action.dart';
 

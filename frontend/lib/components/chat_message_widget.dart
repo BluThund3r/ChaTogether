@@ -39,6 +39,9 @@ class ChatMessageWidget extends StatelessWidget {
       );
     }
 
+    final sender =
+        members.where((element) => element.id == message.senderId).firstOrNull;
+    final bool senderStillInChat = sender != null;
     return Align(
       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
@@ -48,12 +51,10 @@ class ChatMessageWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 5.0),
               child: CustomCircleAvatar(
-                imageUrl:
-                    '$baseUrl/user/profilePictureById?userId=${message.senderId}',
-                name: members
-                    .where((element) => element.id == message.senderId)
-                    .first
-                    .firstName,
+                imageUrl: senderStillInChat
+                    ? '$baseUrl/user/profilePictureById?userId=${message.senderId}'
+                    : '$baseUrl/user/profilePictureById?userId=0',
+                name: senderStillInChat ? sender.firstName : '?',
                 radius: 20,
               ),
             ),
@@ -107,7 +108,7 @@ class ChatMessageWidget extends StatelessWidget {
                             color: Colors.white70,
                           ),
                         const SizedBox(width: 2),
-                        if (!privateChat || isCurrentUser)
+                        if (isCurrentUser)
                           Icon(
                             message.seenBy.length > 1
                                 ? Icons.remove_red_eye

@@ -6,6 +6,7 @@ import chatogether.ChaTogether.persistence.FriendRequest;
 import chatogether.ChaTogether.persistence.User;
 import chatogether.ChaTogether.repositories.FriendRequestRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 public class FriendshipService {
     private FriendRequestRepository friendRequestRepository;
     private UserService userService;
+
 
     public void sendFriendRequest(String sender, String receiver) {
         if (friendRequestRepository.getFriendRequest(sender, receiver).isPresent()) {
@@ -112,6 +114,7 @@ public class FriendshipService {
         }
 
         userService.saveUser(userRequesting);
+
     }
 
     public void unblockUser(String requestingUsername, String usernameToUnblock) {
@@ -122,6 +125,7 @@ public class FriendshipService {
 
         userRequesting.getBlockedUsers().remove(userToUnblock);
         userService.saveUser(userRequesting);
+
     }
 
     public List<User> getBlockedUsers(String username) {

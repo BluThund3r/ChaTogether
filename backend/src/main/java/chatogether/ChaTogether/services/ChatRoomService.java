@@ -157,8 +157,11 @@ public class ChatRoomService {
 
     public void addUserToChatRoom(Long userId, String chatRoomId, String encryptedKey, Long adminId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
+        if (chatRoom.isPrivateChat())
+            throw new UserAddDenied("Cannot add user to private chat room");
         if (!chatRoom.getAdmins().contains(adminId))
             throw new UserNotInChatRoom();
+
         chatRoom.setEncryptedKeyOfUser(userId, encryptedKey);
         var savedChatRoom = chatRoomRepository.save(chatRoom);
         simpMessagingTemplate.convertAndSend(
@@ -195,7 +198,7 @@ public class ChatRoomService {
                 new ChatRoomAddOrRemoveDTO(
                         savedChatRoom,
                         null,
-                        ChatRoomAction.ADD,
+                        ChatRoomAction.REMOVE,
                         List.of(userId),
                         userService
                 )
@@ -203,6 +206,7 @@ public class ChatRoomService {
     }
 
     public void leaveChatRoom(Long userId, String chatRoomId) {
+        System.out.println("Leaving chat room: " + chatRoomId + " by user: " + userId);
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         if (chatRoom.isPrivateChat())
             throw new UserRemovalDenied("Cannot leave private chat room");
@@ -277,6 +281,19 @@ public class ChatRoomService {
             throw new UserNotInChatRoom();
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         return new ChatRoomDetailsWithLastMessageDTO(chatRoom, null, userService);
+    }
+
+    public List<User> getFriendsNotInChat(String callerUsername, String chatRoomId) {
+        var caller = userService.findByUsername(callerUsername).orElseThrow(UserDoesNotExist::new);
+        return caller.getFriends().stream()
+                .filter(friend -> !isUserInChatRoom(friend.getId(), chatRoomId))
+                .toList();
+    }
+
+    public Optional<ChatRoom> getPrivateChatOfUsers(String username1, String username2) {
+        var user1 = userService.findByUsername(username1).orElseThrow(UserDoesNotExist::new);
+        var user2 = userService.findByUsername(username2).orElseThrow(UserDoesNotExist::new);
+        return chatRoomRepository.findPrivateByUserIds(user1.getId(), user2.getId());
     }
 }
 

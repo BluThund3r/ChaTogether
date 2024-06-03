@@ -58,6 +58,18 @@ class UserService {
     }
   }
 
+  Future<dynamic> getPublicKeyOfOtherUser(String username) async {
+    final response = await HttpWithToken.get(
+      url: "$baseUrl/user/getPublicKeyOfUser/$username",
+    );
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      return response.body;
+    }
+  }
+
   Future<dynamic> fetchUserRSAKeys(String password) async {
     final response = await HttpWithToken.get(url: "$baseUrl/user/getKeys");
     if (response.statusCode != 200) {

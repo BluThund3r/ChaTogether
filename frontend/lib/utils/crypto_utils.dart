@@ -63,6 +63,11 @@ class CryptoUtils {
     return [base64Decode(key), encrypt.IV.fromBase64(iv)];
   }
 
+  static Future<void> removeConversationKeyAndIV(String conversationId) async {
+    await _secureStorage.delete(key: "conversationKey.$conversationId");
+    await _secureStorage.delete(key: "conversationIV.$conversationId");
+  }
+
   static Future<List<dynamic>> decryptConversationKeyAndIv(
       String encryptedKeyAndIvBase64) async {
     final privateKey = (await getUserRSAKeys())!.privateKey;
@@ -153,6 +158,18 @@ class CryptoUtils {
 
     message.content = decryptedMessage;
     return message;
+  }
+
+  static Future<dynamic> encryptChatKeyForNewUser(
+    Uint8List chatRoomKey,
+    encrypt.IV chatRoomIV,
+    String publicKey,
+  ) async {
+    final chatRoomKeyBase64 = base64Encode(chatRoomKey);
+    final chatRoomIVBase64 = chatRoomIV.base64;
+    final concatenated = "$chatRoomIVBase64.$chatRoomKeyBase64";
+    final encryptedKeyAndIv = await encryptWithRSA(concatenated, publicKey);
+    return encryptedKeyAndIv;
   }
 
   static Future<List<ChatMessage>> decryptChatMessages(

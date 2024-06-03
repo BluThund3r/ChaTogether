@@ -19,12 +19,25 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-        id: json['id'],
-        username: json['username'],
-        email: json['email'],
-        firstName: json['firstName'],
-        lastName: json['lastName'],
-        online: json['online'],
-        isAdminInChat: json['isAdminInChat']);
+      id: json['id'],
+      username: json['username'],
+      email: json['email'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      online: json['online'],
+      isAdminInChat: json['isAdminInChat'] ?? false,
+    );
+  }
+
+  factory User.empty() {
+    return User(
+      id: 0,
+      username: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      online: false,
+      isAdminInChat: false,
+    );
   }
 }

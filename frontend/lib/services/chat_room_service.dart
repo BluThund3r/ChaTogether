@@ -94,4 +94,88 @@ class ChatRoomService {
       return response.body;
     }
   }
+
+  Future<dynamic> getFriendsNotInChat(String chatId) async {
+    final response = await HttpWithToken.get(
+      url: "$baseUrl/chatRoom/friendsNotInChat/$chatId",
+    );
+
+    print("Fetched friends not in chat: ${response.body}");
+    if (response.statusCode == 200) {
+      final List<dynamic> body = jsonDecode(response.body);
+      return body.map((dynamic item) => User.fromJson(item)).toList();
+    } else {
+      return response.body;
+    }
+  }
+
+  Future<dynamic> addMemberToChat(
+    String chatId,
+    int userId,
+    String encryptedChatKey,
+  ) async {
+    final response = await HttpWithToken.post(
+      url: "$baseUrl/chatRoom/addUser",
+      body: {
+        "chatRoomId": chatId,
+        "userId": userId,
+        "encryptedKey": encryptedChatKey,
+      },
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
+
+  Future<dynamic> grantChatAdminToUser(String chatRoomId, int userId) async {
+    final response = await HttpWithToken.post(
+      url: "$baseUrl/chatRoom/makeAdmin/$chatRoomId/$userId",
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
+
+  Future<dynamic> revokeChatAdminFromUser(String chatRoomId, int userId) async {
+    final response = await HttpWithToken.delete(
+      url: "$baseUrl/chatRoom/removeAdmin/$chatRoomId/$userId",
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
+
+  Future<dynamic> removeUserFromChat(String chatRoomId, int userId) async {
+    final response = await HttpWithToken.delete(
+      url: "$baseUrl/chatRoom/removeUser/$chatRoomId/$userId",
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
+
+  Future<dynamic> leaveChat(String chatRoomId) async {
+    final response = await HttpWithToken.delete(
+      url: "$baseUrl/chatRoom/leaveChat/$chatRoomId",
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:frontend/api/firebase_api.dart';
 import 'package:frontend/routing/router.dart';
 import 'package:frontend/services/auth_service.dart';
@@ -8,10 +9,13 @@ import 'package:frontend/services/chat_room_service.dart';
 import 'package:frontend/services/friend_service.dart';
 import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/services/user_service.dart';
+import 'package:frontend/services/video_room_service.dart';
+import 'package:frontend/utils/backend_details.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  print("Domain: $baseUrl");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -23,28 +27,38 @@ void main() async {
     stompService.openWsConnection();
   }
 
-  runApp(
-    MultiProvider(
-      providers: [
-        Provider<AuthService>(
-          create: (_) => AuthService(),
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then(
+    (_) {
+      runApp(
+        MultiProvider(
+          providers: [
+            Provider<AuthService>(
+              create: (_) => AuthService(),
+            ),
+            Provider<FriendService>(
+              create: (_) => FriendService(),
+            ),
+            Provider<UserService>(
+              create: (_) => UserService(),
+            ),
+            Provider<ChatRoomService>(
+              create: (_) => ChatRoomService(),
+            ),
+            Provider<ChatMessageService>(
+              create: (_) => ChatMessageService(),
+            ),
+            Provider<VideoRoomService>(
+              create: (_) => VideoRoomService(),
+            ),
+            // other services that need to be injected
+          ],
+          child: const MyApp(),
         ),
-        Provider<FriendService>(
-          create: (_) => FriendService(),
-        ),
-        Provider<UserService>(
-          create: (_) => UserService(),
-        ),
-        Provider<ChatRoomService>(
-          create: (_) => ChatRoomService(),
-        ),
-        Provider<ChatMessageService>(
-          create: (_) => ChatMessageService(),
-        ),
-        // other services that need to be injected
-      ],
-      child: const MyApp(),
-    ),
+      );
+    },
   );
 }
 
