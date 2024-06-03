@@ -1,13 +1,19 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
 import 'package:frontend/components/toast.dart';
+import 'package:frontend/interfaces/enums/join_or_leave_type.dart';
 import 'package:frontend/interfaces/video_room_details.dart';
+import 'package:frontend/interfaces/video_room_join_or_leave.dart';
+import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/services/video_room_service.dart';
 import 'package:frontend/utils/backend_details.dart';
 import 'package:provider/provider.dart';
+import 'package:stomp_dart_client/stomp_dart_client.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class VideoRoomPage extends StatefulWidget {
@@ -20,6 +26,7 @@ class VideoRoomPage extends StatefulWidget {
 
 class _VideoRoomPageState extends State<VideoRoomPage> {
   late VideoRoomService videoRoomService;
+  final StompService stompService = StompService();
   late VideoRoomDetails videoRoomDetails;
   final initialVideoUrl = "https://www.youtube.com/watch?v=3nQNiWdeH2Q";
   late YoutubePlayerController youtubePlayerController;
@@ -27,17 +34,70 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
   bool _isFullScreen = false;
   bool totalDuration = true;
   bool _pageLoaded = false;
+  List<dynamic> unsubscribeFunctions = [];
 
-  void subscribeToVideoRoom() {
-    // TODO: implement this
-  }
-
-  void unsubscribeFromVideoRoom() {
+  void handleVideoRoomSignalReceived(StompFrame frame) {
     // TODO: implement this
   }
 
   void handleLoadNewVideo() {
     // TODO: implement this
+  }
+
+  void handlePauseVideo() {
+    // TODO: implement this
+  }
+
+  void handleResumeVideo() {
+    // TODO: implement this
+  }
+
+  void handleSeekToPosition(Duration position) {
+    // TODO: implement this
+  }
+
+  void handleVideoRoomJoinOrLeaveReceived(StompFrame frame) {
+    if (frame.body == null) return;
+    print("Received video room join or leave signal: ${frame.body}");
+    final VideoRoomJoinOrLeave videoRoomJoinOrLeave =
+        VideoRoomJoinOrLeave.fromjson(jsonDecode(frame.body!));
+
+    if (videoRoomJoinOrLeave.action == JoinOrLeaveType.JOIN) {
+      setState(() {
+        videoRoomDetails.members.add(videoRoomJoinOrLeave.userDetails);
+      });
+    } else {
+      setState(() {
+        videoRoomDetails.members.removeWhere((member) =>
+            member.username == videoRoomJoinOrLeave.userDetails.username);
+      });
+    }
+  }
+
+  void subscribeToVideoRoom() {
+    print("Subscribing to video room signals and join or leave");
+    final unsubscribe1 = stompService.subscribeToVideoRoomSignals(
+      videoRoomDetails.connectionCode,
+      handleVideoRoomSignalReceived,
+    );
+
+    final unsubscribe2 = stompService.subscribeToVideoRoomJoinOrLeave(
+      videoRoomDetails.connectionCode,
+      handleVideoRoomJoinOrLeaveReceived,
+    );
+
+    unsubscribeFunctions = [unsubscribe1, unsubscribe2];
+  }
+
+  void signalLeaving() {
+    videoRoomService.leaveVideoRoom(videoRoomDetails.connectionCode);
+  }
+
+  void unsubscribeFromVideoRoom() {
+    print("Unsubscribing from video room signals and join or leave");
+    for (var unsubscribe in unsubscribeFunctions) {
+      unsubscribe();
+    }
   }
 
   void handleCopyConnectionCode() async {
@@ -72,6 +132,8 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
       videoRoomDetails = _videoRoomDetails;
       _pageLoaded = true;
     });
+
+    subscribeToVideoRoom();
   }
 
   void removeCachedImages() async {
@@ -104,6 +166,7 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
     unsubscribeFromVideoRoom();
     youtubePlayerController.dispose();
     removeCachedImages();
+    signalLeaving();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,

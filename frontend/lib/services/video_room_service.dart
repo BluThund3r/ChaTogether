@@ -1,10 +1,15 @@
 import 'dart:convert';
 
 import 'package:frontend/interfaces/video_room_details.dart';
+import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/utils/backend_details.dart';
 import 'package:frontend/utils/fetch_with_token.dart';
 
 class VideoRoomService {
+  final StompService stompService = StompService();
+  final AuthService authService = AuthService();
+
   Future<dynamic> createVideoRoom() async {
     final response = await HttpWithToken.post(
       url: "$baseUrl/videoRoom/createNew",
@@ -33,7 +38,7 @@ class VideoRoomService {
     }
   }
 
-  Future<dynamic> leaveVideoRoom(String connectionCode) async {
-    // TODO: implement this
+  void leaveVideoRoom(String connectionCode) async {
+    stompService.sendLeaveSignal(connectionCode);
   }
 }

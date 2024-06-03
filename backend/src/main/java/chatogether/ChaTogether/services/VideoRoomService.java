@@ -84,7 +84,22 @@ public class VideoRoomService {
         videoRooms.forEach(System.out::println);
         System.out.println("Last user left: ");
         lastUserLeft.forEach((key, value) -> System.out.println(key + " " + value));
-        LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(MAX_INACTIVE_TIME_MINUTES);
-        lastUserLeft.entrySet().removeIf(entry -> entry.getValue().isBefore(fiveMinutesAgo));
+        var fiveMinutesAgo = LocalDateTime.now().minusMinutes(MAX_INACTIVE_TIME_MINUTES);
+        var iterator = lastUserLeft.entrySet().iterator();
+        while (iterator.hasNext()) {
+            var entry = iterator.next();
+            if (entry.getValue().isBefore(fiveMinutesAgo)) {
+                var videoRoom = getVideoRomByConnectionCode(entry.getKey());
+                videoRooms.remove(videoRoom);
+                iterator.remove();
+            }
+        }
+//        for (var entry : lastUserLeft.entrySet()) {
+//            if (entry.getValue().isBefore(fiveMinutesAgo)) {
+//                var videoRoom = getVideoRomByConnectionCode(entry.getKey());
+//                videoRooms.remove(videoRoom);
+//            }
+//        }
+//        lastUserLeft.entrySet().removeIf(entry -> entry.getValue().isBefore(fiveMinutesAgo));
     }
 }

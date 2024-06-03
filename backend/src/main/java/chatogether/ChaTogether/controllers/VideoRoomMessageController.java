@@ -107,6 +107,21 @@ public class VideoRoomMessageController {
         );
     }
 
+    @MessageMapping("/videoRoom/seekToPosition/{connectionCode}")
+    public void seekToPosition(
+            @DestinationVariable String connectionCode,
+            VideoPositionChangeDTO videoPositionChangeDTO
+    ) {
+        simpMessagingTemplate.convertAndSend(
+                "/queue/videoRoom/signal/" + connectionCode,
+                VideoRoomSignalDTO.builder()
+                        .connectionCode(connectionCode)
+                        .signalType(VideoRoomSignalType.SEEK)
+                        .signalData(videoPositionChangeDTO.getPosition() + "|" + videoPositionChangeDTO.isPlaying())
+                        .build()
+        );
+    }
+
     @MessageMapping("/videoRoom/changeVideo/{connectionCode}")
     public void changeVideo(
             @DestinationVariable String connectionCode,
@@ -136,6 +151,8 @@ public class VideoRoomMessageController {
                 connectionCode
         );
 
+        System.out.println(user.getUsername() + " is leaving room " + connectionCode);
+
         simpMessagingTemplate.convertAndSend(
                 "/queue/videoRoom/joinOrLeave/" + connectionCode,
                 VideoRoomJoinOrLeaveDTO.builder()
@@ -144,5 +161,7 @@ public class VideoRoomMessageController {
                         .userDetails(new UserDetailsForOthersDTO(user, false))
                         .build()
         );
+
+        System.out.println("Sent leave message to room " + connectionCode);
     }
 }

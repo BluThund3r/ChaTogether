@@ -1,3 +1,5 @@
+import 'package:frontend/services/auth_service.dart';
+
 class User {
   int id;
   String username;
@@ -39,5 +41,29 @@ class User {
       online: false,
       isAdminInChat: false,
     );
+  }
+
+  factory User.fromLoggedIn(LoggedUserInfo loggedUserInfo) {
+    return User(
+      id: loggedUserInfo.userId,
+      username: loggedUserInfo.username,
+      email: loggedUserInfo.email,
+      firstName: loggedUserInfo.firstName,
+      lastName: loggedUserInfo.lastName,
+      online: false,
+      isAdminInChat: false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'username': username,
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'online': online,
+      'isAdminInChat': isAdminInChat,
+    };
   }
 }
