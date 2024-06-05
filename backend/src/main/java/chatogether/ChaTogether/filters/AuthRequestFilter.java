@@ -24,6 +24,7 @@ public class AuthRequestFilter extends OncePerRequestFilter {
     private static final ThreadLocal<String> firstName = new ThreadLocal<>();
     private static final ThreadLocal<String> lastName = new ThreadLocal<>();
     private static final ThreadLocal<Long> userId = new ThreadLocal<>();
+    private static final ThreadLocal<Boolean> isAdmin = new ThreadLocal<>();
     private JWTService jwtService;
 
     private Set<String> urlsToSkip = Set.of(
@@ -77,6 +78,7 @@ public class AuthRequestFilter extends OncePerRequestFilter {
         firstName.set(claims.get("firstName", String.class));
         lastName.set(claims.get("lastName", String.class));
         userId.set(claims.get("userId", Long.class));
+        isAdmin.set(claims.get("isAdmin", Boolean.class));
 
         filterChain.doFilter(request, response);
     }

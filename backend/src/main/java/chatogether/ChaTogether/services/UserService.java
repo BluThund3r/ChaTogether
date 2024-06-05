@@ -96,4 +96,20 @@ public class UserService {
     public String getPublicKeyOfUser(String username) {
         return userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new).getPublicKey();
     }
+
+    public boolean isUserAppAdmin(String username) {
+        return userRepository.findByUsername(username).orElseThrow(UserDoesNotExist::new).getIsAdmin();
+    }
+
+    public void makeAppAdmin(Long userId) {
+        var user = userRepository.findById(userId).orElseThrow(UserDoesNotExist::new);
+        user.setIsAdmin(true);
+        userRepository.save(user);
+    }
+
+    public void removeAppAdmin(Long userId) {
+        var user = userRepository.findById(userId).orElseThrow(UserDoesNotExist::new);
+        user.setIsAdmin(false);
+        userRepository.save(user);
+    }
 }

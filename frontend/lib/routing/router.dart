@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/pages/add_friend_page.dart';
+import 'package:frontend/pages/admin_stats.dart';
+import 'package:frontend/pages/admin_users.dart';
 import 'package:frontend/pages/auth_pages/login_page.dart';
 import 'package:frontend/pages/auth_pages/mail_verification_page.dart';
 import 'package:frontend/pages/auth_pages/register_page.dart';
@@ -121,6 +123,32 @@ final GoRouter router = GoRouter(
           path: 'addFriend',
           builder: (BuildContext context, GoRouterState state) {
             return const AddFriendPage();
+          },
+        ),
+      ],
+    ),
+    GoRoute(
+      path: "/admin",
+      redirect: (context, state) async {
+        final isAdmin =
+            await Provider.of<AuthService>(context, listen: false).checkAdmin();
+        if (!isAdmin) {
+          return '/';
+        }
+        return null;
+      },
+      builder: (context, state) => const SizedBox(),
+      routes: [
+        GoRoute(
+          path: 'statistics',
+          builder: (BuildContext context, GoRouterState state) {
+            return const AdminStats();
+          },
+        ),
+        GoRoute(
+          path: 'users',
+          builder: (BuildContext context, GoRouterState state) {
+            return const AdminUsers();
           },
         ),
       ],

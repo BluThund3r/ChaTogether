@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -26,6 +27,7 @@ public class ChatRoomService {
     private final FileService fileService;
     private final FriendshipService friendshipService;
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final StatsService statsService;
     public static final int MAX_USERS_IN_GROUP_CHAT = 50;
 
     public ChatRoom createPrivateChat(String senderUsername, String receiverUsername) {
@@ -72,6 +74,8 @@ public class ChatRoomService {
                 )
         );
 
+        statsService.incrementPrivateChatsCount(LocalDateTime.now());
+
         return savedChatRoom;
     }
 
@@ -117,6 +121,8 @@ public class ChatRoomService {
                         userService
                 )
         );
+
+        statsService.incrementGroupChatsCount(LocalDateTime.now());
 
         return savedChatRoom;
     }

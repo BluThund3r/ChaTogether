@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/api/firebase_api.dart';
 import 'package:frontend/routing/router.dart';
+import 'package:frontend/services/admin_service.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/chat_message_service.dart';
 import 'package:frontend/services/chat_room_service.dart';
@@ -52,6 +53,9 @@ void main() async {
             ),
             Provider<VideoRoomService>(
               create: (_) => VideoRoomService(),
+            ),
+            Provider<AdminService>(
+              create: (_) => AdminService(),
             ),
             // other services that need to be injected
           ],

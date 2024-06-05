@@ -41,4 +41,49 @@ class VideoRoomService {
   void leaveVideoRoom(String connectionCode) async {
     stompService.sendLeaveSignal(connectionCode);
   }
+
+  void sendVideoPositionChange(
+      String connectionCode, Duration position, bool isPlaying) {
+    stompService.sendSeekSignal(connectionCode, position.toString(), isPlaying);
+  }
+
+  void sendVideoChange(String connectionCode, String videoId) {
+    stompService.sendChangeVideoSignal(connectionCode, videoId);
+  }
+
+  void sendPauseSignal(String connectionCode) {
+    stompService.sendPauseSignal(connectionCode);
+  }
+
+  void sendResumeSignal(String connectionCode) {
+    stompService.sendResumeSignal(connectionCode);
+  }
+
+  void sendSyncVideoRequest(String connectionCode) {
+    stompService.sendSyncVideoRequest(connectionCode);
+  }
+
+  void sendSyncPositionRequest(String connectionCode) {
+    stompService.sendSyncPositionRequest(connectionCode);
+  }
+
+  void sendSyncVideoResponse(String connectionCode, String videoId) {
+    stompService.sendSyncVideoResponse(connectionCode, videoId);
+  }
+
+  void sendSyncPositionResponse(
+    String connectionCode,
+    Duration position,
+    bool isPlaying,
+  ) {
+    stompService.sendSyncPositionResponse(
+      connectionCode,
+      position.toString(),
+      isPlaying,
+    );
+  }
+
+  void loadNewVideo(String connectionCode, String videoId) {
+    stompService.sendChangeVideoSignal(connectionCode, videoId);
+  }
 }

@@ -14,14 +14,15 @@ class LoggedUserInfo {
   final String firstName;
   final String lastName;
   final int userId;
+  final bool isAppAdmin;
 
-  LoggedUserInfo({
-    required this.username,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.userId,
-  });
+  LoggedUserInfo(
+      {required this.username,
+      required this.email,
+      required this.firstName,
+      required this.lastName,
+      required this.userId,
+      required this.isAppAdmin});
 
   factory LoggedUserInfo.fromJson(Map<String, dynamic> json) {
     return LoggedUserInfo(
@@ -30,6 +31,7 @@ class LoggedUserInfo {
       firstName: json['firstName'],
       lastName: json['lastName'],
       userId: json['userId'],
+      isAppAdmin: json['isAdmin'],
     );
   }
 }
@@ -166,5 +168,15 @@ class AuthService {
 
   Future<String?> getAuthToken() async {
     return await _storage.read(key: 'authToken');
+  }
+
+  Future<bool> checkAdmin() async {
+    final loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+      return false;
+    }
+
+    final loggedInUser = await getLoggedInUser();
+    return loggedInUser.isAppAdmin;
   }
 }

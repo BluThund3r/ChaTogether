@@ -172,11 +172,11 @@ class StompService {
     );
   }
 
-  void sendSeekSignal(String connectionCode, String position) {
+  void sendSeekSignal(String connectionCode, String position, bool isPlaying) {
     _stompClient.send(
       destination: '$_sendBaseUrl/videoRoom/seekToPosition/$connectionCode',
       body: json.encode(
-        VideoPositionChange(position: position, isPlaying: true).toJson(),
+        VideoPositionChange(position: position, isPlaying: isPlaying).toJson(),
       ),
     );
   }

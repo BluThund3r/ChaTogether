@@ -127,6 +127,14 @@ class _WatchPageState extends State<WatchPage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => handleCreateRoom(),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: const BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                    ),
                     child: const Text("Create Room"),
                   ),
                 ),
@@ -134,6 +142,14 @@ class _WatchPageState extends State<WatchPage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => showJoinRoomModal(context),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                          side: const BorderSide(color: Colors.grey),
+                        ),
+                      ),
+                    ),
                     child: const Text("Join Room"),
                   ),
                 ),

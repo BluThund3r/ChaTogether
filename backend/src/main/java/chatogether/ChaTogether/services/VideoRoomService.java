@@ -17,12 +17,14 @@ import java.util.stream.Collectors;
 @Service
 public class VideoRoomService {
     private Set<VideoRoom> videoRooms;
+    private final StatsService statsService;
     private Map<String, LocalDateTime> lastUserLeft;
     private static int MAX_INACTIVE_TIME_MINUTES = 5;
 
-    public VideoRoomService() {
+    public VideoRoomService(StatsService statsService) {
         videoRooms = new HashSet<>();
         lastUserLeft = new HashMap<>();
+        this.statsService = statsService;
     }
 
     public VideoRoom createVideoRoom() {
@@ -39,6 +41,8 @@ public class VideoRoomService {
         videoRoom.setConnectionCode(RandomTokenGenerator.generateVideoRoomConnectionCode());
         videoRoom.setConnectedUsers(new HashSet<>());
         videoRooms.add(videoRoom);
+
+        statsService.incrementVideoRoomsCount(LocalDateTime.now());
         return videoRoom;
     }
 

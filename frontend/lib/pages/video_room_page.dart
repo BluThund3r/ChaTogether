@@ -1,17 +1,20 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/enums/join_or_leave_type.dart';
+import 'package:frontend/interfaces/enums/video_room_signal_type.dart';
 import 'package:frontend/interfaces/video_room_details.dart';
 import 'package:frontend/interfaces/video_room_join_or_leave.dart';
+import 'package:frontend/interfaces/video_room_signal.dart';
 import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/services/video_room_service.dart';
 import 'package:frontend/utils/backend_details.dart';
+import 'package:frontend/utils/parse_duration.dart';
 import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -24,36 +27,174 @@ class VideoRoomPage extends StatefulWidget {
   State<VideoRoomPage> createState() => _VideoRoomPageState();
 }
 
-class _VideoRoomPageState extends State<VideoRoomPage> {
+class _VideoRoomPageState extends State<VideoRoomPage>
+    with WidgetsBindingObserver {
   late VideoRoomService videoRoomService;
   final StompService stompService = StompService();
   late VideoRoomDetails videoRoomDetails;
   final initialVideoUrl = "https://www.youtube.com/watch?v=3nQNiWdeH2Q";
   late YoutubePlayerController youtubePlayerController;
   final TextEditingController _videoUrlController = TextEditingController();
+  final Completer<void> _videoLoadedCompleter =
+      Completer<void>(); // TODO: vezi daca faci cv cu asta
   bool _isFullScreen = false;
-  bool totalDuration = true;
   bool _pageLoaded = false;
+  bool _isPlaying = false;
+  bool _syncedVideo = false;
+  bool _syncedPosition = false;
+  Duration _lastPosition = const Duration(seconds: 0);
+  bool _signalsOff = false;
   List<dynamic> unsubscribeFunctions = [];
 
   void handleVideoRoomSignalReceived(StompFrame frame) {
-    // TODO: implement this
+    if (frame.body == null) return;
+
+    print("Received video room signal: ${frame.body}");
+    final videoRoomSignal = VideoRoomSignal.fromJson(jsonDecode(frame.body!));
+    switch (videoRoomSignal.signalType) {
+      case VideoRoomSignalType.SYNC_VIDEO:
+        if (_syncedVideo && videoRoomDetails.members.length > 1) {
+          videoRoomService.sendSyncVideoResponse(
+            videoRoomDetails.connectionCode,
+            youtubePlayerController.metadata.videoId,
+          );
+        }
+        break;
+      case VideoRoomSignalType.SYNC_POSITION:
+        if (_syncedPosition) {
+          videoRoomService.sendSyncPositionResponse(
+            videoRoomDetails.connectionCode,
+            youtubePlayerController.value.position,
+            youtubePlayerController.value.isPlaying,
+          );
+        }
+        break;
+      case VideoRoomSignalType.SYNC_VIDEO_RESPONSE:
+        if (!_syncedVideo) {
+          videoRoomService
+              .sendSyncPositionRequest(videoRoomDetails.connectionCode);
+          if (!validVideoId(videoRoomSignal.signalData)) return;
+          _signalsOff = true;
+          youtubePlayerController.load(videoRoomSignal.signalData);
+          _signalsOff = false;
+          _syncedVideo = true;
+        }
+        break;
+      case VideoRoomSignalType.SYNC_POSITION_RESPONSE:
+        if (!_syncedPosition) {
+          final [duration, isPlaying] =
+              parseVideoPositionResponse(videoRoomSignal.signalData);
+          if (duration == null) return;
+          _signalsOff = true;
+          youtubePlayerController.seekTo(duration);
+          if (!isPlaying) {
+            youtubePlayerController.pause();
+          }
+          _signalsOff = false;
+          _syncedPosition = true;
+        }
+        break;
+      case VideoRoomSignalType.PAUSE:
+        if (_syncedPosition) {
+          _signalsOff = true;
+          youtubePlayerController.pause();
+          _signalsOff = false;
+        }
+        break;
+      case VideoRoomSignalType.RESUME:
+        if (_syncedPosition) {
+          _signalsOff = true;
+          youtubePlayerController.play();
+          _signalsOff = false;
+        }
+        break;
+      case VideoRoomSignalType.CHANGE_VIDEO:
+        if (!validVideoId(videoRoomSignal.signalData)) return;
+        _signalsOff = true;
+        youtubePlayerController.load(videoRoomSignal.signalData);
+        youtubePlayerController.pause();
+        _signalsOff = false;
+        if (!_syncedVideo || !_syncedPosition) {
+          _syncedPosition = true;
+          _syncedVideo = true;
+        }
+        break;
+      case VideoRoomSignalType.SEEK:
+        if (_syncedPosition) {
+          final [duration, isPlaying] =
+              parseVideoPositionResponse(videoRoomSignal.signalData);
+          if (duration == null) return;
+          _lastPosition = duration;
+          _signalsOff = true;
+          youtubePlayerController.seekTo(duration);
+          if (!isPlaying) {
+            youtubePlayerController.pause();
+          }
+          _signalsOff = false;
+        }
+        break;
+      default:
+        return;
+    }
+  }
+
+  bool validVideoId(String? videoId) {
+    if (videoId == null || videoId.isEmpty) return false;
+
+    final RegExp regExp = RegExp(r'^[a-zA-Z0-9_-]{11}$');
+    return regExp.hasMatch(videoId);
+  }
+
+  List<dynamic> parseVideoPositionResponse(String stringToParse) {
+    final List<String> parts = stringToParse.split("|");
+    final position = parseDuration(parts[0]);
+    if (position == null) return [null, null];
+    bool isPlaying;
+    try {
+      isPlaying = bool.parse(parts[1], caseSensitive: false);
+    } on FormatException {
+      return [null, null];
+    }
+
+    return [position, isPlaying];
   }
 
   void handleLoadNewVideo() {
-    // TODO: implement this
+    final videoUrl = _videoUrlController.text;
+    print("Loading new video: $videoUrl");
+
+    if (videoUrl.isEmpty) return;
+
+    final videoId =
+        YoutubePlayer.convertUrlToId(videoUrl, trimWhitespaces: true);
+
+    if (videoId == null) {
+      initFToast(context);
+      showErrorToast("URL not valid");
+      return;
+    }
+
+    videoRoomService.loadNewVideo(videoRoomDetails.connectionCode, videoId);
+    _videoUrlController.clear();
   }
 
   void handlePauseVideo() {
-    // TODO: implement this
+    print("Pausing video");
+    videoRoomService.sendPauseSignal(videoRoomDetails.connectionCode);
   }
 
   void handleResumeVideo() {
-    // TODO: implement this
+    print("Resuming video");
+    videoRoomService.sendResumeSignal(videoRoomDetails.connectionCode);
   }
 
   void handleSeekToPosition(Duration position) {
-    // TODO: implement this
+    print("Seek to position: ${position.toString()}");
+    videoRoomService.sendVideoPositionChange(
+      videoRoomDetails.connectionCode,
+      position,
+      youtubePlayerController.value.isPlaying,
+    );
   }
 
   void handleVideoRoomJoinOrLeaveReceived(StompFrame frame) {
@@ -131,6 +272,10 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
     setState(() {
       videoRoomDetails = _videoRoomDetails;
       _pageLoaded = true;
+      if (videoRoomDetails.members.length == 1) {
+        _syncedPosition = true;
+        _syncedVideo = true;
+      }
     });
 
     subscribeToVideoRoom();
@@ -147,22 +292,60 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
     }
   }
 
+  void videoControllerListener() {
+    if (youtubePlayerController.value.isPlaying != _isPlaying) {
+      setState(() {
+        _isPlaying = youtubePlayerController.value.isPlaying;
+      });
+
+      if (_signalsOff) return;
+
+      if (_isPlaying) {
+        handleResumeVideo();
+      } else {
+        handlePauseVideo();
+      }
+      return;
+    }
+
+    if (youtubePlayerController.value.isFullScreen != _isFullScreen) {
+      setState(() {
+        _isFullScreen = youtubePlayerController.value.isFullScreen;
+      });
+      return;
+    }
+
+    Duration currentPosition = youtubePlayerController.value.position;
+    if (_signalsOff) {
+      _lastPosition = currentPosition;
+      return;
+    }
+
+    if ((currentPosition - _lastPosition).abs() >
+        const Duration(milliseconds: 500)) {
+      handleSeekToPosition(currentPosition);
+    }
+    _lastPosition = currentPosition;
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     videoRoomService = Provider.of<VideoRoomService>(context, listen: false);
     youtubePlayerController = YoutubePlayerController(
       initialVideoId: YoutubePlayer.convertUrlToId(initialVideoUrl)!,
       flags: const YoutubePlayerFlags(
-        autoPlay: true,
+        autoPlay: false,
         mute: false,
       ),
-    );
+    )..addListener(videoControllerListener);
     fetchVideoRoomDetailsAndInit();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     unsubscribeFromVideoRoom();
     youtubePlayerController.dispose();
     removeCachedImages();
@@ -175,9 +358,17 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      signalLeaving();
+      unsubscribeFromVideoRoom();
+      removeCachedImages();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // resizeToAvoidBottomInset: true,
       appBar: _isFullScreen || !_pageLoaded
           ? null
           : AppBar(
@@ -207,9 +398,6 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
               automaticallyImplyLeading: false,
               actions: _pageLoaded
                   ? ([
-                      // const Text("Room Code:"),
-                      // const SizedBox(width: 10),
-
                       IconButton(
                         onPressed: () {
                           Navigator.pop(context);
@@ -227,15 +415,10 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
                     child: YoutubePlayer(
                       controller: youtubePlayerController,
                       onReady: () {
-                        youtubePlayerController.addListener(() {
-                          if (youtubePlayerController.value.isFullScreen !=
-                              _isFullScreen) {
-                            setState(() {
-                              _isFullScreen =
-                                  youtubePlayerController.value.isFullScreen;
-                            });
-                          }
-                        });
+                        if (!_syncedVideo) {
+                          videoRoomService.sendSyncVideoRequest(
+                              videoRoomDetails.connectionCode);
+                        }
                       },
                       bottomActions: [
                         CurrentPosition(),
@@ -268,6 +451,15 @@ class _VideoRoomPageState extends State<VideoRoomPage> {
                             const SizedBox(height: 10),
                             ElevatedButton(
                               onPressed: () => handleLoadNewVideo(),
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side: const BorderSide(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
                               child: const Text("Play"),
                             ),
                           ],

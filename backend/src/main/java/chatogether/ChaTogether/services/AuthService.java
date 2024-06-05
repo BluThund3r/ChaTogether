@@ -20,6 +20,7 @@ public class AuthService {
     private UserService userService;
     private MailService mailService;
     private FileService fileService;
+    private StatsService statsService;
 
     public User registerUser(
             String username,
@@ -99,6 +100,7 @@ public class AuthService {
         claims.put("firstName", user.getFirstName());
         claims.put("lastName", user.getLastName());
         claims.put("userId", user.getId());
+        claims.put("isAdmin", user.getIsAdmin());
 
         var token = jwtService.createToken(claims);
         return new LoginResponseDTO(
@@ -116,6 +118,7 @@ public class AuthService {
             throw new EmailAlreadyConfirmed();
         user.setConfirmedMail(true);
         userService.saveUser(user);
+        statsService.incrementNewUsersCount(LocalDateTime.now());
     }
 
     public void resendConfirmationEmail(String email) {

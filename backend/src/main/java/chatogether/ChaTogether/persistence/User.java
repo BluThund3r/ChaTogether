@@ -62,6 +62,8 @@ public class User {
     @Column(nullable = true, length = 10000)
     private String encryptedPrivateKey;
 
+    private Boolean isAdmin = false;
+
     private String directoryName;
 
     @JsonIgnore

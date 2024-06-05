@@ -81,8 +81,11 @@ public class VideoRoomMessageController {
 
     @MessageMapping("/videoRoom/pause/{connectionCode}")
     public void pauseVideoRoom(
-            @DestinationVariable String connectionCode
+            @DestinationVariable String connectionCode,
+            SimpMessageHeaderAccessor headerAccessor
     ) {
+        var username = headerAccessor.getSessionAttributes().get("username");
+        System.out.println(username + " is pausing room " + connectionCode);
         simpMessagingTemplate.convertAndSend(
                 "/queue/videoRoom/signal/" + connectionCode,
                 VideoRoomSignalDTO.builder()

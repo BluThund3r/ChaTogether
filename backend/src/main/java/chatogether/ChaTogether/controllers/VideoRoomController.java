@@ -32,6 +32,8 @@ public class VideoRoomController {
         var user = userService.findById(userId).orElseThrow(UserDoesNotExist::new);
         System.out.println("user: " + user);
 
+        var videoRoomDetails = new VideoRoomDetailsDTO(videoRoomService.joinVideoRoom(user, connectionCode));
+
         simpMessagingTemplate.convertAndSend(
                 "/queue/videoRoom/joinOrLeave/" + connectionCode,
                 VideoRoomJoinOrLeaveDTO.builder()
@@ -41,7 +43,7 @@ public class VideoRoomController {
                         .build()
         );
 
-        return new VideoRoomDetailsDTO(videoRoomService.joinVideoRoom(user, connectionCode));
+        return videoRoomDetails;
     }
 
     @PostMapping(path = "/createNew")
