@@ -1,0 +1,355 @@
+<mxfile host="app.diagrams.net" modified="2024-06-10T18:17:38.236Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0" version="24.5.2" etag="XaNWR34TeU__zCCwbtAI" type="device">
+  <diagram name="Page-1" id="e7e014a7-5840-1c2e-5031-d8a46d1fe8dd">
+    <mxGraphModel dx="2580" dy="1060" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="826" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="CLIENT" style="swimlane;whiteSpace=wrap;startSize=23;" parent="1" vertex="1">
+          <mxGeometry x="164.5" y="128" width="280" height="652" as="geometry" />
+        </mxCell>
+        <mxCell id="kW0idx2W1re05_FDhmMN-76" value="Utilizator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="2" vertex="1">
+          <mxGeometry x="25.5" y="32" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="31" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" parent="2" source="12" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="217.5" y="372" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="3" value="SERVER" style="swimlane;whiteSpace=wrap" parent="1" vertex="1">
+          <mxGeometry x="445" y="128" width="280" height="652" as="geometry" />
+        </mxCell>
+        <mxCell id="67" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" parent="3" target="65" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="143.29999999999995" y="772" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-197" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-136" target="pIuSgLsV-ipild1wYhXZ-138">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-136" value="Excepție" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="3">
+          <mxGeometry x="180.25" y="171" width="85" height="39" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-149" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="3">
+          <mxGeometry x="125" y="612" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="kW0idx2W1re05_FDhmMN-82" value="Trimite cerere de creare a unei conversații" style="rounded=0;whiteSpace=wrap;html=1;" parent="3" vertex="1">
+          <mxGeometry x="-191.5" y="42" width="102" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-132" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-107" target="pIuSgLsV-ipild1wYhXZ-124">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-107" value="Verifică datele primite" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="3">
+          <mxGeometry x="89" y="42" width="102" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-134" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-124" target="pIuSgLsV-ipild1wYhXZ-133">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="120" y="152" />
+              <mxPoint x="80" y="152" />
+              <mxPoint x="66" y="151" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-137" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-124" target="pIuSgLsV-ipild1wYhXZ-136">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="222.75" y="171" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="160" y="151" />
+              <mxPoint x="223" y="151" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-124" value="" style="shape=line;html=1;strokeWidth=6;strokeColor=#ff0000;" vertex="1" parent="3">
+          <mxGeometry x="99.75" y="132" width="80.5" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-142" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-133" target="pIuSgLsV-ipild1wYhXZ-140">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-133" value="Date ok" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="3">
+          <mxGeometry x="14.75" y="171" width="85" height="39" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-138" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="3">
+          <mxGeometry x="207.75" y="232" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-144" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-140" target="pIuSgLsV-ipild1wYhXZ-143">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-140" value="Crează obiectul de tip ChatRoom" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="3">
+          <mxGeometry x="89" y="252" width="102" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-146" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-143" target="pIuSgLsV-ipild1wYhXZ-145">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-143" value="Generează o cheie simetrică și un IV" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="3">
+          <mxGeometry x="89" y="342" width="102" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-148" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-145" target="pIuSgLsV-ipild1wYhXZ-147">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-145" value="Criptează cheia și IV pentru fiecare utilizator" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="3">
+          <mxGeometry x="89" y="432" width="102" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-200" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-147" target="pIuSgLsV-ipild1wYhXZ-149">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-147" value="Stochează cheile criptate în HashMap" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="3">
+          <mxGeometry x="89" y="522" width="102" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-141" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="3" source="kW0idx2W1re05_FDhmMN-82" target="pIuSgLsV-ipild1wYhXZ-107">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-199" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=-0.029;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="3" source="pIuSgLsV-ipild1wYhXZ-149" target="pIuSgLsV-ipild1wYhXZ-149">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="kW0idx2W1re05_FDhmMN-75" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font style=&quot;font-size: 24px;&quot;&gt;&lt;b&gt;CHAT CREATION&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+          <mxGeometry x="335" y="60" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-116" value="CLIENT" style="swimlane;whiteSpace=wrap;startSize=23;" vertex="1" parent="1">
+          <mxGeometry x="1770" y="128" width="280" height="692" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-117" value="Utilizator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-116">
+          <mxGeometry x="25.5" y="32" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-119" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-116">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="217.5" y="372" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-120" value="SERVER" style="swimlane;whiteSpace=wrap" vertex="1" parent="1">
+          <mxGeometry x="2050.5" y="128" width="280" height="692" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-121" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="143.29999999999995" y="772" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-152" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-118" target="pIuSgLsV-ipild1wYhXZ-151">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-118" value="Accesează o conversație" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-181.5" y="42" width="91" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-151" value="Are cheia și IV-ul conversației" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-178.75" y="122" width="85.5" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-170" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-153" target="pIuSgLsV-ipild1wYhXZ-169">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-153" value="Da; le folosește pe acelea" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-250.5" y="235" width="85.5" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-167" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-154" target="pIuSgLsV-ipild1wYhXZ-153">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-156" y="215" />
+              <mxPoint x="-208" y="215" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-171" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-154" target="pIuSgLsV-ipild1wYhXZ-168">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-116" y="212" />
+              <mxPoint x="-71" y="212" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-154" value="" style="shape=line;html=1;strokeWidth=6;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-176.25" y="192" width="80.5" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-156" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.504;entryY=0.244;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-151" target="pIuSgLsV-ipild1wYhXZ-154">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-168" value="Nu; cere cheia și iv-ul de la server" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-116" y="232.5" width="90" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-169" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-222.75" y="302" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-187" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-184" target="pIuSgLsV-ipild1wYhXZ-186">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-184" value="Decriptează String-ul primit cu cheia sa privată RSA și obține cheia simetrică și IV" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-193.5" y="462.75" width="115" height="78.5" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-189" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-186" target="pIuSgLsV-ipild1wYhXZ-188">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-186" value="Stochează cele două pe telefonul său" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-184.75" y="572" width="97.5" height="58.5" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-188" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="-151" y="652" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-174" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-122" target="pIuSgLsV-ipild1wYhXZ-173">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-122" value="Verifică dacă utilizatorul face parte din conversație" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="86.75" y="228" width="115.5" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-176" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-173" target="pIuSgLsV-ipild1wYhXZ-175">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="124.5" y="342" />
+              <mxPoint x="61.5" y="342" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-178" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-173" target="pIuSgLsV-ipild1wYhXZ-177">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="164.5" y="342" />
+              <mxPoint x="227.5" y="342" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-173" value="" style="shape=line;html=1;strokeWidth=6;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="104.25" y="322" width="80.5" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-183" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-175" target="pIuSgLsV-ipild1wYhXZ-182">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-175" value="Face parte din conversație" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="18.75" y="362" width="85.5" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-181" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-177" target="pIuSgLsV-ipild1wYhXZ-179">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-177" value="NU face parte din conversație; excepție" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="184.75" y="362" width="85.5" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-179" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="212.5" y="432" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-182" value="Întoarce cheia criptată asociată utilizatorului în HashMap" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-120">
+          <mxGeometry x="86.75" y="472" width="115.75" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-172" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-168" target="pIuSgLsV-ipild1wYhXZ-122">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-185" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-120" source="pIuSgLsV-ipild1wYhXZ-182" target="pIuSgLsV-ipild1wYhXZ-184">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-123" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;&lt;b&gt;CHAT KEY RETRIEVAL&lt;/b&gt;&lt;br&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1905.5" y="60" width="290" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-201" value="CLIENT" style="swimlane;whiteSpace=wrap;startSize=23;" vertex="1" parent="1">
+          <mxGeometry x="980" y="118" width="280" height="652" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-202" value="Utilizator" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-201">
+          <mxGeometry x="25.5" y="32" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-203" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-201">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="217.5" y="372" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-239" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-201" source="pIuSgLsV-ipild1wYhXZ-207" target="pIuSgLsV-ipild1wYhXZ-238">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-207" value="Apasă pe butonul de adăugare membru" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-201">
+          <mxGeometry x="89.25" y="42" width="101.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-238" value="Cere cheia publică RSA a utilizatorului respectiv" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-201">
+          <mxGeometry x="84.63" y="122" width="110.75" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-268" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-201" source="pIuSgLsV-ipild1wYhXZ-265" target="pIuSgLsV-ipild1wYhXZ-267">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-265" value="Folosește cheia publică a utilizatorului ca să cripteze cheia simetrică și IV conversației" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-201">
+          <mxGeometry x="77.31" y="251.5" width="125.37" height="79" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-267" value="Trimite String-ul rezultat către server, alături de id-ul utilizatorului de adăugat" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-201">
+          <mxGeometry x="80.91" y="367" width="118.18" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-204" value="SERVER" style="swimlane;whiteSpace=wrap" vertex="1" parent="1">
+          <mxGeometry x="1260.5" y="118" width="280" height="652" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-205" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="143.29999999999995" y="772" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-240" value="Face verificările necesare" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="92.31" y="126" width="95.38" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-260" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-256" target="pIuSgLsV-ipild1wYhXZ-259">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-261" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-256" target="pIuSgLsV-ipild1wYhXZ-258">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="160" y="242" />
+              <mxPoint x="222" y="242" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-256" value="" style="shape=line;html=1;strokeWidth=6;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="99.75" y="212" width="80.5" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-257" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0.408;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-240" target="pIuSgLsV-ipild1wYhXZ-256">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-258" value="Excepție" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="190" y="270" width="64.88" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-259" value="Totul OK; întoarce cheia publică a utilizatorului" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="29.499999999999996" y="265" width="95.13" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-262" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="207.44" y="342" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-264" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.487;entryY=0.063;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-258" target="pIuSgLsV-ipild1wYhXZ-262">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-269" value="Face verificările necesare" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="99.75" y="376" width="98.18" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-275" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-272" target="pIuSgLsV-ipild1wYhXZ-274">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="129" y="492" />
+              <mxPoint x="67" y="492" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-277" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-272" target="pIuSgLsV-ipild1wYhXZ-276">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-272" value="" style="shape=line;html=1;strokeWidth=6;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="108.58999999999992" y="462" width="80.5" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-273" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.498;entryY=0.287;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-269" target="pIuSgLsV-ipild1wYhXZ-272">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-279" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-274" target="pIuSgLsV-ipild1wYhXZ-278">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-274" value="Totul OK; asociază string-ul cu cheia criptată lui userId în HashMap" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="13.46" y="512" width="106.54" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-280" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="pIuSgLsV-ipild1wYhXZ-204" source="pIuSgLsV-ipild1wYhXZ-276" target="pIuSgLsV-ipild1wYhXZ-278">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-276" value="Excepție" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="187.69" y="531" width="66.04" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-278" value="" style="ellipse;html=1;shape=endState;fillColor=#000000;strokeColor=#ff0000;" vertex="1" parent="pIuSgLsV-ipild1wYhXZ-204">
+          <mxGeometry x="133.84000000000015" y="612" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-235" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;&lt;b&gt;ADD NEW&amp;nbsp; USER TO CHAT&lt;br&gt;&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="1095.5" y="50" width="330" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-241" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="pIuSgLsV-ipild1wYhXZ-238" target="pIuSgLsV-ipild1wYhXZ-240">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-266" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pIuSgLsV-ipild1wYhXZ-259" target="pIuSgLsV-ipild1wYhXZ-265">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pIuSgLsV-ipild1wYhXZ-270" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="pIuSgLsV-ipild1wYhXZ-267" target="pIuSgLsV-ipild1wYhXZ-269">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

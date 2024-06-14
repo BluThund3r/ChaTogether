@@ -65,7 +65,7 @@ public class VideoRoomMessageController {
         );
     }
 
-    @MessageMapping("videoRoom/syncPosition/{connectionCode}")
+    @MessageMapping("/videoRoom/syncPosition/{connectionCode}")
     public void syncPosition(
             @DestinationVariable String connectionCode
     ) {

@@ -85,6 +85,20 @@ public class ChatRoomService {
                 .toList();
         var admin = userService.findByUsername(adminUsername).orElseThrow(UserDoesNotExist::new);
 
+        var anyUsersBlocked = users.stream().anyMatch(
+                user -> !Objects.equals(user.getUsername(), admin.getUsername()) &&
+                        friendshipService.areUsersBlocked(user, admin)
+        );
+        var anyUsersNotFriends = users.stream().anyMatch(
+                user -> !Objects.equals(user.getUsername(), admin.getUsername()) &&
+                        !friendshipService.areUsersFriends(admin, user)
+        );
+
+        if (anyUsersBlocked)
+            throw new UsersBlocked();
+        if (anyUsersNotFriends)
+            throw new UsersNotFriends();
+
         var directorySeed = users.stream().reduce("", (acc, user) -> acc + user.getUsername(), String::concat);
         var directoryPath = BCrypt.hashpw(directorySeed, BCrypt.gensalt())
                 .replaceAll("[^a-zA-Z0-9.-]", "_");

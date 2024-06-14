@@ -25,9 +25,11 @@ public class FriendshipService {
         FriendRequest friendRequest = new FriendRequest();
         var senderUser = userService.findByUsername(sender).orElseThrow(UserDoesNotExist::new);
         var receiverUser = userService.findByUsername(receiver).orElseThrow(UserDoesNotExist::new);
+        if (areUsersFriends(senderUser, receiverUser))
+            throw new UsersAlreadyFriends();
+
         if (senderUser.getBlockedUsers().contains(receiverUser))
             throw new UserBlocked("You have blocked this user");
-
         if (receiverUser.getBlockedUsers().contains(senderUser))
             throw new UserBlocked("This user has blocked you");
 
@@ -40,12 +42,7 @@ public class FriendshipService {
         userService.saveUser(receiverUser);
     }
 
-    private void createFriendship(String sender, String receiver) {
-        var user1 = userService.findByUsername(sender).orElseThrow(UserDoesNotExist::new);
-        var user2 = userService.findByUsername(receiver).orElseThrow(UserDoesNotExist::new);
-        if (user1.getFriends().contains(user2) || user2.getFriends().contains(user1)) {
-            throw new UsersAlreadyFriends();
-        }
+    private void createFriendship(User user1, User user2) {
         user1.getFriends().add(user2);
         user2.getFriends().add(user1);
         userService.saveUser(user1);
@@ -65,8 +62,13 @@ public class FriendshipService {
     }
 
     public void acceptFriendRequest(String sender, String receiver) {
+        var user1 = userService.findByUsername(sender).orElseThrow(UserDoesNotExist::new);
+        var user2 = userService.findByUsername(receiver).orElseThrow(UserDoesNotExist::new);
+        if (user1.getFriends().contains(user2) || user2.getFriends().contains(user1)) {
+            throw new UsersAlreadyFriends();
+        }
         var friendRequest = friendRequestRepository.getFriendRequest(sender, receiver).orElseThrow(FriendRequestNotFound::new);
-        this.createFriendship(sender, receiver);
+        this.createFriendship(user1, user2);
         friendRequestRepository.delete(friendRequest);
     }
 

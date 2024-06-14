@@ -1,6 +1,7 @@
 package chatogether.ChaTogether.services;
 
 import chatogether.ChaTogether.exceptions.UserAlreadyInChatRoom;
+import chatogether.ChaTogether.exceptions.UserAlreadyInVideoRoom;
 import chatogether.ChaTogether.exceptions.UserNotInVideoRoom;
 import chatogether.ChaTogether.exceptions.VideoRoomDoesNotExist;
 import chatogether.ChaTogether.persistence.User;
@@ -60,7 +61,7 @@ public class VideoRoomService {
         if (videoRoom == null)
             throw new VideoRoomDoesNotExist();
         if (videoRoom.getConnectedUsers().contains(user))
-            throw new UserAlreadyInChatRoom();
+            throw new UserAlreadyInVideoRoom();
 
         videoRoom.getConnectedUsers().add(user);
         lastUserLeft.remove(connectionCode);
@@ -79,6 +80,11 @@ public class VideoRoomService {
             lastUserLeft.put(connectionCode, LocalDateTime.now());
 
         return videoRoom;
+    }
+
+    // For testing purposes
+    public void clearVideoRooms() {
+        videoRooms.clear();
     }
 
     @Scheduled(fixedRate = 60000) // Checks every minute

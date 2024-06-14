@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/components/custom_circle_avatar_no_cache.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/friend_request.dart';
 import 'package:frontend/services/friend_service.dart';
+import 'package:frontend/utils/backend_details.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -174,7 +176,11 @@ class _PeoplePageState extends State<PeoplePage> {
                                   title: Text(
                                       "${request.sender.firstName} ${request.sender.lastName}"),
                                   subtitle: Text(request.sender.username),
-                                  leading: const Icon(Icons.person),
+                                  leading: CustomCircleAvatarNoCache(
+                                    imageUrl:
+                                        "$baseUrl/user/profilePicture?username=${request.sender.username}",
+                                    name: request.sender.firstName,
+                                  ),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -232,7 +238,11 @@ class _PeoplePageState extends State<PeoplePage> {
                                   title: Text(
                                       "${request.receiver.firstName} ${request.receiver.lastName}"),
                                   subtitle: Text(request.receiver.username),
-                                  leading: const Icon(Icons.person),
+                                  leading: CustomCircleAvatarNoCache(
+                                    imageUrl:
+                                        "$baseUrl/user/profilePicture?username=${request.receiver.username}",
+                                    name: request.receiver.firstName,
+                                  ),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [

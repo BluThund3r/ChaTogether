@@ -19,11 +19,6 @@ public class UserController {
     private final UserService userService;
     private final FileService fileService;
 
-    @GetMapping("/all")
-    public List<User> getAllUsers() {
-        return userService.findAllUsers();
-    }
-
     @GetMapping("/search")
     public List<User> searchUser(
             @RequestParam String searchString
@@ -47,11 +42,11 @@ public class UserController {
         fileService.uploadProfilePicture(username, profilePicture);
     }
 
-    @GetMapping("/profilePictureUploaded")
-    public boolean profilePictureUploaded() {
-        String username = AuthRequestFilter.getUsername();
-        return fileService.profilePictureUploaded(username);
-    }
+//    @GetMapping("/profilePictureUploaded")
+//    public boolean profilePictureUploaded() {
+//        String username = AuthRequestFilter.getUsername();
+//        return fileService.profilePictureUploaded(username);
+//    }
 
     @GetMapping("/profilePicture")
     public Resource getProfilePicture(
