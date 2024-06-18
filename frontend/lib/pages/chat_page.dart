@@ -57,6 +57,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   final TextEditingController messageEditController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late dynamic unsubscribeWS;
+  final FocusNode focusNode = FocusNode();
 
   bool allowedToSendMessage() {
     return !blockedUsers! && partOfChat;
@@ -130,13 +131,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             _scrollToBottom();
           });
         }
-      }
-      if (message.type == ChatMessageType.ANNOUNCEMENT &&
-          decryptedMessage.content!
-              .contains("removed ${loggedInUser.username} from chat")) {
-        initFToast(context);
-        showInfoToast("You were removed from the chat");
-        GoRouter.of(context).go('/');
       }
     }
   }
@@ -345,30 +339,17 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   void _jumpToBottom() {
     if (messages.isEmpty) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final bottomOffset = MediaQuery.of(context).viewInsets.bottom;
-      _scrollController
-          .jumpTo(_scrollController.position.maxScrollExtent + bottomOffset);
+      // final bottomOffset = MediaQuery.of(context).viewInsets.bottom;
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
 
   void _scrollToBottom() {
     if (messages.isEmpty) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final bottomOffset = MediaQuery.of(context).viewInsets.bottom;
-      final scrollExtent = _scrollController.position.maxScrollExtent;
-      final scrollPosition = _scrollController.position.pixels;
-
-      // Ensure we don't scroll beyond the max scroll extent
-      final targetOffset = scrollExtent + bottomOffset;
-
-      // Only scroll if we are not already at the bottom
-      if (scrollPosition < targetOffset) {
-        _scrollController.animateTo(
-          targetOffset,
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-        );
-      }
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn);
     });
   }
 
@@ -393,13 +374,20 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     );
   }
 
-  @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
-    if (WidgetsBinding.instance.window.viewInsets.bottom > 0) {
-      _scrollToBottom();
-    }
-  }
+  // @override
+  // void didChangeMetrics() {
+  //   super.didChangeMetrics();
+  //   print(
+  //       "metrics Scroll max extent: ${_scrollController.position.maxScrollExtent}");
+  //   print("metrics screen height: ${MediaQuery.of(context).size.height}");
+  //   print(
+  //       "metrics scroll min extent: ${_scrollController.position.minScrollExtent}");
+  //   if (_scrollController.position.maxScrollExtent <
+  //       MediaQuery.of(context).size.height) return;
+  //   if (View.of(context).viewInsets.bottom > 0) {
+  //     _scrollToBottom();
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -408,6 +396,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     messageSendController.dispose();
     messageEditController.dispose();
     _scrollController.dispose();
+    focusNode.dispose();
     unsubscribeFromWS();
     print("Unsubscribed from chat room: ${widget.chatId}");
     super.dispose();
@@ -432,6 +421,16 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         fetchMoreMessages();
       }
     });
+
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        Future.delayed(
+          const Duration(milliseconds: 500),
+          () => _scrollToBottom(),
+        );
+      }
+    });
+
     chatMessageService =
         Provider.of<ChatMessageService>(context, listen: false);
     chatRoomService = Provider.of<ChatRoomService>(context, listen: false);
@@ -539,6 +538,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                 bottom:
                                     MediaQuery.of(context).viewInsets.bottom,
                               ),
+                              // reverse: true,
                               controller: _scrollController,
                               itemCount: messages.length + 1,
                               itemBuilder: (context, index) {
@@ -585,6 +585,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                               children: [
                                 Expanded(
                                   child: TextField(
+                                    focusNode: focusNode,
                                     controller: messageSendController,
                                     decoration: const InputDecoration(
                                       hintText: "Type a message...",

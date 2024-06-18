@@ -103,9 +103,24 @@ class _ChatsPageState extends State<ChatsPage> {
         ChatRoomAddOrRemove.fromJson(jsonDecode(frame.body!));
     print("Chat room add or remove: $chatRoomAddOrRemove");
 
+    if (!chatRoomAddOrRemove.affectedUserIds.contains(_loggedInUser.userId)) {
+      return;
+    }
+
     if (chatRoomAddOrRemove.action == ChatRoomAction.ADD) {
       addChatRoom(chatRoomAddOrRemove);
     } else {
+      final RouteMatch lastMatch =
+          GoRouter.of(context).routerDelegate.currentConfiguration.last;
+      final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+          ? lastMatch.matches
+          : GoRouter.of(context).routerDelegate.currentConfiguration;
+      final String location = matchList.uri.toString();
+      if (location.contains("/chat/${chatRoomAddOrRemove.id}")) {
+        initFToast(context);
+        showInfoToast("You were removed from this chat");
+        GoRouter.of(context).go("/");
+      }
       removeChatRoom(chatRoomAddOrRemove);
     }
   }

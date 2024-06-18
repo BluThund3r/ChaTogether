@@ -3,6 +3,7 @@ package chatogether.ChaTogether.controllers;
 import chatogether.ChaTogether.DTO.OutgoingChatMessageDTO;
 import chatogether.ChaTogether.enums.ActionType;
 import chatogether.ChaTogether.enums.ChatMessageType;
+import chatogether.ChaTogether.exceptions.ChatRoomDoesNotExist;
 import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.FriendRequest;
 import chatogether.ChaTogether.persistence.User;
@@ -85,6 +86,11 @@ public class FriendshipController {
     ) {
         String requestingUsername = AuthRequestFilter.getUsername();
         friendshipService.removeFriendship(requestingUsername, friendToRemove);
+        try {
+            chatRoomService.deletePrivateChat(requestingUsername, friendToRemove);
+        } catch (ChatRoomDoesNotExist ignored) {
+            System.out.println("Chat room does not exist");
+        }
     }
 
     @GetMapping("/blockedUsers")

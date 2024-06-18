@@ -46,6 +46,8 @@ class _CreatePrivateChatPageState extends State<CreatePrivateChatPage> {
   }
 
   void onSearchSubmit(String searchValue) {
+    print("Search value: $searchValue");
+
     if (searchValue.isEmpty) {
       setState(() {
         displayedUsers = users;
@@ -56,11 +58,11 @@ class _CreatePrivateChatPageState extends State<CreatePrivateChatPage> {
     setState(() {
       displayedUsers = users
           .where((user) =>
-              user.username.toLowerCase().contains(searchValue.toLowerCase()) ||
-              ("${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}")
-                  .contains(searchValue.toLowerCase()))
+              user.username.toLowerCase().contains(searchValue.toLowerCase()))
           .toList();
     });
+
+    print("Displayed users for search: $displayedUsers");
   }
 
   void createPrivateChat() async {
@@ -190,7 +192,7 @@ class _CreatePrivateChatPageState extends State<CreatePrivateChatPage> {
                     : Expanded(
                         child: ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
-                            final user = users[index];
+                            final user = displayedUsers[index];
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Container(
@@ -217,7 +219,7 @@ class _CreatePrivateChatPageState extends State<CreatePrivateChatPage> {
                               ),
                             );
                           },
-                          itemCount: users.length,
+                          itemCount: displayedUsers.length,
                         ),
                       ),
             if (loading || displayedUsers.isEmpty) const SizedBox(height: 1),

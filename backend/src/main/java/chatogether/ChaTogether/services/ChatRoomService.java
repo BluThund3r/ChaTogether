@@ -79,6 +79,24 @@ public class ChatRoomService {
         return savedChatRoom;
     }
 
+    public void deletePrivateChat(String username1, String username2) {
+        var userId1 = userService.findByUsername(username1).orElseThrow(UserDoesNotExist::new).getId();
+        var userId2 = userService.findByUsername(username2).orElseThrow(UserDoesNotExist::new).getId();
+        var chatRoom = chatRoomRepository.findPrivateByUserIds(userId1, userId2).orElseThrow(ChatRoomDoesNotExist::new);
+        chatRoomRepository.delete(chatRoom);
+        fileService.deleteChatDirectory(chatRoom);
+        simpMessagingTemplate.convertAndSend(
+                "/queue/chatRoom/addOrRemove",
+                new ChatRoomAddOrRemoveDTO(
+                        chatRoom,
+                        null,
+                        ChatRoomAction.REMOVE,
+                        List.of(userId1, userId2),
+                        userService
+                )
+        );
+    }
+
     public ChatRoom createGroupChat(String roomName, List<String> receiverUsername, String adminUsername) {
         List<User> users = receiverUsername.stream()
                 .map(username -> userService.findByUsername(username).orElseThrow(UserDoesNotExist::new))

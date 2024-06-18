@@ -10,6 +10,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.DateFormatter;
@@ -215,5 +216,13 @@ public class FileService {
     public Resource getProfilePictureById(Long userId) {
         var user = userService.findById(userId).orElseThrow(UserDoesNotExist::new);
         return getProfilePicture(user.getUsername());
+    }
+
+    public void deleteDirectory(String fullPath) {
+        FileSystemUtils.deleteRecursively(new File(fullPath));
+    }
+
+    public void deleteChatDirectory(ChatRoom chatRoom) {
+        deleteDirectory(Paths.get(userDataPath, chatRoom.getDirectoryPath()).toString());
     }
 }

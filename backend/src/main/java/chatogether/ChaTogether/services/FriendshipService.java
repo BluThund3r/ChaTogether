@@ -59,6 +59,7 @@ public class FriendshipService {
         user2.getFriends().remove(user1);
         userService.saveUser(user1);
         userService.saveUser(user2);
+        
     }
 
     public void acceptFriendRequest(String sender, String receiver) {

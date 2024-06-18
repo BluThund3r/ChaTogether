@@ -212,9 +212,7 @@ class _CreateGroupChatPageState extends State<CreateGroupChatPage> {
     setState(() {
       displayedUsers = users
           .where((user) =>
-              user.username.toLowerCase().contains(searchValue.toLowerCase()) ||
-              ("${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}")
-                  .contains(searchValue.toLowerCase()))
+              user.username.toLowerCase().contains(searchValue.toLowerCase()))
           .toList();
     });
   }
@@ -308,7 +306,7 @@ class _CreateGroupChatPageState extends State<CreateGroupChatPage> {
                     : Expanded(
                         child: ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
-                            final user = users[index];
+                            final user = displayedUsers[index];
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Container(
@@ -336,7 +334,7 @@ class _CreateGroupChatPageState extends State<CreateGroupChatPage> {
                               ),
                             );
                           },
-                          itemCount: users.length,
+                          itemCount: displayedUsers.length,
                         ),
                       ),
             if (loading || displayedUsers.isEmpty) const SizedBox(height: 1),

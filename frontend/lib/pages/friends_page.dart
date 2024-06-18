@@ -98,6 +98,31 @@ class _FriendsPageState extends State<FriendsPage> {
     showOKToast("Friend removed");
   }
 
+  void showRemoveDialog(BuildContext context, String usernameToRemove) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text("Remove Friend"),
+            content: const Text(
+                "Removing a friend will permanently delete your private chat with them. Are you sure you want to remove them?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  unfriend(usernameToRemove);
+                },
+                child: const Text("Remove"),
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     initFToast(context);
@@ -214,7 +239,8 @@ class _FriendsPageState extends State<FriendsPage> {
                         subtitle: Text(friend.username),
                         trailing: ElevatedButton(
                           child: const Text("Remove"),
-                          onPressed: () => unfriend(friend.username),
+                          onPressed: () =>
+                              showRemoveDialog(context, friend.username),
                         ),
                       );
                     },

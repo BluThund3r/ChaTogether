@@ -51,10 +51,12 @@ class StompService {
   }
 
   void closeWsConnection() {
+    print("Closing ws connection");
     _stompClient.deactivate();
   }
 
   void openWsConnection() {
+    print("Opening ws connection");
     _stompClient.activate();
   }
 
