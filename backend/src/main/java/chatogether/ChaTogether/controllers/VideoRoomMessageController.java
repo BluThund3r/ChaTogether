@@ -14,6 +14,9 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 @Controller
 @RequiredArgsConstructor
 public class VideoRoomMessageController {
@@ -84,6 +87,12 @@ public class VideoRoomMessageController {
             @DestinationVariable String connectionCode,
             SimpMessageHeaderAccessor headerAccessor
     ) {
+        var videoRoom = videoRoomService.getVideoRoomByConnectionCode(connectionCode);
+        var lastPauseTime = videoRoom.getLastSignalTime(VideoRoomSignalType.PAUSE);
+        var timeDiff = Duration.between(lastPauseTime, LocalDateTime.now()).toSeconds();
+        if (timeDiff < 1)
+            return;
+        videoRoom.setLastSignalTime(VideoRoomSignalType.PAUSE, LocalDateTime.now());
         var username = headerAccessor.getSessionAttributes().get("username");
         System.out.println(username + " is pausing room " + connectionCode);
         simpMessagingTemplate.convertAndSend(
@@ -98,8 +107,17 @@ public class VideoRoomMessageController {
 
     @MessageMapping("/videoRoom/resume/{connectionCode}")
     public void resumeVideoRoom(
-            @DestinationVariable String connectionCode
+            @DestinationVariable String connectionCode,
+            SimpMessageHeaderAccessor headerAccessor
     ) {
+        var videoRoom = videoRoomService.getVideoRoomByConnectionCode(connectionCode);
+        var lastResumeTime = videoRoom.getLastSignalTime(VideoRoomSignalType.RESUME);
+        var timeDiff = Duration.between(lastResumeTime, LocalDateTime.now()).toSeconds();
+        if (timeDiff < 1)
+            return;
+        videoRoom.setLastSignalTime(VideoRoomSignalType.RESUME, LocalDateTime.now());
+        var username = headerAccessor.getSessionAttributes().get("username");
+        System.out.println(username + " is resuming room " + connectionCode);
         simpMessagingTemplate.convertAndSend(
                 "/queue/videoRoom/signal/" + connectionCode,
                 VideoRoomSignalDTO.builder()
@@ -115,6 +133,12 @@ public class VideoRoomMessageController {
             @DestinationVariable String connectionCode,
             VideoPositionChangeDTO videoPositionChangeDTO
     ) {
+        var videoRoom = videoRoomService.getVideoRoomByConnectionCode(connectionCode);
+        var lastSeekTime = videoRoom.getLastSignalTime(VideoRoomSignalType.SEEK);
+        var timeDiff = Duration.between(lastSeekTime, LocalDateTime.now()).toSeconds();
+        if (timeDiff < 1)
+            return;
+        videoRoom.setLastSignalTime(VideoRoomSignalType.SEEK, LocalDateTime.now());
         simpMessagingTemplate.convertAndSend(
                 "/queue/videoRoom/signal/" + connectionCode,
                 VideoRoomSignalDTO.builder()
@@ -130,6 +154,12 @@ public class VideoRoomMessageController {
             @DestinationVariable String connectionCode,
             VideoChangeDTO videoChangeDTO
     ) {
+        var videoRoom = videoRoomService.getVideoRoomByConnectionCode(connectionCode);
+        var lastVideoChangeTime = videoRoom.getLastSignalTime(VideoRoomSignalType.CHANGE_VIDEO);
+        var timeDiff = Duration.between(lastVideoChangeTime, LocalDateTime.now()).toSeconds();
+        if (timeDiff < 1)
+            return;
+        videoRoom.setLastSignalTime(VideoRoomSignalType.CHANGE_VIDEO, LocalDateTime.now());
         simpMessagingTemplate.convertAndSend(
                 "/queue/videoRoom/signal/" + connectionCode,
                 VideoRoomSignalDTO.builder()

@@ -47,7 +47,7 @@ public class VideoRoomService {
         return videoRoom;
     }
 
-    public VideoRoom getVideoRomByConnectionCode(String connectionCode) {
+    public VideoRoom getVideoRoomByConnectionCode(String connectionCode) {
         return videoRooms.stream().filter(videoRoom -> videoRoom.getConnectionCode().equals(connectionCode))
                 .findFirst().orElse(null);
     }
@@ -57,7 +57,7 @@ public class VideoRoomService {
     }
 
     public VideoRoom joinVideoRoom(User user, String connectionCode) {
-        var videoRoom = getVideoRomByConnectionCode(connectionCode);
+        var videoRoom = getVideoRoomByConnectionCode(connectionCode);
         if (videoRoom == null)
             throw new VideoRoomDoesNotExist();
         if (videoRoom.getConnectedUsers().contains(user))
@@ -69,7 +69,7 @@ public class VideoRoomService {
     }
 
     public VideoRoom leaveVideoRoom(User user, String connectionCode) {
-        var videoRoom = getVideoRomByConnectionCode(connectionCode);
+        var videoRoom = getVideoRoomByConnectionCode(connectionCode);
         if (videoRoom == null)
             throw new VideoRoomDoesNotExist();
         if (!videoRoom.getConnectedUsers().contains(user))
@@ -99,7 +99,7 @@ public class VideoRoomService {
         while (iterator.hasNext()) {
             var entry = iterator.next();
             if (entry.getValue().isBefore(fiveMinutesAgo)) {
-                var videoRoom = getVideoRomByConnectionCode(entry.getKey());
+                var videoRoom = getVideoRoomByConnectionCode(entry.getKey());
                 videoRooms.remove(videoRoom);
                 iterator.remove();
             }

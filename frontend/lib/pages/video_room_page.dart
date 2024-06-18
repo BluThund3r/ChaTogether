@@ -49,7 +49,7 @@ class _VideoRoomPageState extends State<VideoRoomPage>
   void handleVideoRoomSignalReceived(StompFrame frame) {
     if (frame.body == null) return;
 
-    print("Received video room signal: ${frame.body}");
+    print("Received video room signal: ${frame.body} at ${DateTime.now()}");
     final videoRoomSignal = VideoRoomSignal.fromJson(jsonDecode(frame.body!));
     switch (videoRoomSignal.signalType) {
       case VideoRoomSignalType.SYNC_VIDEO:
@@ -322,7 +322,7 @@ class _VideoRoomPageState extends State<VideoRoomPage>
     }
 
     if ((currentPosition - _lastPosition).abs() >
-        const Duration(milliseconds: 500)) {
+        const Duration(milliseconds: 1000)) {
       handleSeekToPosition(currentPosition);
     }
     _lastPosition = currentPosition;

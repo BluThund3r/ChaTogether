@@ -40,7 +40,7 @@ public class VideoRoomServiceTest {
         var user = userService.findByUsername("BluThund3r");
         var videoRoom = videoRoomService.createVideoRoom();
         Assertions.assertDoesNotThrow(() -> videoRoomService.joinVideoRoom(user.get(), videoRoom.getConnectionCode()));
-        var videoRoomGot = videoRoomService.getVideoRomByConnectionCode(videoRoom.getConnectionCode());
+        var videoRoomGot = videoRoomService.getVideoRoomByConnectionCode(videoRoom.getConnectionCode());
         Assertions.assertTrue(videoRoomGot.getConnectedUsers().contains(user.get()));
     }
 
@@ -50,7 +50,7 @@ public class VideoRoomServiceTest {
         var user = userService.findByUsername("BluThund3r");
         var videoRoom = videoRoomService.createVideoRoom();
         Assertions.assertDoesNotThrow(() -> videoRoomService.joinVideoRoom(user.get(), videoRoom.getConnectionCode()));
-        var videoRoomGot = videoRoomService.getVideoRomByConnectionCode(videoRoom.getConnectionCode());
+        var videoRoomGot = videoRoomService.getVideoRoomByConnectionCode(videoRoom.getConnectionCode());
         Assertions.assertTrue(videoRoomGot.getConnectedUsers().contains(user.get()));
         Assertions.assertThrows(UserAlreadyInVideoRoom.class, () -> {
             videoRoomService.joinVideoRoom(user.get(), videoRoom.getConnectionCode());
