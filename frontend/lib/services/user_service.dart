@@ -90,4 +90,18 @@ class UserService {
 
     return KeyPair(publicKey, privateKey);
   }
+
+  Future<String?> updateUserInfo(Map<String, String?> updatedUserInfo) async {
+    final response = await HttpWithToken.put(
+      url: "$baseUrl/user/updateUserInfo",
+      body: updatedUserInfo,
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
 }

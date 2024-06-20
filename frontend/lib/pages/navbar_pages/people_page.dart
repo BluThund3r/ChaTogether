@@ -110,6 +110,15 @@ class _PeoplePageState extends State<PeoplePage> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: const BorderSide(color: Colors.grey),
+                              ),
+                            ),
+                          ),
                           onPressed: () {
                             GoRouter.of(context).push('/people/friends');
                           },
@@ -121,6 +130,15 @@ class _PeoplePageState extends State<PeoplePage> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                                side: const BorderSide(color: Colors.grey),
+                              ),
+                            ),
+                          ),
                           onPressed: () {
                             GoRouter.of(context).push('/people/blocked');
                           },

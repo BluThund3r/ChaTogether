@@ -8,9 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserDetailsForAdmins extends UserDetailsForOthersDTO {
     private Boolean isAppAdmin;
+    private Boolean confirmedMail;
 
     public UserDetailsForAdmins(User user) {
         super(user);
         this.isAppAdmin = user.getIsAdmin();
+        this.confirmedMail = user.getConfirmedMail();
     }
 }

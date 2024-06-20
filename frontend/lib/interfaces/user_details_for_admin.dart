@@ -2,6 +2,7 @@ import 'package:frontend/interfaces/user.dart';
 
 class UserDetailsForAdmin extends User {
   bool isAppAdmin;
+  bool confirmedMail;
 
   UserDetailsForAdmin({
     required super.id,
@@ -12,9 +13,11 @@ class UserDetailsForAdmin extends User {
     required super.online,
     required super.isAdminInChat,
     required this.isAppAdmin,
+    required this.confirmedMail,
   });
 
-  factory UserDetailsForAdmin.withUserDetails(User user, bool isAppAdmin) {
+  factory UserDetailsForAdmin.withUserDetails(
+      User user, bool isAppAdmin, bool confirmedMail) {
     return UserDetailsForAdmin(
       id: user.id,
       username: user.username,
@@ -24,12 +27,14 @@ class UserDetailsForAdmin extends User {
       online: user.online,
       isAdminInChat: user.isAdminInChat,
       isAppAdmin: isAppAdmin,
+      confirmedMail: confirmedMail,
     );
   }
 
   factory UserDetailsForAdmin.fromJson(Map<String, dynamic> json) {
     final user = User.fromJson(json);
     final isAppAdmin = json['isAppAdmin'];
-    return UserDetailsForAdmin.withUserDetails(user, isAppAdmin);
+    final confirmedMail = json['confirmedMail'];
+    return UserDetailsForAdmin.withUserDetails(user, isAppAdmin, confirmedMail);
   }
 }

@@ -45,4 +45,12 @@ class AdminService {
     if (response.statusCode != 200) return response.body;
     return null;
   }
+
+  Future<String?> resendConfirmationEmailToUser(int userId) async {
+    final response = await HttpWithToken.post(
+        url: "$baseUrl/admin/resendConfirmationEmailToUser/$userId");
+
+    if (response.statusCode != 200) return response.body;
+    return null;
+  }
 }

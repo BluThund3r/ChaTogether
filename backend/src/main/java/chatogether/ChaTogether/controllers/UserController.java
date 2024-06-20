@@ -1,6 +1,7 @@
 package chatogether.ChaTogether.controllers;
 
 import chatogether.ChaTogether.DTO.KeysDTO;
+import chatogether.ChaTogether.DTO.UserDetailsUpdateDTO;
 import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.User;
 import chatogether.ChaTogether.services.FileService;
@@ -47,6 +48,14 @@ public class UserController {
 //        String username = AuthRequestFilter.getUsername();
 //        return fileService.profilePictureUploaded(username);
 //    }
+
+    @PutMapping("/updateUserInfo")
+    public void updateUserInfo(
+            @RequestBody UserDetailsUpdateDTO userDetailsUpdateDTO
+    ) {
+        var username = AuthRequestFilter.getUsername();
+        userService.updateUserInfo(username, userDetailsUpdateDTO);
+    }
 
     @GetMapping("/profilePicture")
     public Resource getProfilePicture(

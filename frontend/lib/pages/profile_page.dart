@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
+import 'package:frontend/components/edit_profile_details.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/user_service.dart';
@@ -29,6 +30,17 @@ class _ProfilePageState extends State<ProfilePage> {
     // initFToast(context);
     authService = Provider.of<AuthService>(context, listen: false);
     userService = Provider.of<UserService>(context, listen: false);
+  }
+
+  void handleEditProfileDetails(context) async {
+    final userInfo = await authService.getLoggedInUser();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return EditProfileDetails(userInfo: userInfo);
+      },
+    );
   }
 
   @override
@@ -192,7 +204,31 @@ class _ProfilePageState extends State<ProfilePage> {
                 }
               },
             ),
-            const SizedBox(height: 60),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: () => handleEditProfileDetails(context),
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                    side: const BorderSide(color: Colors.grey),
+                  ),
+                ),
+              ),
+              child: const Text(
+                'Edit Profile Details',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            const SizedBox(height: 15),
+            const Text(
+              "After updating the details, you will be logged out\n and you will have to log back in to see the changes.",
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

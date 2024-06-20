@@ -53,6 +53,18 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
     Navigator.pop(context);
   }
 
+  void resendMailConfirmationToUser(context) async {
+    final response =
+        await adminService.resendConfirmationEmailToUser(widget.user.id);
+    initFToast(context);
+    if (response == null) {
+      showOKToast("Mail confirmation sent to user");
+    } else {
+      showErrorToast("Failed to resend mail confirmation to user");
+    }
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -97,53 +109,73 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
               ),
               const SizedBox(height: 20),
               Text(
-                widget.user.isAppAdmin
-                    ? "User is an app admin"
-                    : "User is not an app admin",
+                !widget.user.confirmedMail
+                    ? "User has not confirmed mail"
+                    : widget.user.isAppAdmin
+                        ? "User is an app admin"
+                        : "User is not an app admin",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 10),
-              widget.user.isAppAdmin
-                  ? widget.isCurrentuser
-                      ? const SizedBox(
-                          height: 0,
-                          width: 0,
-                        )
-                      : ElevatedButton(
-                          onPressed: () => removeAdminFromUser(context),
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                const Color.fromARGB(255, 165, 56, 56)),
-                            textStyle: MaterialStateProperty.all(
-                              const TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          child: const Text(
-                            "Remove Admin",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        )
-                  : ElevatedButton(
-                      onPressed: () => grandAdminToUser(context),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                            const Color.fromARGB(255, 49, 123, 51)),
-                        textStyle: MaterialStateProperty.all(
-                          const TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      child: const Text(
-                        "Grant Admin",
-                        style: TextStyle(color: Colors.white),
+              if (!widget.user.confirmedMail)
+                ElevatedButton(
+                  onPressed: () => resendMailConfirmationToUser(context),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        Color.fromARGB(255, 56, 105, 165)),
+                    textStyle: MaterialStateProperty.all(
+                      const TextStyle(
+                        color: Colors.white,
                       ),
                     ),
+                  ),
+                  child: const Text(
+                    "Resend Mail Confirmation",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              if (widget.user.confirmedMail)
+                widget.user.isAppAdmin
+                    ? widget.isCurrentuser
+                        ? const SizedBox(
+                            height: 0,
+                            width: 0,
+                          )
+                        : ElevatedButton(
+                            onPressed: () => removeAdminFromUser(context),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color.fromARGB(255, 165, 56, 56)),
+                              textStyle: MaterialStateProperty.all(
+                                const TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              "Remove Admin",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                    : ElevatedButton(
+                        onPressed: () => grandAdminToUser(context),
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              const Color.fromARGB(255, 49, 123, 51)),
+                          textStyle: MaterialStateProperty.all(
+                            const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          "Grant Admin",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
             ],
           )),
     );

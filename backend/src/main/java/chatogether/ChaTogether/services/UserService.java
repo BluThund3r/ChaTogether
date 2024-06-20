@@ -1,6 +1,8 @@
 package chatogether.ChaTogether.services;
 
 import chatogether.ChaTogether.DTO.KeysDTO;
+import chatogether.ChaTogether.DTO.UserDetailsUpdateDTO;
+import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserAlreadyExists;
 import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserDoesNotExist;
 import chatogether.ChaTogether.exceptions.UsersAlreadyFriends;
 import chatogether.ChaTogether.exceptions.UsersNotFriends;
@@ -111,5 +113,28 @@ public class UserService {
         var user = userRepository.findById(userId).orElseThrow(UserDoesNotExist::new);
         user.setIsAdmin(false);
         userRepository.save(user);
+    }
+
+    public void updateUserInfo(String currentUsername, UserDetailsUpdateDTO userDetailsUpdateDTO) {
+        var username = userDetailsUpdateDTO.getUsername();
+        var email = userDetailsUpdateDTO.getEmail();
+        var firstName = userDetailsUpdateDTO.getFirstName();
+        var lastName = userDetailsUpdateDTO.getLastName();
+
+        var userToUpdate = findByUsername(currentUsername).orElseThrow(UserDoesNotExist::new);
+        var userWithNewUsername = findByUsername(username);
+        var userWithNewEmail = findByEmail(email);
+
+        if (!username.equals(currentUsername) && userWithNewUsername.isPresent())
+            throw new UserAlreadyExists("Username not available");
+
+        if (!userToUpdate.getEmail().equals(email) && userWithNewEmail.isPresent())
+            throw new UserAlreadyExists("Email already taken");
+
+        userToUpdate.setUsername(username);
+        userToUpdate.setEmail(email);
+        userToUpdate.setFirstName(firstName);
+        userToUpdate.setLastName(lastName);
+        saveUser(userToUpdate);
     }
 }

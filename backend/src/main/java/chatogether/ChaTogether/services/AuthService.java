@@ -121,16 +121,18 @@ public class AuthService {
         statsService.incrementNewUsersCount(LocalDateTime.now());
     }
 
-    public void resendConfirmationEmail(String email) {
+    public void resendConfirmationEmail(String email, boolean adminRights) {
         var user = userService.findByEmail(email).orElseThrow(UserDoesNotExist::new);
         if (user.getConfirmedMail())
             throw new EmailAlreadyConfirmed();
-        if (user.exceededEmailConfirmationTrials())
+        if (user.exceededEmailConfirmationTrials() && !adminRights)
             throw new EmailConfirmationTrialsExceeded();
         var confirmationToken = generateEmailConfirmationToken();
         user.setConfirmationToken(confirmationToken);
         user.setTokenExpiration(LocalDateTime.now().plusHours(24));
-        user.setEmailConfirmationTrials(user.getEmailConfirmationTrials() + 1);
+        if (!adminRights)
+            user.setEmailConfirmationTrials(user.getEmailConfirmationTrials() + 1);
+        
         userService.saveUser(user);
         mailService.sendConfirmationEmail(
                 email,
@@ -139,6 +141,10 @@ public class AuthService {
                 user.getLastName(),
                 confirmationToken
         );
+    }
+
+    public void resendConfirmationEmail(String email) {
+        resendConfirmationEmail(email, false);
     }
 
     private String generateEmailConfirmationToken() {
