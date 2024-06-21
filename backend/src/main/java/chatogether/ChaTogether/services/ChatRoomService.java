@@ -2,9 +2,13 @@ package chatogether.ChaTogether.services;
 
 import chatogether.ChaTogether.DTO.ChatRoomAddOrRemoveDTO;
 import chatogether.ChaTogether.DTO.ChatRoomDetailsWithLastMessageDTO;
+import chatogether.ChaTogether.DTO.OutgoingChatMessageDTO;
+import chatogether.ChaTogether.enums.ActionType;
+import chatogether.ChaTogether.enums.ChatMessageType;
 import chatogether.ChaTogether.enums.ChatRoomAction;
 import chatogether.ChaTogether.exceptions.*;
 import chatogether.ChaTogether.exceptions.ConcreteExceptions.UserDoesNotExist;
+import chatogether.ChaTogether.persistence.ChatMessage;
 import chatogether.ChaTogether.persistence.ChatRoom;
 import chatogether.ChaTogether.persistence.User;
 import chatogether.ChaTogether.repositories.ChatRoomRepository;
@@ -332,6 +336,52 @@ public class ChatRoomService {
         var user1 = userService.findByUsername(username1).orElseThrow(UserDoesNotExist::new);
         var user2 = userService.findByUsername(username2).orElseThrow(UserDoesNotExist::new);
         return chatRoomRepository.findPrivateByUserIds(user1.getId(), user2.getId());
+    }
+
+    public void updateGroupName(String chatRoomId, String newName, Long callerId) {
+        var chatRoom = findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
+        if (!chatRoom.getAdmins().contains(callerId))
+            throw new NotChatAdmin();
+
+        /*
+        * this.id = chatMessage.getId();
+        this.chatRoomId = chatMessage.getChatRoomId();
+        this.senderId = chatMessage.getSenderId();
+        if (chatMessage.getType() != ChatMessageType.IMAGE)
+            this.encryptedContent = chatMessage.getContentOrPath();
+        else
+            this.encryptedContent = imageContent;
+        this.sentAt = chatMessage.getSentAt().toString();
+        this.type = chatMessage.getType();
+        this.isEdited = chatMessage.getIsEdited();
+        this.isDeleted = chatMessage.getIsDeleted();
+        this.seenBy = chatMessage.getSeenBy();
+        this.action = action;
+        * */
+
+        chatRoom.setRoomName(newName);
+        chatRoomRepository.save(chatRoom);
+        simpMessagingTemplate.convertAndSend(
+                "/queue/chatRoomUpdates",
+                new ChatRoomDetailsWithLastMessageDTO(
+                        chatRoom,
+                        new OutgoingChatMessageDTO(
+                                ChatMessage.builder()
+                                        .id("0")
+                                        .chatRoomId(chatRoomId)
+                                        .contentOrPath("")
+                                        .sentAt(LocalDateTime.now())
+                                        .senderId(callerId)
+                                        .type(ChatMessageType.TEXT)
+                                        .isEdited(false)
+                                        .isDeleted(false)
+                                        .seenBy(new ArrayList<>())
+                                        .build(),
+                                ActionType.SEND,
+                                null),
+                        userService
+                )
+        );
     }
 }
 

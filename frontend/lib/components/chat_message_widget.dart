@@ -31,6 +31,7 @@ class ChatMessageWidget extends StatelessWidget {
           child: Text(
             message.content!,
             style: const TextStyle(
+              fontSize: 12,
               fontStyle: FontStyle.italic,
               color: Colors.grey,
             ),

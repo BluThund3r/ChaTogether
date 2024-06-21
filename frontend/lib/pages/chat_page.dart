@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -8,6 +9,7 @@ import 'package:frontend/components/add_member_to_chat_modal.dart';
 import 'package:frontend/components/chat_members_modal.dart';
 import 'package:frontend/components/chat_message_widget.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
+import 'package:frontend/components/edit_group_name_modal.dart';
 import 'package:frontend/components/long_press_message_options.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/chat_message.dart';
@@ -24,6 +26,7 @@ import 'package:frontend/services/stomp_service.dart';
 import 'package:frontend/utils/backend_details.dart';
 import 'package:frontend/utils/crypto_utils.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
@@ -58,6 +61,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   final ScrollController _scrollController = ScrollController();
   late dynamic unsubscribeWS;
   final FocusNode focusNode = FocusNode();
+  File? _selectedImage;
 
   bool allowedToSendMessage() {
     return !blockedUsers! && partOfChat;
@@ -119,6 +123,10 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
         setState(() {
           messages.add(decryptedMessage);
         });
+        if (message.type == ChatMessageType.ANNOUNCEMENT &&
+            message.content!.contains("changed the group name to")) {
+          chatRoomDetails.roomName = message.content!.split('"')[1];
+        }
         if (decryptedMessage.senderId != loggedInUser.userId) {
           stompService.seeMessage(decryptedMessage.id, widget.chatId);
           if (isLockedToBottom) {
@@ -250,6 +258,66 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     GoRouter.of(context).go('/');
   }
 
+  Future _pickImage({required ImageSource source}) async {
+    final pickedImage = await ImagePicker().pickImage(source: source);
+
+    if (pickedImage == null) {
+      return;
+    }
+
+    setState(() {
+      _selectedImage = File(pickedImage.path);
+    });
+  }
+
+  void showImageChoiceDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Choose a source"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  GestureDetector(
+                    child: const Text("Pick from Gallery"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _pickImage(source: ImageSource.gallery);
+                    },
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                  ),
+                  GestureDetector(
+                    child: const Text("Take a picture"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      _pickImage(source: ImageSource.camera);
+                    },
+                  )
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void changeGroupImage(context) {}
+
+  void showEditGroupNameModal(context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return EditGroupNameModal(
+          chatRoomDetails: chatRoomDetails,
+          chatRoomKey: chatRoomKey,
+          chatRoomIv: chatRoomIv,
+        );
+      },
+    );
+  }
+
   void showOptionsModal(context) {
     bool isLoggedInUserAdmin = chatRoomDetails.members
         .firstWhere((member) => member.id == loggedInUser.userId)
@@ -275,6 +343,22 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                 title: const Text("Add new member"),
                 onTap: () {
                   showAddMemberModal(context);
+                },
+              ),
+            if (isLoggedInUserAdmin && !chatRoomDetails.isPrivateChat())
+              ListTile(
+                leading: const Icon(Icons.image_rounded),
+                title: const Text("Change Group Image"),
+                onTap: () {
+                  showImageChoiceDialog(context);
+                },
+              ),
+            if (isLoggedInUserAdmin && !chatRoomDetails.isPrivateChat())
+              ListTile(
+                leading: const Icon(Icons.edit_rounded),
+                title: const Text("Change Group Name"),
+                onTap: () {
+                  showEditGroupNameModal(context);
                 },
               ),
             if (!chatRoomDetails.isPrivateChat())
@@ -339,7 +423,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   void _jumpToBottom() {
     if (messages.isEmpty) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // final bottomOffset = MediaQuery.of(context).viewInsets.bottom;
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
@@ -373,21 +456,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       },
     );
   }
-
-  // @override
-  // void didChangeMetrics() {
-  //   super.didChangeMetrics();
-  //   print(
-  //       "metrics Scroll max extent: ${_scrollController.position.maxScrollExtent}");
-  //   print("metrics screen height: ${MediaQuery.of(context).size.height}");
-  //   print(
-  //       "metrics scroll min extent: ${_scrollController.position.minScrollExtent}");
-  //   if (_scrollController.position.maxScrollExtent <
-  //       MediaQuery.of(context).size.height) return;
-  //   if (View.of(context).viewInsets.bottom > 0) {
-  //     _scrollToBottom();
-  //   }
-  // }
 
   @override
   void dispose() {

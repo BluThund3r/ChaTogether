@@ -159,4 +159,14 @@ public class ChatRoomController {
                 .map(friend -> new UserDetailsForOthersDTO(friend, false))
                 .toList();
     }
+
+    @PutMapping("/updateGroupName")
+    public void updateGroupName(
+            @RequestBody GroupNameChangeDTO groupNameChangeDTO
+    ) {
+        var callerId = AuthRequestFilter.getUserId();
+        var newName = groupNameChangeDTO.getNewGroupName();
+        var chatRoomId = groupNameChangeDTO.getChatRoomId();
+        chatRoomService.updateGroupName(chatRoomId, newName, callerId);
+    }
 }

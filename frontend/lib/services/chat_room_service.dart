@@ -178,4 +178,21 @@ class ChatRoomService {
       return response.body;
     }
   }
+
+  Future<String?> changeGroupName(String chatRoomId, String newName) async {
+    final response = await HttpWithToken.put(
+      url: "$baseUrl/chatRoom/updateGroupName",
+      body: {
+        "chatRoomId": chatRoomId,
+        "newGroupName": newName,
+      },
+      headers: {"Content-Type": "application/json"},
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
 }
