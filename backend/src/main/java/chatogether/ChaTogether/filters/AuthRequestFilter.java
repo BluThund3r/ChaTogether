@@ -29,7 +29,8 @@ public class AuthRequestFilter extends OncePerRequestFilter {
 
     private Set<String> urlsToSkip = Set.of(
             "/user/profilePicture",
-            "/user/profilePictureById"
+            "/user/profilePictureById",
+            "/chatRoom/groupPicture"
     );
 
     @Override

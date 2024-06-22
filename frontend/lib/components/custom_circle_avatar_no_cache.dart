@@ -1,18 +1,20 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/utils/backend_details.dart';
+import 'package:frontend/utils/fetch_with_token.dart';
 import 'package:http/http.dart' as http;
 
 class CustomCircleAvatarNoCache extends StatefulWidget {
   final String name;
   final double radius;
   final String imageUrl;
+  final bool isGroupConversation;
   const CustomCircleAvatarNoCache({
     super.key,
     required this.name,
     required this.imageUrl,
     this.radius = 20.0,
+    this.isGroupConversation = false,
   });
 
   @override
@@ -39,7 +41,8 @@ class _CustomCircleAvatarNoCacheState extends State<CustomCircleAvatarNoCache> {
 
   Future<Uint8List?> fetchImage() async {
     print("Fetching image: ${widget.imageUrl}");
-    final response = await http.get(Uri.parse(widget.imageUrl));
+    final response = await HttpWithToken.get(url: widget.imageUrl);
+    print("Image response fetched: ${response.statusCode} ${response.body}");
     if (response.statusCode == 200) {
       return response.bodyBytes;
     } else {
@@ -56,32 +59,58 @@ class _CustomCircleAvatarNoCacheState extends State<CustomCircleAvatarNoCache> {
           return const CircularProgressIndicator();
         }
 
-        final avatarWithInitial = CircleAvatar(
-          radius: widget.radius,
-          backgroundColor: _getUserColor(widget.name),
-          child: Text(
-            widget.name[0].toUpperCase(),
-            style: TextStyle(
+        if (widget.isGroupConversation) {
+          final groupIcon = CircleAvatar(
+            radius: widget.radius,
+            backgroundColor: Colors.blue,
+            child: Icon(
+              Icons.group_rounded,
               color: Colors.white,
-              fontSize: widget.radius,
-              fontWeight: FontWeight.bold,
+              size: widget.radius * 1.3,
             ),
-          ),
-        );
+          );
 
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.data == null) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data == null) {
+            return groupIcon;
+          }
+
+          if (snapshot.hasData) {
+            return CircleAvatar(
+              radius: widget.radius,
+              backgroundImage: MemoryImage(snapshot.data!),
+            );
+          }
+
+          return groupIcon;
+        } else {
+          final avatarWithInitial = CircleAvatar(
+            radius: widget.radius,
+            backgroundColor: _getUserColor(widget.name),
+            child: Text(
+              widget.name[0].toUpperCase(),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: widget.radius,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.data == null) {
+            return avatarWithInitial;
+          }
+
+          if (snapshot.hasData) {
+            return CircleAvatar(
+              radius: widget.radius,
+              backgroundImage: MemoryImage(snapshot.data!),
+            );
+          }
+
           return avatarWithInitial;
         }
-
-        if (snapshot.hasData) {
-          return CircleAvatar(
-            radius: widget.radius,
-            backgroundImage: MemoryImage(snapshot.data!),
-          );
-        }
-
-        return avatarWithInitial;
       },
     );
   }

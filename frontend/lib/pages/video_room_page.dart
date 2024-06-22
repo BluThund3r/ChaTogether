@@ -35,8 +35,6 @@ class _VideoRoomPageState extends State<VideoRoomPage>
   final initialVideoUrl = "https://www.youtube.com/watch?v=3nQNiWdeH2Q";
   late YoutubePlayerController youtubePlayerController;
   final TextEditingController _videoUrlController = TextEditingController();
-  final Completer<void> _videoLoadedCompleter =
-      Completer<void>(); // TODO: vezi daca faci cv cu asta
   bool _isFullScreen = false;
   bool _pageLoaded = false;
   bool _isPlaying = false;

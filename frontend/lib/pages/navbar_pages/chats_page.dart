@@ -220,10 +220,12 @@ class _ChatsPageState extends State<ChatsPage> {
                                       name: otherMember.firstName,
                                       radius: 25,
                                     )
-                                  : const CircleAvatar(
+                                  : CustomCircleAvatarNoCache(
+                                      imageUrl:
+                                          "$baseUrl/chatRoom/groupPicture?chatRoomId=${chatRoom.id}",
+                                      name: "",
+                                      isGroupConversation: true,
                                       radius: 25,
-                                      child:
-                                          Icon(Icons.group_rounded, size: 30),
                                     ),
                               title: Row(
                                 children: [

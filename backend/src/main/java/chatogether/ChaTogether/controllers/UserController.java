@@ -43,12 +43,6 @@ public class UserController {
         fileService.uploadProfilePicture(username, profilePicture);
     }
 
-//    @GetMapping("/profilePictureUploaded")
-//    public boolean profilePictureUploaded() {
-//        String username = AuthRequestFilter.getUsername();
-//        return fileService.profilePictureUploaded(username);
-//    }
-
     @PutMapping("/updateUserInfo")
     public void updateUserInfo(
             @RequestBody UserDetailsUpdateDTO userDetailsUpdateDTO

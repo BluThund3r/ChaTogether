@@ -14,9 +14,11 @@ import chatogether.ChaTogether.persistence.User;
 import chatogether.ChaTogether.repositories.ChatRoomRepository;
 import chatogether.ChaTogether.utils.CryptoUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -343,22 +345,6 @@ public class ChatRoomService {
         if (!chatRoom.getAdmins().contains(callerId))
             throw new NotChatAdmin();
 
-        /*
-        * this.id = chatMessage.getId();
-        this.chatRoomId = chatMessage.getChatRoomId();
-        this.senderId = chatMessage.getSenderId();
-        if (chatMessage.getType() != ChatMessageType.IMAGE)
-            this.encryptedContent = chatMessage.getContentOrPath();
-        else
-            this.encryptedContent = imageContent;
-        this.sentAt = chatMessage.getSentAt().toString();
-        this.type = chatMessage.getType();
-        this.isEdited = chatMessage.getIsEdited();
-        this.isDeleted = chatMessage.getIsDeleted();
-        this.seenBy = chatMessage.getSeenBy();
-        this.action = action;
-        * */
-
         chatRoom.setRoomName(newName);
         chatRoomRepository.save(chatRoom);
         simpMessagingTemplate.convertAndSend(
@@ -382,6 +368,19 @@ public class ChatRoomService {
                         userService
                 )
         );
+    }
+
+    public void uploadGroupPicture(String chatRoomId, MultipartFile groupPicture, Long callerId) {
+        var chatRoom = findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
+        if (!chatRoom.getAdmins().contains(callerId))
+            throw new NotChatAdmin();
+
+        fileService.uploadGroupPicture(chatRoom, groupPicture);
+    }
+
+    public Resource getGroupPicture(String chatRoomId) {
+        var chatRoom = findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
+        return fileService.getGroupPicture(chatRoom);
     }
 }
 

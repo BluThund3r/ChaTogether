@@ -6,6 +6,7 @@ import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/utils/backend_details.dart';
 import 'package:frontend/utils/crypto_utils.dart';
 import 'package:frontend/utils/fetch_with_token.dart';
+import 'package:http/http.dart' as http;
 
 class ChatRoomService {
   final AuthService _authService = AuthService();
@@ -189,6 +190,21 @@ class ChatRoomService {
       headers: {"Content-Type": "application/json"},
     );
 
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      return response.body;
+    }
+  }
+
+  Future<String?> uploadGroupPicture(
+      String chatRoomId, String imagePath) async {
+    final streamedResponse = await HttpWithToken.postFile(
+      filePath: imagePath,
+      url: "$baseUrl/chatRoom/uploadGroupPicture/$chatRoomId",
+    );
+
+    var response = await http.Response.fromStream(streamedResponse);
     if (response.statusCode == 200) {
       return null;
     } else {

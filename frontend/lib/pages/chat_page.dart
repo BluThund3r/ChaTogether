@@ -6,9 +6,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/add_member_to_chat_modal.dart';
+import 'package:frontend/components/change_group_picture.dart';
 import 'package:frontend/components/chat_members_modal.dart';
 import 'package:frontend/components/chat_message_widget.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
+import 'package:frontend/components/custom_circle_avatar_no_cache.dart';
 import 'package:frontend/components/edit_group_name_modal.dart';
 import 'package:frontend/components/long_press_message_options.dart';
 import 'package:frontend/components/toast.dart';
@@ -61,7 +63,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   final ScrollController _scrollController = ScrollController();
   late dynamic unsubscribeWS;
   final FocusNode focusNode = FocusNode();
-  File? _selectedImage;
+  late int imageKey;
 
   bool allowedToSendMessage() {
     return !blockedUsers! && partOfChat;
@@ -127,6 +129,16 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             message.content!.contains("changed the group name to")) {
           chatRoomDetails.roomName = message.content!.split('"')[1];
         }
+        if (message.type == ChatMessageType.ANNOUNCEMENT &&
+            message.content!.contains("changed the group picture")) {
+          CachedNetworkImage.evictFromCache(
+            "$baseUrl/chatRoom/groupPicture?chatRoomId=${chatRoomDetails.id}",
+          );
+          setState(() {
+            imageKey = DateTime.now().millisecondsSinceEpoch;
+          });
+        }
+
         if (decryptedMessage.senderId != loggedInUser.userId) {
           stompService.seeMessage(decryptedMessage.id, widget.chatId);
           if (isLockedToBottom) {
@@ -206,6 +218,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     for (final url in profilePictureUrls) {
       await CachedNetworkImage.evictFromCache(url);
     }
+
+    await CachedNetworkImage.evictFromCache(
+        "$baseUrl/chatRoom/groupPicture?chatRoomId=${chatRoomDetails.id}");
   }
 
   void showAddMemberModal(BuildContext context) {
@@ -258,52 +273,17 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     GoRouter.of(context).go('/');
   }
 
-  Future _pickImage({required ImageSource source}) async {
-    final pickedImage = await ImagePicker().pickImage(source: source);
-
-    if (pickedImage == null) {
-      return;
-    }
-
-    setState(() {
-      _selectedImage = File(pickedImage.path);
-    });
-  }
-
-  void showImageChoiceDialog(BuildContext context) {
-    showDialog(
+  void showGroupPictureUpdateModal(BuildContext context) {
+    showModalBottomSheet(
         context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Choose a source"),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  GestureDetector(
-                    child: const Text("Pick from Gallery"),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _pickImage(source: ImageSource.gallery);
-                    },
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                  ),
-                  GestureDetector(
-                    child: const Text("Take a picture"),
-                    onTap: () {
-                      Navigator.pop(context);
-                      _pickImage(source: ImageSource.camera);
-                    },
-                  )
-                ],
-              ),
-            ),
+        builder: (context) {
+          return ChangeGroupPictureModal(
+            chatRoomDetails: chatRoomDetails,
+            chatRoomKey: chatRoomKey,
+            chatRoomIv: chatRoomIv,
           );
         });
   }
-
-  void changeGroupImage(context) {}
 
   void showEditGroupNameModal(context) {
     showModalBottomSheet(
@@ -348,9 +328,9 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
             if (isLoggedInUserAdmin && !chatRoomDetails.isPrivateChat())
               ListTile(
                 leading: const Icon(Icons.image_rounded),
-                title: const Text("Change Group Image"),
+                title: const Text("Change Group Picture"),
                 onTap: () {
-                  showImageChoiceDialog(context);
+                  showGroupPictureUpdateModal(context);
                 },
               ),
             if (isLoggedInUserAdmin && !chatRoomDetails.isPrivateChat())
@@ -473,6 +453,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    imageKey = DateTime.now().millisecondsSinceEpoch;
     WidgetsBinding.instance.addObserver(this);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
@@ -528,12 +509,13 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                         name: otherMember.firstName,
                         radius: 25,
                       )
-                    : const CircleAvatar(
+                    : CustomCircleAvatar(
+                        name: "",
+                        key: ValueKey(imageKey),
+                        imageUrl:
+                            "$baseUrl/chatRoom/groupPicture?chatRoomId=${chatRoomDetails.id}",
+                        isGroupConversation: true,
                         radius: 25,
-                        child: Icon(
-                          Icons.group_rounded,
-                          size: 30,
-                        ),
                       ),
               ),
               title: Row(

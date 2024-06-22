@@ -6,15 +6,17 @@ class CustomCircleAvatar extends StatefulWidget {
   final String name;
   final String imageUrl;
   final double radius;
-  // final Key key;
+  final bool isGroupConversation;
+  @override
+  final Key key;
 
   const CustomCircleAvatar({
-    super.key,
+    this.key = const Key(''),
     required this.imageUrl,
     required this.name,
     this.radius = 20.0,
-    // required this.key,
-  });
+    this.isGroupConversation = false,
+  }) : super(key: key);
 
   @override
   State<CustomCircleAvatar> createState() => _CustomCircleAvatarState();
@@ -45,25 +47,43 @@ class _CustomCircleAvatarState extends State<CustomCircleAvatar> {
 
   @override
   Widget build(BuildContext context) {
-    return CircleAvatar(
-      radius: widget.radius,
-      backgroundColor: _getUserColor(widget.name),
-      child: CachedNetworkImage(
-        imageUrl: widget.imageUrl,
-        imageBuilder: (context, imageProvider) => CircleAvatar(
-          radius: widget.radius,
-          backgroundImage: imageProvider,
-        ),
-        placeholder: (context, url) => const CircularProgressIndicator(),
-        errorWidget: (context, url, error) => Text(
-          widget.name.isNotEmpty ? widget.name[0].toUpperCase() : '?',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: widget.radius,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
+    return widget.isGroupConversation
+        ? CircleAvatar(
+            radius: widget.radius,
+            backgroundColor: Colors.blue,
+            child: CachedNetworkImage(
+              imageUrl: widget.imageUrl,
+              imageBuilder: (context, imageProvider) => CircleAvatar(
+                radius: widget.radius,
+                backgroundImage: imageProvider,
+              ),
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(
+                Icons.group_rounded,
+                color: Colors.white,
+                size: widget.radius * 1.3,
+              ),
+            ),
+          )
+        : CircleAvatar(
+            radius: widget.radius,
+            backgroundColor: _getUserColor(widget.name),
+            child: CachedNetworkImage(
+              imageUrl: widget.imageUrl,
+              imageBuilder: (context, imageProvider) => CircleAvatar(
+                radius: widget.radius,
+                backgroundImage: imageProvider,
+              ),
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Text(
+                widget.name.isNotEmpty ? widget.name[0].toUpperCase() : '?',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: widget.radius,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
   }
 }

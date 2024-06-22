@@ -8,8 +8,10 @@ import chatogether.ChaTogether.services.ChatMessageService;
 import chatogether.ChaTogether.services.ChatRoomService;
 import chatogether.ChaTogether.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -169,4 +171,21 @@ public class ChatRoomController {
         var chatRoomId = groupNameChangeDTO.getChatRoomId();
         chatRoomService.updateGroupName(chatRoomId, newName, callerId);
     }
+
+    @PostMapping("/uploadGroupPicture/{chatRoomId}")
+    public void uploadGroupPicture(
+            @RequestParam("file") MultipartFile groupPicture,
+            @PathVariable String chatRoomId
+    ) {
+        var callerId = AuthRequestFilter.getUserId();
+        chatRoomService.uploadGroupPicture(chatRoomId, groupPicture, callerId);
+    }
+
+    @GetMapping("/groupPicture")
+    public Resource getGroupPicture(
+            @RequestParam String chatRoomId
+    ) {
+        return chatRoomService.getGroupPicture(chatRoomId);
+    }
+
 }

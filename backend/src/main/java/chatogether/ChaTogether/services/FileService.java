@@ -24,94 +24,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-//@Service
-//public class FileService {
-//    private final ResourceLoader resourceLoader;
-//    private final UserService userService;
-//
-//    private final String userDataPath = "classpath:userData/";
-//
-//    public FileService(
-//            @Qualifier("webApplicationContext") ResourceLoader resourceLoader,
-//            UserService userService
-//    ) {
-//        this.resourceLoader = resourceLoader;
-//        this.userService = userService;
-//    }
-//
-//    public void createUserDirectory(User user) throws IOException {
-//        Resource resource = resourceLoader.getResource(userDataPath);
-//        if (user.getDirectoryName() == null) {
-//            var hashedUsername = BCrypt.hashpw(user.getUsername(), BCrypt.gensalt());
-//            user.setDirectoryName(hashedUsername);
-//            userService.saveUser(user);
-//        }
-//        Path userDirectory = Paths.get(resource.getURI()).resolve(user.getDirectoryName());
-//        System.out.println("User directory path: " + userDirectory);
-//        if (!Files.exists(userDirectory)) {
-//            System.out.println("Creating user directory...");
-//            Files.createDirectories(userDirectory);
-//        }
-//    }
-//
-//    public void uploadProfilePicture(String username, MultipartFile profilePicture)
-//            throws ImageUploadFailed, UserDoesNotExist {
-//        var user = userService.findByUsername(username).orElseThrow(UserDoesNotExist::new);
-//        try {
-//            createUserDirectory(user);
-//            System.out.println("User directory created for " + username);
-//            var pictureExtension = Objects.requireNonNull(profilePicture.getOriginalFilename()).split("\\.")[1];
-//            if (!(pictureExtension.equals("jpg") || pictureExtension.equals("png"))) {
-//                throw new ImageUploadFailed("Extension not supported. Supported extensions are jpg and png.");
-//            }
-//            System.out.println("After extension check");
-//            Path profilePicturePath = Paths.get(resourceLoader.getResource(userDataPath + user.getDirectoryName()).getURI())
-//                    .resolve("profilePicture." + pictureExtension);
-//            System.out.println("After profile picture path");
-//            Files.write(profilePicturePath, profilePicture.getBytes());
-//            System.out.println("After writing file");
-//        } catch (IOException e) {
-//            throw new ImageUploadFailed();
-//        }
-//    }
-//
-//    public boolean profilePictureUploaded(String username) {
-//        try {
-//            var user = userService.findByUsername(username).orElseThrow(UserDoesNotExist::new);
-//            Path jpgProfilePicturePath = Paths.get(resourceLoader.getResource(userDataPath + user.getDirectoryName()).getURI())
-//                    .resolve("profilePicture.jpg");
-//            Path pngProfilePicturePath = Paths.get(resourceLoader.getResource(userDataPath + user.getDirectoryName()).getURI())
-//                    .resolve("profilePicture.png");
-//            return Files.exists(jpgProfilePicturePath) || Files.exists(pngProfilePicturePath);
-//        } catch (IOException e) {
-//            return false;
-//        }
-//    }
-//
-//    public Resource getProfilePicture(String username) throws FileNotFoundException {
-//        try {
-//            var user = userService.findByUsername(username).orElseThrow(UserDoesNotExist::new);
-//
-//            Path jpgProfilePicturePath = Paths.get(resourceLoader.getResource(userDataPath + user.getDirectoryName()).getURI())
-//                    .resolve("profilePicture.jpg");
-//
-//            Path pngProfilePicturePath = Paths.get(resourceLoader.getResource(userDataPath + user.getDirectoryName()).getURI())
-//                    .resolve("profilePicture.png");
-//
-//            if (Files.exists(jpgProfilePicturePath)) {
-//                return resourceLoader.getResource("file:" + jpgProfilePicturePath);
-//            } else if (Files.exists(pngProfilePicturePath)) {
-//                return resourceLoader.getResource("file:" + pngProfilePicturePath);
-//            }
-//
-//            throw new FileNotFoundException("Profile picture not found for user " + username);
-//
-//        } catch (IOException e) {
-//            throw new FileNotFoundException("Error occurred while retrieving profile picture for user " + username);
-//        }
-//    }
-//}
-
 @Service
 public class FileService {
     private final UserService userService;
@@ -141,7 +53,7 @@ public class FileService {
             createUserDirectory(user);
             var pictureExtension = Objects.requireNonNull(profilePicture.getOriginalFilename()).split("\\.")[1];
             if (!(pictureExtension.equals("jpg") || pictureExtension.equals("png"))) {
-                throw new ImageUploadFailed("Extension not supported. Supported extensions are jpg and png.");
+                throw new ImageUploadFailed("Extension not supported (not jpg or png)");
             }
             Path profilePicturePath = Paths.get(userDataPath, user.getDirectoryName(), "profilePicture." + pictureExtension);
             Files.write(profilePicturePath, profilePicture.getBytes());
@@ -224,5 +136,36 @@ public class FileService {
 
     public void deleteChatDirectory(ChatRoom chatRoom) {
         deleteDirectory(Paths.get(userDataPath, chatRoom.getDirectoryPath()).toString());
+    }
+
+    public void uploadGroupPicture(ChatRoom chatRoom, MultipartFile groupPicture) throws ImageUploadFailed {
+        try {
+            createChatDirectory(chatRoom.getDirectoryPath());
+            var pictureExtension = Objects.requireNonNull(groupPicture.getOriginalFilename()).split("\\.")[1];
+            if (!(pictureExtension.equals("jpg") || pictureExtension.equals("png"))) {
+                throw new ImageUploadFailed("Extension not supported (not jpg or png)");
+            }
+
+            Path groupPicturePath = Paths.get(
+                    userDataPath, chatRoom.getDirectoryPath(),
+                    "groupPicture." + pictureExtension
+            );
+            Files.write(groupPicturePath, groupPicture.getBytes());
+        } catch (IOException e) {
+            throw new ImageUploadFailed();
+        }
+    }
+
+    public Resource getGroupPicture(ChatRoom chatRoom) throws FileNotFoundException {
+        Path jpgGroupPicturePath = Paths.get(userDataPath, chatRoom.getDirectoryPath(), "groupPicture.jpg");
+        Path pngGroupPicturePath = Paths.get(userDataPath, chatRoom.getDirectoryPath(), "groupPicture.png");
+
+        if (Files.exists(jpgGroupPicturePath)) {
+            return new FileSystemResource(jpgGroupPicturePath.toFile());
+        } else if (Files.exists(pngGroupPicturePath)) {
+            return new FileSystemResource(pngGroupPicturePath.toFile());
+        }
+
+        throw new FileNotFoundException("Group picture not found for chat room " + chatRoom.getId());
     }
 }
