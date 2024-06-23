@@ -21,7 +21,6 @@ import java.util.List;
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final ChatMessageService chatMessageService;
-    //    private final SimpMessagingTemplate simpMessagingTemplate;
     private final UserService userService;
 
     @GetMapping("/myChats")

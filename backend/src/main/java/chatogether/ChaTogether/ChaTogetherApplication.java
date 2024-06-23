@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ChaTogetherApplication {
 
     public static void main(String[] args) {
+        System.out.println("SPRING VERSION: " + SpringVersion.getVersion());
         SpringApplication.run(ChaTogetherApplication.class, args);
     }
 }

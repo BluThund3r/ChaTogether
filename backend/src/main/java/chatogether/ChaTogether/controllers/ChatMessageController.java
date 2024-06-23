@@ -35,6 +35,8 @@ public class ChatMessageController {
     private final ChatRoomService chatRoomService;
     private final UserService userService;
 
+
+    // TODO: vezi de ce se tot reseteaza conexiunea websocket cand trimite o imagine criptata...
     @MessageMapping("/sendMessage/{chatRoomId}")
     public void sendMessage(
             @DestinationVariable String chatRoomId,

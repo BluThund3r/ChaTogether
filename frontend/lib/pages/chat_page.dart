@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:frontend/components/add_member_to_chat_modal.dart';
 import 'package:frontend/components/change_group_picture.dart';
 import 'package:frontend/components/chat_members_modal.dart';
@@ -13,6 +14,7 @@ import 'package:frontend/components/custom_circle_avatar.dart';
 import 'package:frontend/components/custom_circle_avatar_no_cache.dart';
 import 'package:frontend/components/edit_group_name_modal.dart';
 import 'package:frontend/components/long_press_message_options.dart';
+import 'package:frontend/components/send_chat_image_modal.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/chat_message.dart';
 import 'package:frontend/interfaces/chat_room_details.dart';
@@ -64,6 +66,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   late dynamic unsubscribeWS;
   final FocusNode focusNode = FocusNode();
   late int imageKey;
+  bool isTypingMessage = false;
 
   bool allowedToSendMessage() {
     return !blockedUsers! && partOfChat;
@@ -120,6 +123,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     } else {
       final decryptedMessage = await CryptoUtils.decryptChatMessage(
           message, chatRoomKey, chatRoomIv);
+
+      // TODO: remove this if (i think it is not needed)
       if (message.type == ChatMessageType.TEXT ||
           message.type == ChatMessageType.ANNOUNCEMENT) {
         setState(() {
@@ -473,10 +478,15 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
 
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
+        setState(() => isTypingMessage = true);
         Future.delayed(
           const Duration(milliseconds: 500),
           () => _scrollToBottom(),
         );
+      }
+
+      if (!focusNode.hasFocus) {
+        setState(() => isTypingMessage = false);
       }
     });
 
@@ -487,6 +497,20 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     friendService = Provider.of<FriendService>(context, listen: false);
     loadChatRoomKeyAndIv();
     fetchDataAndSubscribeWS();
+  }
+
+  void showSendImageModal(ImageSource imageSource, BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SendChatImageModal(
+          source: imageSource,
+          chatRoomKey: chatRoomKey,
+          chatRoomIv: chatRoomIv,
+          chatRoomDetails: chatRoomDetails,
+        );
+      },
+    );
   }
 
   @override
@@ -588,7 +612,6 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                                 bottom:
                                     MediaQuery.of(context).viewInsets.bottom,
                               ),
-                              // reverse: true,
                               controller: _scrollController,
                               itemCount: messages.length + 1,
                               itemBuilder: (context, index) {
@@ -627,28 +650,57 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                           color: Color.fromARGB(255, 5, 29, 48),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 3, vertical: 5),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    focusNode: focusNode,
-                                    controller: messageSendController,
-                                    decoration: const InputDecoration(
-                                      hintText: "Type a message...",
-                                      border: InputBorder.none,
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              if (!isTypingMessage)
+                                IconButton(
+                                  onPressed: () => showSendImageModal(
+                                      ImageSource.camera, context),
+                                  icon: const Icon(Icons.camera_alt_rounded),
+                                  padding: EdgeInsets.zero,
+                                ),
+                              if (!isTypingMessage)
+                                IconButton(
+                                  icon: const Icon(Icons.photo_rounded),
+                                  onPressed: () => showSendImageModal(
+                                      ImageSource.gallery, context),
+                                  padding: EdgeInsets.zero,
+                                ),
+                              Expanded(
+                                child: TextField(
+                                  focusNode: focusNode,
+                                  controller: messageSendController,
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    hintText: "Type a message...",
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.grey[600]!,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(25),
+                                      ),
+                                      gapPadding: 0,
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.grey[600]!,
+                                      ),
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(25),
+                                      ),
+                                      gapPadding: 0,
                                     ),
                                   ),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.send),
-                                  onPressed: sendTextMessage,
-                                ),
-                              ],
-                            ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.send),
+                                onPressed: sendTextMessage,
+                              ),
+                            ],
                           ),
                         ),
                       )
