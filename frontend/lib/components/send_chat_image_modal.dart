@@ -36,9 +36,7 @@ class _SendChatImageModalState extends State<SendChatImageModal> {
   Future<Uint8List> compressImage(File file) async {
     final result = await FlutterImageCompress.compressWithFile(
       file.absolute.path,
-      minWidth: 800,
-      minHeight: 800,
-      quality: 85,
+      quality: 0,
     );
     return result!;
   }

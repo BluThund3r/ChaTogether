@@ -1,17 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/components/add_member_to_chat_modal.dart';
 import 'package:frontend/components/change_group_picture.dart';
 import 'package:frontend/components/chat_members_modal.dart';
 import 'package:frontend/components/chat_message_widget.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
-import 'package:frontend/components/custom_circle_avatar_no_cache.dart';
 import 'package:frontend/components/edit_group_name_modal.dart';
 import 'package:frontend/components/long_press_message_options.dart';
 import 'package:frontend/components/send_chat_image_modal.dart';
@@ -124,38 +121,34 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       final decryptedMessage = await CryptoUtils.decryptChatMessage(
           message, chatRoomKey, chatRoomIv);
 
-      // TODO: remove this if (i think it is not needed)
-      if (message.type == ChatMessageType.TEXT ||
-          message.type == ChatMessageType.ANNOUNCEMENT) {
+      setState(() {
+        messages.add(decryptedMessage);
+      });
+      if (message.type == ChatMessageType.ANNOUNCEMENT &&
+          message.content!.contains("changed the group name to")) {
+        chatRoomDetails.roomName = message.content!.split('"')[1];
+      }
+      if (message.type == ChatMessageType.ANNOUNCEMENT &&
+          message.content!.contains("changed the group picture")) {
+        CachedNetworkImage.evictFromCache(
+          "$baseUrl/chatRoom/groupPicture?chatRoomId=${chatRoomDetails.id}",
+        );
         setState(() {
-          messages.add(decryptedMessage);
+          imageKey = DateTime.now().millisecondsSinceEpoch;
         });
-        if (message.type == ChatMessageType.ANNOUNCEMENT &&
-            message.content!.contains("changed the group name to")) {
-          chatRoomDetails.roomName = message.content!.split('"')[1];
-        }
-        if (message.type == ChatMessageType.ANNOUNCEMENT &&
-            message.content!.contains("changed the group picture")) {
-          CachedNetworkImage.evictFromCache(
-            "$baseUrl/chatRoom/groupPicture?chatRoomId=${chatRoomDetails.id}",
-          );
-          setState(() {
-            imageKey = DateTime.now().millisecondsSinceEpoch;
-          });
-        }
+      }
 
-        if (decryptedMessage.senderId != loggedInUser.userId) {
-          stompService.seeMessage(decryptedMessage.id, widget.chatId);
-          if (isLockedToBottom) {
-            Future.delayed(const Duration(milliseconds: 200), () {
-              _scrollToBottom();
-            });
-          }
-        } else {
+      if (decryptedMessage.senderId != loggedInUser.userId) {
+        stompService.seeMessage(decryptedMessage.id, widget.chatId);
+        if (isLockedToBottom) {
           Future.delayed(const Duration(milliseconds: 200), () {
             _scrollToBottom();
           });
         }
+      } else {
+        Future.delayed(const Duration(milliseconds: 200), () {
+          _scrollToBottom();
+        });
       }
     }
   }

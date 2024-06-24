@@ -32,7 +32,7 @@ class ChatMessage {
       id: json['id'],
       chatRoomId: json['chatRoomId'],
       senderId: json['senderId'],
-      encryptedContent: json['encryptedContent'],
+      encryptedContent: json['encryptedContent'] ?? "",
       sentAt: DateTime.parse(json['sentAt']),
       type: ChatMessageType.values
           .firstWhere((e) => e.toString() == 'ChatMessageType.${json['type']}'),

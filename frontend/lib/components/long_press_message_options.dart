@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:frontend/components/edit_message_modal.dart';
 import 'package:frontend/interfaces/chat_message.dart';
+import 'package:frontend/interfaces/enums/chat_message_type.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/stomp_service.dart';
 
@@ -75,12 +76,13 @@ class LongPressMessageOptions extends StatelessWidget {
           if (!message.isDeleted)
             Column(
               children: [
+                if(message.type == ChatMessageType.TEXT)
                 ListTile(
                   leading: const Icon(Icons.copy_rounded),
                   title: const Text("Copy"),
                   onTap: () => handleCopy(context),
                 ),
-                if (userSendMessage)
+                if (userSendMessage && message.type == ChatMessageType.TEXT)
                   ListTile(
                     leading: const Icon(Icons.edit_rounded),
                     title: const Text("Edit"),

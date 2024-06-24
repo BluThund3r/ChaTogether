@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
 import 'package:frontend/interfaces/chat_message.dart';
 import 'package:frontend/interfaces/enums/chat_message_type.dart';
 import 'package:frontend/interfaces/user.dart';
 import 'package:frontend/utils/backend_details.dart';
+import 'package:insta_image_viewer/insta_image_viewer.dart';
 import 'package:intl/intl.dart';
 
 class ChatMessageWidget extends StatelessWidget {
@@ -38,6 +41,11 @@ class ChatMessageWidget extends StatelessWidget {
           ),
         ),
       );
+    }
+
+    var imageBytes;
+    if (message.type == ChatMessageType.IMAGE) {
+      imageBytes = base64Decode(message.content!);
     }
 
     final sender =
@@ -78,10 +86,23 @@ class ChatMessageWidget extends StatelessWidget {
                       : CrossAxisAlignment.start,
                   children: [
                     if (message.content != null && !message.isDeleted)
-                      Text(
-                        message.content!,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                      message.type == ChatMessageType.TEXT
+                          ? Text(
+                              message.content!,
+                              style: const TextStyle(color: Colors.white),
+                            )
+                          : Container(
+                              constraints: const BoxConstraints(
+                                maxHeight: 200,
+                                maxWidth: 200,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: InstaImageViewer(
+                                child: Image.memory(imageBytes),
+                              ),
+                            ),
                     if (message.isDeleted)
                       const Text(
                         'Message deleted',
