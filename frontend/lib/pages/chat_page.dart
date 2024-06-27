@@ -422,6 +422,8 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
   }
 
   void handleMessageLongPress(ChatMessage message, BuildContext context) {
+    if (message.type == ChatMessageType.IMAGE &&
+        message.senderId != loggedInUser.userId) return;
     showModalBottomSheet(
       context: context,
       builder: (context) {

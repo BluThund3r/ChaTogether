@@ -18,6 +18,7 @@ public class FilterConfig {
         registrationBean.addUrlPatterns("/chatMessages/*");
         registrationBean.addUrlPatterns("/videoRoom/*");
         registrationBean.addUrlPatterns("/admin/*");
+        registrationBean.addUrlPatterns("/chatMessage/*");
 
         return registrationBean;
     }

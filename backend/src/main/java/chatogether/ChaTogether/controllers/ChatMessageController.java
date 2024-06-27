@@ -5,6 +5,7 @@ import chatogether.ChaTogether.DTO.OutgoingChatMessageDTO;
 import chatogether.ChaTogether.enums.ActionType;
 import chatogether.ChaTogether.enums.ChatMessageType;
 import chatogether.ChaTogether.DTO.IncomingTextChatMessageDTO;
+import chatogether.ChaTogether.exceptions.ImageUploadFailed;
 import chatogether.ChaTogether.filters.AuthRequestFilter;
 import chatogether.ChaTogether.persistence.ChatMessage;
 import chatogether.ChaTogether.services.ChatMessageService;
@@ -13,14 +14,14 @@ import chatogether.ChaTogether.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
@@ -35,12 +36,10 @@ public class ChatMessageController {
     private final ChatRoomService chatRoomService;
     private final UserService userService;
 
-
-    // TODO: vezi de ce se tot reseteaza conexiunea websocket cand trimite o imagine criptata...
     @MessageMapping("/sendMessage/{chatRoomId}")
     public void sendMessage(
             @DestinationVariable String chatRoomId,
-            IncomingTextChatMessageDTO incomingMessage,
+            @Payload IncomingTextChatMessageDTO incomingMessage,
             SimpMessageHeaderAccessor headerAccessor
     ) {
         var attributes = headerAccessor.getSessionAttributes();
@@ -50,22 +49,13 @@ public class ChatMessageController {
         System.out.println("incomingMessageContent: " + incomingMessage.getEncryptedContent());
         System.out.println("incomingMessageType: " + incomingMessage.getType());
         ChatMessage chatMessage;
-        if (incomingMessage.getType() == ChatMessageType.IMAGE)
-            chatMessage = chatMessageService.uploadMessage(
-                    chatRoomId,
-                    senderId,
-                    "",
-                    incomingMessage.getType(),
-                    Base64.getDecoder().decode(incomingMessage.getEncryptedContent())
-            );
-        else
-            chatMessage = chatMessageService.uploadMessage(
-                    chatRoomId,
-                    senderId,
-                    incomingMessage.getEncryptedContent(),
-                    incomingMessage.getType(),
-                    null
-            );
+        chatMessage = chatMessageService.uploadMessage(
+                chatRoomId,
+                senderId,
+                incomingMessage.getEncryptedContent(),
+                incomingMessage.getType(),
+                null
+        );
 
         simpMessagingTemplate.convertAndSend(
                 "/queue/chatRoom/" + chatRoomId,
@@ -88,6 +78,88 @@ public class ChatMessageController {
                 )
         );
     }
+
+    @PostMapping("/chatMessage/sendImage/{chatRoomId}")
+    void postChatImage(
+            @PathVariable String chatRoomId,
+            @RequestPart("file") MultipartFile encryptedImage
+    ) {
+        byte[] encryptedImageBytes;
+        try {
+            encryptedImageBytes = encryptedImage.getBytes();
+        } catch (IOException e) {
+            throw new ImageUploadFailed();
+        }
+        var senderId = AuthRequestFilter.getUserId();
+        System.out.println("Image sent by " + senderId + " in chat room " + chatRoomId);
+        var chatMessage = chatMessageService.uploadMessage(
+                chatRoomId,
+                senderId,
+                "",
+                ChatMessageType.IMAGE,
+                encryptedImageBytes
+        );
+
+        simpMessagingTemplate.convertAndSend(
+                "/queue/chatRoom/" + chatRoomId,
+                new OutgoingChatMessageDTO(
+                        chatMessage,
+                        ActionType.SEND,
+                        chatMessage.getType() == ChatMessageType.IMAGE ?
+                                chatMessageService.getImageEncodedOfMessage(chatMessage) :
+                                null
+                )
+        );
+
+        var chatRoom = chatRoomService.getChatRoomById(chatRoomId);
+        simpMessagingTemplate.convertAndSend(
+                "/queue/chatRoomUpdates",
+                new ChatRoomDetailsWithLastMessageDTO(
+                        chatRoom,
+                        new OutgoingChatMessageDTO(chatMessage, ActionType.SEND, null),
+                        userService
+                )
+        );
+    }
+
+//    @MessageMapping("/sendChatImage/{chatRoomId}")
+//    public void sendChatImage(
+//            @DestinationVariable String chatRoomId,
+//            @Payload byte[] encryptedImageBytes,
+//            SimpMessageHeaderAccessor headerAccessor
+//    ) {
+//        var attributes = headerAccessor.getSessionAttributes();
+//        var senderId = (Long) attributes.get("userId");
+//        System.out.println("Image sent by " + senderId + " in chat room " + chatRoomId);
+//        var chatMessage = chatMessageService.uploadMessage(
+//                chatRoomId,
+//                senderId,
+//                "",
+//                ChatMessageType.IMAGE,
+//                encryptedImageBytes
+//        );
+//
+//        simpMessagingTemplate.convertAndSend(
+//                "/queue/chatRoom/" + chatRoomId,
+//                new OutgoingChatMessageDTO(
+//                        chatMessage,
+//                        ActionType.SEND,
+//                        chatMessage.getType() == ChatMessageType.IMAGE ?
+//                                chatMessageService.getImageEncodedOfMessage(chatMessage) :
+//                                null
+//                )
+//        );
+//
+//        var chatRoom = chatRoomService.getChatRoomById(chatRoomId);
+//        simpMessagingTemplate.convertAndSend(
+//                "/queue/chatRoomUpdates",
+//                new ChatRoomDetailsWithLastMessageDTO(
+//                        chatRoom,
+//                        new OutgoingChatMessageDTO(chatMessage, ActionType.SEND, null),
+//                        userService
+//                )
+//        );
+//    }
 
     @MessageMapping("/seeMessage/{messageId}")
     public void seeMessage(

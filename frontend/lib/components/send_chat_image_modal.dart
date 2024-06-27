@@ -6,10 +6,10 @@ import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:frontend/interfaces/chat_room_details.dart';
-import 'package:frontend/interfaces/enums/chat_message_type.dart';
-import 'package:frontend/interfaces/outgoing_chat_message.dart';
 import 'package:frontend/services/stomp_service.dart';
+import 'package:frontend/utils/backend_details.dart';
 import 'package:frontend/utils/crypto_utils.dart';
+import 'package:frontend/utils/fetch_with_token.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SendChatImageModal extends StatefulWidget {
@@ -36,7 +36,7 @@ class _SendChatImageModalState extends State<SendChatImageModal> {
   Future<Uint8List> compressImage(File file) async {
     final result = await FlutterImageCompress.compressWithFile(
       file.absolute.path,
-      quality: 0,
+      quality: 75,
     );
     return result!;
   }
@@ -68,16 +68,14 @@ class _SendChatImageModalState extends State<SendChatImageModal> {
       widget.chatRoomKey,
       widget.chatRoomIv,
     );
+    final ciphertextBytes = base64Decode(ciphertext);
     print("Length of the ciphertext: ${ciphertext.length}");
-    print(
-        "Length of the ciphertext bytes: {${base64Decode(ciphertext).length}}");
+    print("Length of the ciphertext bytes: {${ciphertextBytes.length}}");
 
-    final imageMessage = OutgoingChatMessage(
-      encryptedContent: ciphertext,
-      type: ChatMessageType.IMAGE,
+    HttpWithToken.postFile(
+      fileBytes: ciphertextBytes,
+      url: '$baseUrl/chatMessage/sendImage/${widget.chatRoomDetails.id}',
     );
-
-    stompService.sendChatMessage(imageMessage, widget.chatRoomDetails.id);
 
     Navigator.pop(context);
   }

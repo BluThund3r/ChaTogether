@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:frontend/interfaces/outgoing_chat_message.dart';
 import 'package:frontend/interfaces/video_change.dart';
@@ -110,6 +111,13 @@ class StompService {
     _stompClient.send(
       destination: '$_sendBaseUrl/sendMessage/$chatRoomId',
       body: json.encode(chatMessage.toJson()),
+    );
+  }
+
+  void sendChatImage(Uint8List encryptedImageBytes, String chatRoomId) {
+    _stompClient.send(
+      destination: '$_sendBaseUrl/sendChatImage/$chatRoomId',
+      binaryBody: encryptedImageBytes,
     );
   }
 

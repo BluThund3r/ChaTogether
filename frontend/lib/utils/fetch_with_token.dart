@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -76,7 +78,8 @@ class HttpWithToken {
   }
 
   static Future<http.StreamedResponse> postFile({
-    required String filePath,
+    String filePath = "",
+    Uint8List? fileBytes,
     String url = "",
     Map<String, String> headers = const {},
   }) async {
@@ -84,9 +87,16 @@ class HttpWithToken {
     var localHeaders = {...headers};
     localHeaders["Authorization"] = 'Bearer $token';
 
-    var request = http.MultipartRequest('POST', Uri.parse(url))
-      ..files.add(await http.MultipartFile.fromPath('file', filePath))
-      ..headers.addAll(localHeaders);
+    http.MultipartRequest request =
+        http.MultipartRequest('POST', Uri.parse(url))
+          ..headers.addAll(localHeaders);
+
+    if (fileBytes != null) {
+      request.files.add(await http.MultipartFile.fromBytes("file", fileBytes,
+          filename: "image.jpg"));
+    } else {
+      request.files.add(await http.MultipartFile.fromPath('file', filePath));
+    }
 
     return request.send();
   }
