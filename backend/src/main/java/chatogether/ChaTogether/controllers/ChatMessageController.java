@@ -122,45 +122,6 @@ public class ChatMessageController {
         );
     }
 
-//    @MessageMapping("/sendChatImage/{chatRoomId}")
-//    public void sendChatImage(
-//            @DestinationVariable String chatRoomId,
-//            @Payload byte[] encryptedImageBytes,
-//            SimpMessageHeaderAccessor headerAccessor
-//    ) {
-//        var attributes = headerAccessor.getSessionAttributes();
-//        var senderId = (Long) attributes.get("userId");
-//        System.out.println("Image sent by " + senderId + " in chat room " + chatRoomId);
-//        var chatMessage = chatMessageService.uploadMessage(
-//                chatRoomId,
-//                senderId,
-//                "",
-//                ChatMessageType.IMAGE,
-//                encryptedImageBytes
-//        );
-//
-//        simpMessagingTemplate.convertAndSend(
-//                "/queue/chatRoom/" + chatRoomId,
-//                new OutgoingChatMessageDTO(
-//                        chatMessage,
-//                        ActionType.SEND,
-//                        chatMessage.getType() == ChatMessageType.IMAGE ?
-//                                chatMessageService.getImageEncodedOfMessage(chatMessage) :
-//                                null
-//                )
-//        );
-//
-//        var chatRoom = chatRoomService.getChatRoomById(chatRoomId);
-//        simpMessagingTemplate.convertAndSend(
-//                "/queue/chatRoomUpdates",
-//                new ChatRoomDetailsWithLastMessageDTO(
-//                        chatRoom,
-//                        new OutgoingChatMessageDTO(chatMessage, ActionType.SEND, null),
-//                        userService
-//                )
-//        );
-//    }
-
     @MessageMapping("/seeMessage/{messageId}")
     public void seeMessage(
             @DestinationVariable String messageId,

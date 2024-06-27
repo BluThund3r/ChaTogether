@@ -158,13 +158,16 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
     final oldestMessageSentAt = messages.first.sentAt;
     final newMessages = await chatMessageService.getChatMessagesDecryptedBefore(
         widget.chatId, chatRoomKey, chatRoomIv, oldestMessageSentAt);
-    if (newMessages.isEmpty || newMessages.length < messagesFetchedOnce) {
+    if (newMessages.isEmpty) {
       setState(() => areMessagesLeftToFetch = false);
       return;
     }
     setState(() {
       messages.insertAll(0, newMessages);
     });
+    if (newMessages.length < messagesFetchedOnce) {
+      setState(() => areMessagesLeftToFetch = false);
+    }
   }
 
   void fetchDataAndSubscribeWS() async {
@@ -475,13 +478,17 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
       if (focusNode.hasFocus) {
         setState(() => isTypingMessage = true);
         Future.delayed(
-          const Duration(milliseconds: 500),
+          const Duration(milliseconds: 1000),
           () => _scrollToBottom(),
         );
       }
 
       if (!focusNode.hasFocus) {
         setState(() => isTypingMessage = false);
+        Future.delayed(
+          const Duration(milliseconds: 1000),
+          () => _scrollToBottom(),
+        );
       }
     });
 
@@ -603,6 +610,7 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                           builder: (BuildContext context,
                               BoxConstraints constraints) {
                             return ListView.builder(
+                              addAutomaticKeepAlives: true,
                               padding: EdgeInsets.only(
                                 bottom:
                                     MediaQuery.of(context).viewInsets.bottom,

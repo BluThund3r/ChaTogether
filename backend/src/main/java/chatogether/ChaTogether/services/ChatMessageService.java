@@ -101,7 +101,9 @@ public class ChatMessageService {
             throw new UserNotInChatRoom();
 
         var pageable = PageRequest.of(0, limit);
-        return chatMessageRepository.findByChatRoomIdBeforeAndLimited(chatRoomId, beforeTimestamp, pageable);
+        var chatMessages = chatMessageRepository.findByChatRoomIdBeforeAndLimited(chatRoomId, beforeTimestamp, pageable);
+        chatMessages.sort(Comparator.comparing(ChatMessage::getSentAt));
+        return chatMessages;
     }
 
     public byte[] getImageBytesByMessageId(String messageId) {
