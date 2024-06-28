@@ -553,22 +553,25 @@ class _ChatPageState extends State<ChatPage> with WidgetsBindingObserver {
                             .username
                         : chatRoomDetails.roomName,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    chatRoomDetails.isPrivateChat() ? "Private" : "Group",
-                    style: const TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 13,
-                      color: Colors.grey,
-                    ),
+                        fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ],
               ),
               automaticallyImplyLeading: false,
               actions: [
+                Text(
+                  chatRoomDetails.isPrivateChat() ? "Private" : "Group",
+                  style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 13,
+                    color: Colors.grey,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () =>
+                      GoRouter.of(context).push("/call/${widget.chatId}"),
+                  icon: const Icon(Icons.add_ic_call_rounded),
+                ),
                 IconButton(
                   icon: const Icon(Icons.more_vert_rounded),
                   onPressed: () => showOptionsModal(context),

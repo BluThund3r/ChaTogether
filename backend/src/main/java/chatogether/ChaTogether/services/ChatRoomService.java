@@ -169,6 +169,17 @@ public class ChatRoomService {
         return chatRoomRepository.findById(chatRoomId).orElseThrow();
     }
 
+    public void setDateForAll() {
+        var chatRooms = chatRoomRepository.findAll();
+        chatRooms.forEach(chatRoom -> {
+            chatRoom.setUserAddedAt(new HashMap<>());
+            chatRoom.getEncryptedKeys().forEach((userId, key) -> {
+                chatRoom.getUserAddedAt().put(userId, LocalDateTime.now());
+            });
+            chatRoomRepository.save(chatRoom);
+        });
+    }
+
     public boolean isUserInChatRoom(Long userId, String chatRoomId) {
         var chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomDoesNotExist::new);
         return chatRoom.getEncryptedKeyOfUser(userId) != null;
@@ -178,6 +189,12 @@ public class ChatRoomService {
         var user = userService.findByUsername(username).orElseThrow(UserDoesNotExist::new);
         return chatRoomRepository.findAll().stream()
                 .filter(chatRoom -> chatRoom.getEncryptedKeys().containsKey(user.getId()))
+                .toList();
+    }
+
+    public List<ChatRoom> getChatRoomsOfUser(Long userId) {
+        return chatRoomRepository.findAll().stream()
+                .filter(chatRoom -> chatRoom.getEncryptedKeys().containsKey(userId))
                 .toList();
     }
 
@@ -255,6 +272,7 @@ public class ChatRoomService {
         if (chatRoom.isPrivateChat())
             throw new UserRemovalDenied("Cannot leave private chat room");
         chatRoom.removeUserEncryptionKey(userId);
+        chatRoom.getUserAddedAt().remove(userId);
         var savedChatRoom = chatRoomRepository.save(chatRoom);
 
         simpMessagingTemplate.convertAndSend(

@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,19 +25,28 @@ public class ChatRoom {
     private int maxUsers;
     private List<Long> admins;
     private String directoryPath;
+    private Map<Long, LocalDateTime> userAddedAt;
 
     public String getEncryptedKeyOfUser(Long userId) {
         return encryptedKeys.get(userId);
     }
 
+    public LocalDateTime getTimeOfUserAdded(Long userId) {
+        return userAddedAt.get(userId);
+    }
+
     public void setEncryptedKeyOfUser(Long userId, String encryptedKey) {
         if (encryptedKeys == null)
             encryptedKeys = new HashMap<>();
+        if (userAddedAt == null)
+            userAddedAt = new HashMap<>();
         encryptedKeys.put(userId, encryptedKey);
+        userAddedAt.put(userId, LocalDateTime.now());
     }
 
     public void removeUserEncryptionKey(Long userId) {
         encryptedKeys.remove(userId);
+        userAddedAt.remove(userId);
     }
 
     public boolean isPrivateChat() {

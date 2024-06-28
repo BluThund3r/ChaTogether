@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
 import 'package:frontend/pages/navbar_pages/admin_page.dart';
+import 'package:frontend/pages/navbar_pages/calls_page.dart';
 import 'package:frontend/pages/navbar_pages/chats_page.dart';
 import 'package:frontend/pages/navbar_pages/people_page.dart';
 import 'package:frontend/pages/navbar_pages/watch_page.dart';
@@ -73,10 +74,12 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.person_add),
       ),
       null,
+      null,
     ];
     navbarPages = <Widget>[
       const ChatsPage(),
       const PeoplePage(),
+      const CallsPage(),
       const WatchPage(),
     ];
     destinations = [
@@ -87,6 +90,10 @@ class _HomePageState extends State<HomePage> {
       const NavigationDestination(
         icon: Icon(Icons.person_rounded),
         label: 'People',
+      ),
+      const NavigationDestination(
+        icon: Icon(Icons.phone_rounded),
+        label: 'Calls',
       ),
       const NavigationDestination(
         icon: Icon(Icons.live_tv_rounded),

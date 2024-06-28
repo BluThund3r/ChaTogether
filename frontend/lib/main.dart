@@ -1,10 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/api/firebase_api.dart';
 import 'package:frontend/routing/router.dart';
 import 'package:frontend/services/admin_service.dart';
 import 'package:frontend/services/auth_service.dart';
+import 'package:frontend/services/call_service.dart';
 import 'package:frontend/services/chat_message_service.dart';
 import 'package:frontend/services/chat_room_service.dart';
 import 'package:frontend/services/friend_service.dart';
@@ -17,6 +19,7 @@ import 'firebase_options.dart';
 
 void main() async {
   print("Domain: $baseUrl");
+  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -56,6 +59,9 @@ void main() async {
             ),
             Provider<AdminService>(
               create: (_) => AdminService(),
+            ),
+            Provider<CallService>(
+              create: (_) => CallService(),
             ),
             // other services that need to be injected
           ],

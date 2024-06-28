@@ -6,6 +6,7 @@ import 'package:frontend/pages/auth_pages/login_page.dart';
 import 'package:frontend/pages/auth_pages/mail_verification_page.dart';
 import 'package:frontend/pages/auth_pages/register_page.dart';
 import 'package:frontend/pages/blocked_users_page.dart';
+import 'package:frontend/pages/call.dart';
 import 'package:frontend/pages/chat_page.dart';
 import 'package:frontend/pages/create_group_chat_page.dart';
 import 'package:frontend/pages/create_private_chat_page.dart';
@@ -40,7 +41,13 @@ final GoRouter router = GoRouter(
     //     return TestPage();
     //   },
     // ),
-
+    GoRoute(
+        path: "/call/:chatRoomId",
+        builder: (context, state) {
+          final chatRoomId = state.pathParameters['chatRoomId'];
+          if (chatRoomId == null) return const SizedBox();
+          return CallPage(chatRoomId: chatRoomId);
+        }),
     GoRoute(
       path: '/chat',
       builder: (BuildContext context, GoRouterState state) {
