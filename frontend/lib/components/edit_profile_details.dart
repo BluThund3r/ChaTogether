@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/user_service.dart';

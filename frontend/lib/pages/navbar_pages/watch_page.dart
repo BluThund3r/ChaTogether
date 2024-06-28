@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/video_room_details.dart';
 import 'package:frontend/services/video_room_service.dart';

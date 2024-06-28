@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/components/custom_bar_cart.dart';
 import 'package:frontend/components/toast.dart';

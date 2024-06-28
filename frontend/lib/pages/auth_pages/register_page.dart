@@ -237,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               children: [
                                 const Tooltip(
                                   message:
-                                      '''Password must contain at least:\n - 8 characters\n - 1 uppercase letter\n - 1 lowercase letter\n - 1 number\n - 1 special character from the following set:\n    !?()*\[\]+\-_.,:;<=>@'"''',
+                                      '''Password must contain at least:\n - 8 characters\n - 1 uppercase letter\n - 1 lowercase letter\n - 1 number\n - 1 special character from the following set:\n    !?()*[]+-_.,:;<=>@'"''',
                                   child: Icon(Icons.info),
                                 ),
                                 IconButton(

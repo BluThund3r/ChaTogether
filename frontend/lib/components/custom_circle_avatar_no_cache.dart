@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/utils/fetch_with_token.dart';
-import 'package:http/http.dart' as http;
 
 class CustomCircleAvatarNoCache extends StatefulWidget {
   final String name;

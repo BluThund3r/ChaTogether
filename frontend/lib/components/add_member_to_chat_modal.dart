@@ -47,7 +47,7 @@ class _AddMemberToChatModalState extends State<AddMemberToChatModal> {
     final userPublicKey =
         await userService.getPublicKeyOfOtherUser(userToAdd.username);
     final encryptedKeyAndIv = await CryptoUtils.encryptChatKeyForNewUser(
-      widget.chatKey!,
+      widget.chatKey,
       widget.chatIv,
       userPublicKey,
     );

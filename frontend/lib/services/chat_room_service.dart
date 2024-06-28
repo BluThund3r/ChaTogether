@@ -26,7 +26,7 @@ class ChatRoomService {
 
   Future<dynamic> getChatRoomSecretKeyAndIv(String chatRoomId) async {
     final response = await HttpWithToken.get(
-        url: "$baseUrl/chatRoom/getChatRoomKey/${chatRoomId}");
+        url: "$baseUrl/chatRoom/getChatRoomKey/$chatRoomId");
     if (response.statusCode != 200) {
       return response.body;
     }

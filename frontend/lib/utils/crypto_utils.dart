@@ -14,8 +14,8 @@ class CryptoUtils {
   static const int _SALT_LENGTH = 16;
   static const int _ITERATIONS = 1000;
   static const int _DERIVED_KEY_LENGTH = 32;
-  static final FlutterSecureStorage _secureStorage =
-      const FlutterSecureStorage();
+  static const FlutterSecureStorage _secureStorage =
+      FlutterSecureStorage();
   static const int _IV_SIZE = 16;
   static const int _RSA_KEY_SIZE = 2048;
   static const int _AES_KEY_SIZE = 32;

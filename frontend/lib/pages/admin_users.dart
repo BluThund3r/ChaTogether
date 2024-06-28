@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/components/custom_circle_avatar.dart';
 import 'package:frontend/components/custom_circle_avatar_no_cache.dart';
 import 'package:frontend/components/custom_search_bar.dart';
 import 'package:frontend/components/toast.dart';

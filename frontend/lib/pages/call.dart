@@ -1,12 +1,10 @@
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:frontend/components/toast.dart';
 import 'package:frontend/interfaces/chat_room_details.dart';
 import 'package:frontend/services/auth_service.dart';
 import 'package:frontend/services/call_service.dart';
 import 'package:frontend/services/chat_room_service.dart';
-import 'package:frontend/utils/fetch_with_token.dart';
 import 'package:provider/provider.dart';
 
 class CallPage extends StatefulWidget {
@@ -100,12 +98,12 @@ class _CallPageState extends State<CallPage> {
                     client: client,
                     layoutType: Layout.floating,
                     enableHostControls:
-                        true, // Add this to enable host controls
+                        true, 
                   ),
                   AgoraVideoButtons(
                     client: client,
                     addScreenSharing:
-                        false, // Add this to enable screen sharing
+                        false,
                   ),
                 ],
               ),

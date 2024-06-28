@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:frontend/components/custom_circle_avatar.dart';
@@ -43,7 +44,7 @@ class ChatMessageWidget extends StatelessWidget {
       );
     }
 
-    var imageBytes;
+    Uint8List? imageBytes;
     if (message.type == ChatMessageType.IMAGE) {
       imageBytes = base64Decode(message.content!);
     }
@@ -100,7 +101,7 @@ class ChatMessageWidget extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               child: InstaImageViewer(
-                                child: Image.memory(imageBytes),
+                                child: Image.memory(imageBytes!),
                               ),
                             ),
                     if (message.isDeleted)

@@ -172,7 +172,7 @@ class _CreateGroupChatPageState extends State<CreateGroupChatPage> {
   late FriendService _friendService;
   final TextEditingController _searchController = TextEditingController();
   late ChatRoomService _chatRoomService;
-  Set<User> _selectedUsers = {};
+  final Set<User> _selectedUsers = {};
 
   void fetchData() async {
     final response = await _friendService.fetchFriends();

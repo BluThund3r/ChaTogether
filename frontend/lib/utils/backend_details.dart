@@ -1,4 +1,4 @@
-const _local = true;
+const _local = false;
 const localHostName = "10.0.2.2";
 const remoteHostName = "grossly-star-bear.ngrok-free.app";
 const hostname = _local ? localHostName : remoteHostName;

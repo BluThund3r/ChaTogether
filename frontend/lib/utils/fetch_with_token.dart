@@ -92,7 +92,7 @@ class HttpWithToken {
           ..headers.addAll(localHeaders);
 
     if (fileBytes != null) {
-      request.files.add(await http.MultipartFile.fromBytes("file", fileBytes,
+      request.files.add(http.MultipartFile.fromBytes("file", fileBytes,
           filename: "image.jpg"));
     } else {
       request.files.add(await http.MultipartFile.fromPath('file', filePath));

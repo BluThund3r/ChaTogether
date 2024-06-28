@@ -25,7 +25,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return HomePage();
+        return const HomePage();
       },
       redirect: (context, _) async {
         final isLoggedIn =

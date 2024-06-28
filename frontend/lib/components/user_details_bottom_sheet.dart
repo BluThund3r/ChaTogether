@@ -125,7 +125,7 @@ class _UserDetailsBottomSheetState extends State<UserDetailsBottomSheet> {
                   onPressed: () => resendMailConfirmationToUser(context),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all(
-                        Color.fromARGB(255, 56, 105, 165)),
+                        const Color.fromARGB(255, 56, 105, 165)),
                     textStyle: MaterialStateProperty.all(
                       const TextStyle(
                         color: Colors.white,

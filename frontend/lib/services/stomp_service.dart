@@ -72,7 +72,7 @@ class StompService {
   Function({Map<String, String>? unsubscribeHeaders})
       subscribeToVideoRoomSignals(
           String connectionCode, Function(StompFrame) callback) {
-    print("Subscribing to video room signals " + connectionCode);
+    print("Subscribing to video room signals $connectionCode");
     return _stompClient.subscribe(
       destination: '$_receiveBaseUrl/videoRoom/signal/$connectionCode',
       callback: callback,
@@ -84,7 +84,7 @@ class StompService {
     String connectionCode,
     Function(StompFrame) callback,
   ) {
-    print("Subscribing to video room join or leave " + connectionCode);
+    print("Subscribing to video room join or leave $connectionCode");
     return _stompClient.subscribe(
       destination: '$_receiveBaseUrl/videoRoom/joinOrLeave/$connectionCode',
       callback: callback,
